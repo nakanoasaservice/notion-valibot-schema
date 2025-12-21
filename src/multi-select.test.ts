@@ -2,10 +2,10 @@ import { describe, it } from "@std/testing/bdd";
 import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
 import { MultiSelectSchema } from "./multi-select.ts";
-import type { Extends, NotionProperty } from "./test-utils.ts";
+import type { Extends, SelectNotionProperty } from "./test-utils.ts";
 import { assertEquals } from "@std/assert/equals";
 
-type ExpectedInput = Extract<NotionProperty, { type: "multi_select" }>;
+type TargetType = SelectNotionProperty<"multi_select">;
 
 describe("multi-select", () => {
   describe("MultiSelectSchema", () => {
@@ -14,7 +14,7 @@ describe("multi-select", () => {
 
       assertType<
         Extends<
-          ExpectedInput,
+          TargetType,
           v.InferInput<typeof Schema>
         >
       >(true);
@@ -24,7 +24,15 @@ describe("multi-select", () => {
       const Schema = MultiSelectSchema(v.picklist(["Green", "Red", "Blue"]));
 
       assertEquals(
-        v.parse(Schema, { multi_select: [{ name: "Green" }, { name: "Red" }] }),
+        v.parse(
+          Schema,
+          {
+            multi_select: [
+              { id: "123", color: "green", name: "Green" },
+              { id: "456", color: "red", name: "Red" },
+            ],
+          } satisfies TargetType,
+        ),
         ["Green", "Red"],
       );
     });
@@ -40,7 +48,10 @@ describe("multi-select", () => {
     it("should parse empty multi-select array", () => {
       const Schema = MultiSelectSchema(v.picklist(["Green", "Red", "Blue"]));
 
-      assertEquals(v.parse(Schema, { multi_select: [] }), []);
+      assertEquals(
+        v.parse(Schema, { multi_select: [] } satisfies TargetType),
+        [],
+      );
     });
   });
 });

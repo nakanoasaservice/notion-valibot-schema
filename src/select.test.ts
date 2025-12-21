@@ -5,11 +5,11 @@ import { NullableSelectSchema, SelectSchema } from "./select.ts";
 import type {
   Extends,
   NonNullableValues,
-  NotionProperty,
+  SelectNotionProperty,
 } from "./test-utils.ts";
 import { assertEquals } from "@std/assert/equals";
 
-type ExpectedInput = Extract<NotionProperty, { type: "select" }>;
+type TargetType = SelectNotionProperty<"select">;
 
 describe("select", () => {
   describe("SelectSchema", () => {
@@ -19,7 +19,7 @@ describe("select", () => {
 
         assertType<
           Extends<
-            NonNullableValues<ExpectedInput>,
+            NonNullableValues<TargetType>,
             v.InferInput<typeof Schema>
           >
         >(true);
@@ -36,13 +36,24 @@ describe("select", () => {
       it("should parse select property and extract name value", () => {
         const Schema = SelectSchema(v.picklist(["Green", "Red", "Blue"]));
 
-        assertEquals(v.parse(Schema, { select: { name: "Green" } }), "Green");
+        assertEquals(
+          v.parse(
+            Schema,
+            {
+              select: { id: "123", color: "green", name: "Green" },
+            } satisfies TargetType,
+          ),
+          "Green",
+        );
       });
 
       it("should reject null for non-nullable select schema", () => {
         const Schema = SelectSchema(v.string());
 
-        assertEquals(v.safeParse(Schema, { select: null }).success, false);
+        assertEquals(
+          v.safeParse(Schema, { select: null } satisfies TargetType).success,
+          false,
+        );
       });
     });
   });
@@ -53,7 +64,7 @@ describe("select", () => {
         const Schema = NullableSelectSchema(v.string());
         assertType<
           Extends<
-            ExpectedInput,
+            TargetType,
             v.InferInput<typeof Schema>
           >
         >(true);
@@ -72,7 +83,15 @@ describe("select", () => {
           v.picklist(["Green", "Red", "Blue"]),
         );
 
-        assertEquals(v.parse(Schema, { select: { name: "Green" } }), "Green");
+        assertEquals(
+          v.parse(
+            Schema,
+            {
+              select: { id: "123", color: "green", name: "Green" },
+            } satisfies TargetType,
+          ),
+          "Green",
+        );
       });
 
       it("should parse null select property and return null", () => {
@@ -80,7 +99,10 @@ describe("select", () => {
           v.picklist(["Green", "Red", "Blue"]),
         );
 
-        assertEquals(v.parse(Schema, { select: null }), null);
+        assertEquals(
+          v.parse(Schema, { select: null } satisfies TargetType),
+          null,
+        );
       });
     });
   });

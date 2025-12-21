@@ -5,17 +5,17 @@ import type { NullableNumberSchema, NumberSchema } from "./number.ts";
 import type {
   Extends,
   NonNullableValues,
-  NotionProperty,
+  SelectNotionProperty,
 } from "./test-utils.ts";
 
-type ExpectedInput = Extract<NotionProperty, { type: "number" }>;
+type TargetType = SelectNotionProperty<"number">;
 
 describe("number", () => {
   describe("NullableNumberSchema", () => {
     it("should accept a number or null", () => {
       assertType<
         Extends<
-          ExpectedInput,
+          TargetType,
           v.InferInput<typeof NullableNumberSchema>
         >
       >(true);
@@ -26,7 +26,7 @@ describe("number", () => {
     it("should accept a number", () => {
       assertType<
         Extends<
-          NonNullableValues<ExpectedInput>,
+          NonNullableValues<TargetType>,
           v.InferInput<typeof NumberSchema>
         >
       >(true);

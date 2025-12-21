@@ -10,11 +10,11 @@ import {
 import type {
   Extends,
   NonNullableValues,
-  NotionProperty,
+  SelectNotionProperty,
 } from "./test-utils.ts";
 import { assertEquals } from "@std/assert/equals";
 
-type ExpectedInput = Extract<NotionProperty, { type: "date" }>;
+type TargetType = SelectNotionProperty<"date">;
 
 describe("date", () => {
   describe("DateSchema", () => {
@@ -22,7 +22,7 @@ describe("date", () => {
       it("should accept non-nullable date property input type", () => {
         assertType<
           Extends<
-            NonNullableValues<ExpectedInput>,
+            NonNullableValues<TargetType>,
             v.InferInput<typeof DateSchema>
           >
         >(true);
@@ -35,9 +35,16 @@ describe("date", () => {
 
     describe("parsing", () => {
       it("should parse date property and convert to Date object", () => {
-        const result = v.parse(DateSchema, {
-          date: { start: "2024-01-15T00:00:00.000Z" },
-        });
+        const result = v.parse(
+          DateSchema,
+          {
+            date: {
+              start: "2024-01-15T00:00:00.000Z",
+              end: null,
+              time_zone: null,
+            },
+          } satisfies TargetType,
+        );
 
         assertEquals(result instanceof Date, true);
         assertEquals(result.toISOString(), "2024-01-15T00:00:00.000Z");
@@ -45,7 +52,7 @@ describe("date", () => {
 
       it("should reject null for non-nullable date schema", () => {
         assertEquals(
-          v.safeParse(DateSchema, { date: null }).success,
+          v.safeParse(DateSchema, { date: null } satisfies TargetType).success,
           false,
         );
       });
@@ -57,7 +64,7 @@ describe("date", () => {
       it("should accept date property or null input type", () => {
         assertType<
           Extends<
-            ExpectedInput,
+            TargetType,
             v.InferInput<typeof NullableDateSchema>
           >
         >(true);
@@ -74,16 +81,26 @@ describe("date", () => {
 
     describe("parsing", () => {
       it("should parse date property and convert to Date object", () => {
-        const result = v.parse(NullableDateSchema, {
-          date: { start: "2024-01-15T00:00:00.000Z" },
-        });
+        const result = v.parse(
+          NullableDateSchema,
+          {
+            date: {
+              start: "2024-01-15T00:00:00.000Z",
+              end: null,
+              time_zone: null,
+            },
+          } satisfies TargetType,
+        );
 
         assertEquals(result instanceof Date, true);
         assertEquals(result?.toISOString(), "2024-01-15T00:00:00.000Z");
       });
 
       it("should parse null date property and return null", () => {
-        assertEquals(v.parse(NullableDateSchema, { date: null }), null);
+        assertEquals(
+          v.parse(NullableDateSchema, { date: null } satisfies TargetType),
+          null,
+        );
       });
     });
   });
@@ -102,12 +119,16 @@ describe("date", () => {
 
     describe("parsing", () => {
       it("should parse full date property and convert to Date objects", () => {
-        const result = v.parse(FullDateSchema, {
-          date: {
-            start: "2024-01-15T00:00:00.000Z",
-            end: "2024-01-20T00:00:00.000Z",
-          },
-        });
+        const result = v.parse(
+          FullDateSchema,
+          {
+            date: {
+              start: "2024-01-15T00:00:00.000Z",
+              end: "2024-01-20T00:00:00.000Z",
+              time_zone: null,
+            },
+          } satisfies TargetType,
+        );
 
         assertEquals(result.start instanceof Date, true);
         assertEquals(result.end instanceof Date, true);
@@ -117,7 +138,8 @@ describe("date", () => {
 
       it("should reject null for non-nullable full date schema", () => {
         assertEquals(
-          v.safeParse(FullDateSchema, { date: null }).success,
+          v.safeParse(FullDateSchema, { date: null } satisfies TargetType)
+            .success,
           false,
         );
       });
@@ -129,7 +151,7 @@ describe("date", () => {
       it("should accept date property or null input type", () => {
         assertType<
           Extends<
-            ExpectedInput,
+            TargetType,
             v.InferInput<typeof NullableFullDateSchema>
           >
         >(true);
@@ -147,12 +169,16 @@ describe("date", () => {
 
     describe("parsing", () => {
       it("should parse full date property with both start and end dates", () => {
-        const result = v.parse(NullableFullDateSchema, {
-          date: {
-            start: "2024-01-15T00:00:00.000Z",
-            end: "2024-01-20T00:00:00.000Z",
-          },
-        });
+        const result = v.parse(
+          NullableFullDateSchema,
+          {
+            date: {
+              start: "2024-01-15T00:00:00.000Z",
+              end: "2024-01-20T00:00:00.000Z",
+              time_zone: null,
+            },
+          } satisfies TargetType,
+        );
 
         assertEquals(result?.start instanceof Date, true);
         assertEquals(result?.end instanceof Date, true);
@@ -161,12 +187,16 @@ describe("date", () => {
       });
 
       it("should parse date property with null end date", () => {
-        const result = v.parse(NullableFullDateSchema, {
-          date: {
-            start: "2024-01-15T00:00:00.000Z",
-            end: null,
-          },
-        });
+        const result = v.parse(
+          NullableFullDateSchema,
+          {
+            date: {
+              start: "2024-01-15T00:00:00.000Z",
+              end: null,
+              time_zone: null,
+            },
+          } satisfies TargetType,
+        );
 
         assertEquals(result?.start instanceof Date, true);
         assertEquals(result?.end, null);
@@ -174,7 +204,10 @@ describe("date", () => {
       });
 
       it("should parse null date property and return null", () => {
-        assertEquals(v.parse(NullableFullDateSchema, { date: null }), null);
+        assertEquals(
+          v.parse(NullableFullDateSchema, { date: null } satisfies TargetType),
+          null,
+        );
       });
     });
   });
