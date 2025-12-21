@@ -11,16 +11,8 @@ export const FormulaSchema = v.pipe(
         type: v.literal("date"),
         date: v.nullable(
           v.object({
-            start: v.pipe(
-              v.string(),
-              v.transform((v) => new Date(v)),
-            ),
-            end: v.nullable(
-              v.pipe(
-                v.string(),
-                v.transform((v) => new Date(v)),
-              ),
-            ),
+            start: v.string(),
+            end: v.nullable(v.string()),
           }),
         ),
       }),
@@ -39,7 +31,12 @@ export const FormulaSchema = v.pipe(
       case "string":
         return v.formula.string;
       case "date":
-        return v.formula.date;
+        return v.formula.date
+          ? {
+            start: new Date(v.formula.date.start),
+            end: v.formula.date.end ? new Date(v.formula.date.end) : null,
+          }
+          : null;
       case "number":
         return v.formula.number;
       case "boolean":
