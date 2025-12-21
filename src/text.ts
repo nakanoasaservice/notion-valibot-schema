@@ -1,6 +1,6 @@
 import * as v from "valibot";
 
-export const RichTextArraySchema = v.pipe(
+const RichTextArraySchema = v.pipe(
   v.array(
     v.object({
       plain_text: v.string(),

@@ -1,76 +1,11 @@
 import { describe, it } from "@std/testing/bdd";
 import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
-import {
-  RichTextArraySchema,
-  RichTextSchema,
-  TitleSchema,
-} from "./rich-text.ts";
+import { RichTextSchema, TitleSchema } from "./text.ts";
 import type { Extends, SelectNotionProperty } from "./test-utils.ts";
 import { assertEquals } from "@std/assert/equals";
 
-describe("rich-text", () => {
-  describe("RichTextArraySchema", () => {
-    describe("type checking", () => {
-      it("should have correct output type", () => {
-        assertType<
-          IsExact<v.InferOutput<typeof RichTextArraySchema>, string>
-        >(true);
-      });
-    });
-
-    describe("parsing", () => {
-      it("should parse rich text array and join plain_text values", () => {
-        const result = v.parse(RichTextArraySchema, [
-          {
-            type: "text",
-            text: {
-              content: "Hello",
-              link: null,
-            },
-            annotations: {
-              bold: false,
-              italic: false,
-              strikethrough: false,
-              underline: false,
-              code: false,
-              color: "default",
-            },
-            plain_text: "Hello",
-            href: null,
-          },
-          {
-            type: "text",
-            text: {
-              content: " World",
-              link: null,
-            },
-            annotations: {
-              bold: false,
-              italic: false,
-              strikethrough: false,
-              underline: false,
-              code: false,
-              color: "default",
-            },
-            plain_text: " World",
-            href: null,
-          },
-        ]);
-
-        assertEquals(result, "Hello World");
-        assertEquals(typeof result, "string");
-      });
-
-      it("should parse empty rich text array and return empty string", () => {
-        const result = v.parse(RichTextArraySchema, []);
-
-        assertEquals(result, "");
-        assertEquals(typeof result, "string");
-      });
-    });
-  });
-
+describe("text", () => {
   describe("TitleSchema", () => {
     describe("type checking", () => {
       it("should accept title property input type", () => {
