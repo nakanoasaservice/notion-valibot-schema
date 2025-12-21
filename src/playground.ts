@@ -59,7 +59,7 @@ export const NullableFilesSchema = v.pipe(
   v.transform((v) => v.files.map((v) => v.file.url)),
 );
 
-export const NullableCreatedByNameSchema = v.pipe(
+export const CreatedBySchema = v.pipe(
   v.object({
     created_by: v.object({
       name: v.nullish(v.string(), null),
@@ -68,7 +68,7 @@ export const NullableCreatedByNameSchema = v.pipe(
   v.transform((v) => v.created_by.name),
 );
 
-export const NullableCreatedByIdSchema = v.pipe(
+export const CreatedByIdSchema = v.pipe(
   v.object({
     created_by: v.object({
       id: v.string(),
@@ -77,7 +77,7 @@ export const NullableCreatedByIdSchema = v.pipe(
   v.transform((v) => v.created_by.id),
 );
 
-export const NullableCreatedTimeSchema = v.pipe(
+export const CreatedTimeSchema = v.pipe(
   v.object({
     created_time: v.pipe(
       v.string(),

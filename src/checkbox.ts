@@ -1,6 +1,6 @@
 import * as v from "valibot";
 
-export const NullableCheckboxSchema = v.pipe(
+export const CheckboxSchema = v.pipe(
   v.object({
     checkbox: v.boolean(),
   }),

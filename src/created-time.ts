@@ -1,6 +1,6 @@
 import * as v from "valibot";
 
-export const NullableCreatedTimeSchema = v.pipe(
+export const CreatedTimeSchema = v.pipe(
   v.object({
     created_time: v.string(),
   }),

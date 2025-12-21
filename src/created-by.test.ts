@@ -1,17 +1,14 @@
 import { describe, it } from "@std/testing/bdd";
 import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
-import {
-  NullableCreatedByIdSchema,
-  NullableCreatedByNameSchema,
-} from "./created-by.ts";
+import { CreatedByIdSchema, CreatedBySchema } from "./created-by.ts";
 import type { Extends, SelectNotionProperty } from "./test-utils.ts";
 import { assertEquals } from "@std/assert/equals";
 
 type TargetType = SelectNotionProperty<"created_by">;
 
 describe("created-by", () => {
-  describe("NullableCreatedByNameSchema", () => {
+  describe("CreatedBySchema", () => {
     describe("type checking", () => {
       it("should accept created_by property input type", () => {
         // Note: Type checking for created_by property
@@ -20,8 +17,8 @@ describe("created-by", () => {
       it("should have correct output type", () => {
         assertType<
           IsExact<
-            v.InferOutput<typeof NullableCreatedByNameSchema>,
-            string | null
+            v.InferOutput<typeof CreatedBySchema>,
+            { id: string; object: "user"; name: string | null }
           >
         >(true);
       });
@@ -30,7 +27,7 @@ describe("created-by", () => {
     describe("parsing", () => {
       it("should parse created_by property and extract name value", () => {
         const result = v.parse(
-          NullableCreatedByNameSchema,
+          CreatedBySchema,
           {
             created_by: {
               object: "user",
@@ -45,13 +42,16 @@ describe("created-by", () => {
           } satisfies TargetType,
         );
 
-        assertEquals(result, "John Doe");
-        assertEquals(typeof result, "string");
+        assertEquals(result, {
+          id: "user-123",
+          object: "user",
+          name: "John Doe",
+        });
       });
 
       it("should parse created_by property with null name and return null", () => {
         const result = v.parse(
-          NullableCreatedByNameSchema,
+          CreatedBySchema,
           {
             created_by: {
               object: "user",
@@ -66,25 +66,25 @@ describe("created-by", () => {
           } satisfies TargetType,
         );
 
-        assertEquals(result, null);
+        assertEquals(result, { id: "user-123", object: "user", name: null });
       });
     });
   });
 
-  describe("NullableCreatedByIdSchema", () => {
+  describe("CreatedByIdSchema", () => {
     describe("type checking", () => {
       it("should accept created_by property input type", () => {
         assertType<
           Extends<
             TargetType,
-            v.InferInput<typeof NullableCreatedByIdSchema>
+            v.InferInput<typeof CreatedByIdSchema>
           >
         >(true);
       });
 
       it("should have correct output type", () => {
         assertType<
-          IsExact<v.InferOutput<typeof NullableCreatedByIdSchema>, string>
+          IsExact<v.InferOutput<typeof CreatedByIdSchema>, string>
         >(true);
       });
     });
@@ -92,7 +92,7 @@ describe("created-by", () => {
     describe("parsing", () => {
       it("should parse created_by property and extract id value", () => {
         const result = v.parse(
-          NullableCreatedByIdSchema,
+          CreatedByIdSchema,
           {
             created_by: {
               object: "user",
