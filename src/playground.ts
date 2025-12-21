@@ -173,7 +173,7 @@ export const UniqueIdSchema = v.pipe(
   v.transform((v) => v.unique_id),
 );
 
-export const RichTextArraySchema = v.pipe(
+const RichTextArraySchema = v.pipe(
   v.array(
     v.object({
       plain_text: v.string(),
@@ -219,22 +219,3 @@ export const RelationSchema = v.pipe(
   }),
   v.transform((v) => v.relation),
 );
-
-export function queryDatabaseResponseSchema<T extends v.GenericSchema>(
-  propertiesSchema: T,
-) {
-  return v.pipe(
-    v.object({
-      results: v.array(
-        v.pipe(
-          v.object({
-            id: v.string(),
-            object: v.literal("page"),
-            properties: propertiesSchema,
-          }),
-        ),
-      ),
-    }),
-    v.transform((v) => v.results),
-  );
-}
