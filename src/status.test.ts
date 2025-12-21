@@ -15,40 +15,49 @@ describe("status", () => {
   describe("StatusSchema", () => {
     describe("type checking", () => {
       it("should accept non-nullable status property input type", () => {
+        const Schema = StatusSchema(v.string());
+
         assertType<
           Extends<
             NonNullableValues<TargetType>,
-            v.InferInput<typeof StatusSchema>
+            v.InferInput<typeof Schema>
           >
         >(true);
       });
 
       it("should have correct output type", () => {
-        assertType<IsExact<v.InferOutput<typeof StatusSchema>, string>>(true);
+        const Schema = StatusSchema(v.string());
+
+        assertType<IsExact<v.InferOutput<typeof Schema>, string>>(true);
       });
     });
 
     describe("parsing", () => {
       it("should parse status property and extract name value", () => {
-        const result = v.parse(
-          StatusSchema,
-          {
-            status: {
-              id: "123",
-              name: "Done",
-              color: "green",
-            },
-          } satisfies TargetType,
+        const Schema = StatusSchema(
+          v.picklist(["Done", "In Progress", "Todo"]),
         );
 
-        assertEquals(result, "Done");
-        assertEquals(typeof result, "string");
+        assertEquals(
+          v.parse(
+            Schema,
+            {
+              status: {
+                id: "123",
+                name: "Done",
+                color: "green",
+              },
+            } satisfies TargetType,
+          ),
+          "Done",
+        );
       });
 
       it("should reject null for non-nullable status schema", () => {
+        const Schema = StatusSchema(v.string());
+
         assertEquals(
-          v.safeParse(StatusSchema, { status: null } satisfies TargetType)
-            .success,
+          v.safeParse(Schema, { status: null } satisfies TargetType).success,
           false,
         );
       });
@@ -58,45 +67,56 @@ describe("status", () => {
   describe("NullableStatusSchema", () => {
     describe("type checking", () => {
       it("should accept status property or null input type", () => {
+        const Schema = NullableStatusSchema(v.string());
         assertType<
           Extends<
             TargetType,
-            v.InferInput<typeof NullableStatusSchema>
+            v.InferInput<typeof Schema>
           >
         >(true);
       });
 
       it("should have correct output type", () => {
+        const Schema = NullableStatusSchema(v.string());
+
         assertType<
           IsExact<
-            v.InferOutput<typeof NullableStatusSchema>,
-            string | undefined
+            v.InferOutput<typeof Schema>,
+            string | null
           >
         >(true);
       });
     });
 
     describe("parsing", () => {
-      it("should parse status property and extract name value", () => {
-        const result = v.parse(
-          NullableStatusSchema,
-          {
-            status: {
-              id: "123",
-              name: "Done",
-              color: "green",
-            },
-          } satisfies TargetType,
+      it("should parse status property and return name value", () => {
+        const Schema = NullableStatusSchema(
+          v.picklist(["Done", "In Progress", "Todo"]),
         );
 
-        assertEquals(result, "Done");
-        assertEquals(typeof result, "string");
+        assertEquals(
+          v.parse(
+            Schema,
+            {
+              status: {
+                id: "123",
+                name: "Done",
+                color: "green",
+              },
+            } satisfies TargetType,
+          ),
+          "Done",
+        );
       });
 
-      it("should parse null status property and return undefined", () => {
+      it("should parse null status property and return null", () => {
+        const Schema = NullableStatusSchema(
+          v.picklist(["Done", "In Progress", "Todo"]),
+        );
+
         assertEquals(
-          v.parse(NullableStatusSchema, { status: null } satisfies TargetType),
-          undefined,
+          v.parse(Schema, { status: null } satisfies TargetType),
+          null,
         );
       });
     });
