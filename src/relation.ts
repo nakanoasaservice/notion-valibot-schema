@@ -6,3 +6,14 @@ export const RelationSchema = v.pipe(
 	}),
 	v.transform((v) => v.relation.map((r) => r.id)),
 );
+
+export const SingleRelationSchema = v.pipe(
+	v.object({
+		relation: v.tuple([
+			v.object({
+				id: v.string(),
+			}),
+		]),
+	}),
+	v.transform((v) => v.relation[0].id),
+);

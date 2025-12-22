@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { RelationSchema } from "./relation.ts";
+import { RelationSchema, SingleRelationSchema } from "./relation.ts";
 import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"relation">;
@@ -49,6 +49,43 @@ describe("relation", () => {
 
 				expect(result).toEqual([]);
 				expect(result.length).toBe(0);
+			});
+		});
+	});
+
+	describe("SingleRelationSchema", () => {
+		describe("type checking", () => {
+			it("should accept relation property input type", () => {
+				expectTypeOf<
+					TargetType & {
+						relation: [
+							{
+								id: string;
+							},
+						];
+					}
+				>().toExtend<v.InferInput<typeof SingleRelationSchema>>();
+			});
+
+			it("should have correct output type", () => {
+				expectTypeOf<
+					v.InferOutput<typeof SingleRelationSchema>
+				>().toEqualTypeOf<string>();
+			});
+		});
+
+		describe("parsing", () => {
+			it("should parse single relation property and extract id", () => {
+				const result = v.parse(SingleRelationSchema, {
+					relation: [
+						{
+							id: "page-1",
+						},
+					],
+				} satisfies TargetType);
+
+				expect(result).toBe("page-1");
+				expect(typeof result).toBe("string");
 			});
 		});
 	});
