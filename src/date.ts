@@ -1,6 +1,6 @@
 import * as v from "valibot";
 
-const InnerDateSchema = v.object({
+export const DateObjectSchema = v.object({
 	start: v.string(),
 	end: v.nullable(v.string()),
 	time_zone: v.nullable(v.string()),
@@ -8,21 +8,21 @@ const InnerDateSchema = v.object({
 
 export const DateSchema = v.pipe(
 	v.object({
-		date: InnerDateSchema,
+		date: DateObjectSchema,
 	}),
 	v.transform((v) => new Date(v.date.start)),
 );
 
 export const NullableDateSchema = v.pipe(
 	v.object({
-		date: v.nullable(InnerDateSchema),
+		date: v.nullable(DateObjectSchema),
 	}),
 	v.transform((v) => (v.date?.start ? new Date(v.date.start) : null)),
 );
 
 export const DateRangeSchema = v.pipe(
 	v.object({
-		date: InnerDateSchema,
+		date: DateObjectSchema,
 	}),
 	v.transform((v) => ({
 		start: new Date(v.date.start),
@@ -33,7 +33,7 @@ export const DateRangeSchema = v.pipe(
 
 export const NullableDateRangeSchema = v.pipe(
 	v.object({
-		date: v.nullable(InnerDateSchema),
+		date: v.nullable(DateObjectSchema),
 	}),
 	v.transform((v) =>
 		v.date
