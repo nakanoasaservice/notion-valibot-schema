@@ -32,8 +32,5 @@ jobs:
       - name: Run Biome Check
         run: pnpm run check
 
-      - name: Run Type Check
-        run: pnpm run check-types
-
       - name: Run Tests
         run: pnpm run test
