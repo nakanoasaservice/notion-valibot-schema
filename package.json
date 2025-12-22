@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"description": "A collection of valibot schemas for Notion API",
 	"author": "Nakano as a Service",
-	"license": "Apache-2.0",
+	"license": "MIT",
 	"type": "module",
 	"sideEffects": false,
 	"publishConfig": {
@@ -13,7 +13,7 @@
 	"homepage": "https://github.com/nakanoasaservice/notion-valibot-schema",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/nakanoasaservice/notion-valibot-schema.git"
+		"url": "git+https://github.com/nakanoasaservice/notion-valibot-schema.git"
 	},
 	"bugs": {
 		"url": "https://github.com/nakanoasaservice/notion-valibot-schema/issues"
@@ -38,21 +38,20 @@
 	],
 	"scripts": {
 		"build": "tsdown",
-		"cf-typegen": "wrangler types",
-		"check-types": "tsc --noEmit",
 		"check:fix": "biome check --write",
 		"check": "biome check",
-		"test": "vitest"
+		"test": "vitest --typecheck"
 	},
 	"peerDependencies": {
 		"valibot": "^1.2.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.7",
+		"@notionhq/client": "^5.6.0",
 		"@types/node": "^24.10.1",
 		"tsdown": "^0.16.7",
 		"typescript": "^5.9.3",
-		"vitest": "~3.2.4"
+		"vitest": "~4.0.16"
 	},
 	"packageManager": "pnpm@10.23.0"
 }
