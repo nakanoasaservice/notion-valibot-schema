@@ -10,13 +10,15 @@ describe("created-by", () => {
 	describe("CreatedBySchema", () => {
 		describe("type checking", () => {
 			it("should accept created_by property input type", () => {
-				// Note: Type checking for created_by property
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof CreatedBySchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
 				expectTypeOf<v.InferOutput<typeof CreatedBySchema>>().toEqualTypeOf<{
 					id: string;
-					object: "user";
+					object: "user" | "bot" | "group";
 					name: string | null;
 				}>();
 			});

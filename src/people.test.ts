@@ -17,7 +17,11 @@ describe("people", () => {
 
 			it("should have correct output type", () => {
 				expectTypeOf<v.InferOutput<typeof PeopleSchema>>().toEqualTypeOf<
-					Array<{ id: string; name: string | null }>
+					Array<{
+						id: string;
+						object: "user" | "bot" | "group";
+						name: string | null;
+					}>
 				>();
 			});
 		});
