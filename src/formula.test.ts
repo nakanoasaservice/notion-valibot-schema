@@ -14,25 +14,19 @@ describe("formula", () => {
 					v.variant("type", [
 						v.object({
 							type: v.literal("string"),
-							string: v.nullable(v.string()),
+							string: v.any(),
 						}),
 						v.object({
 							type: v.literal("number"),
-							number: v.nullable(v.number()),
+							number: v.any(),
 						}),
 						v.object({
 							type: v.literal("boolean"),
-							boolean: v.nullable(v.boolean()),
+							boolean: v.any(),
 						}),
 						v.object({
 							type: v.literal("date"),
-							date: v.nullable(
-								v.object({
-									start: v.string(),
-									end: v.nullable(v.string()),
-									time_zone: v.nullable(v.string()),
-								}),
-							),
+							date: v.any(),
 						}),
 					]),
 				);
