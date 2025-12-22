@@ -1,11 +1,95 @@
 import * as v from "valibot";
 
+/**
+ * Schema for a Notion person object (user, bot, or group).
+ *
+ * **Input:**
+ * ```
+ * {
+ *   id: string;
+ *   object: "user" | "bot" | "group";
+ *   name: string | null;
+ *   ...
+ * }
+ * ```
+ *
+ * **Output:**
+ * ```
+ * {
+ *   id: string;
+ *   object: "user" | "bot" | "group";
+ *   name: string | null;
+ * }
+ * ```
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { PersonSchema } from "@nakanoaas/notion-valibot-schema";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   created_by: PersonSchema,
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.created_by: { id: string; object: "user" | "bot" | "group"; name: string | null }
+ * ```
+ *
+ * @internal
+ */
 export const PersonSchema = v.object({
 	id: v.string(),
 	object: v.picklist(["user", "bot", "group"]),
 	name: v.nullish(v.string(), null),
 });
 
+/**
+ * Schema to extract the `people` array from a Notion property.
+ *
+ * **Input:**
+ * ```
+ * {
+ *   people: [
+ *     {
+ *       id: string;
+ *       object: "user" | "bot" | "group";
+ *       name: string | null;
+ *       ...
+ *     }
+ *   ]
+ * }
+ * ```
+ *
+ * **Output:**
+ * ```
+ * [
+ *   {
+ *     id: string;
+ *     object: "user" | "bot" | "group";
+ *     name: string | null;
+ *   }
+ * ]
+ * ```
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { PeopleSchema } from "@nakanoaas/notion-valibot-schema";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     People: PeopleSchema,
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.People: Array<{ id: string; object: "user" | "bot" | "group"; name: string | null }>
+ * ```
+ */
 export const PeopleSchema = v.pipe(
 	v.object({
 		people: v.array(PersonSchema),
