@@ -33,6 +33,7 @@ export default defineConfig({
 						exports: "./src/index.ts",
 						publish: {
 							include: ["src", "README.md", "LICENSE"],
+							exclude: ["**/*.test.ts", "test-utils.ts"],
 						},
 						imports: {
 							valibot: `jsr:@valibot/valibot@${packageJson.peerDependencies.valibot}`,
