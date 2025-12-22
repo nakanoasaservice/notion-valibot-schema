@@ -258,10 +258,13 @@ describe("rollup", () => {
 		describe("parsing", () => {
 			it("should parse rollup array property with string array and extract array", () => {
 				const Schema = RollupArraySchema(
-					v.object({
-						type: v.literal("string"),
-						string: v.string(),
-					}),
+					v.pipe(
+						v.object({
+							type: v.literal("number"),
+							number: v.number(),
+						}),
+						v.transform((v) => v.number),
+					),
 				);
 				const result = v.parse(Schema, {
 					rollup: {
@@ -276,7 +279,7 @@ describe("rollup", () => {
 					},
 				} satisfies RollupArrayType);
 
-				expect(result).toEqual(["foo", "bar", "baz"]);
+				expect(result).toEqual([42]);
 				expect(Array.isArray(result)).toBe(true);
 			});
 
