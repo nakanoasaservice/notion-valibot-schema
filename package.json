@@ -1,6 +1,6 @@
 {
 	"name": "@nakanoaas/notion-valibot-schema",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A collection of valibot schemas for Notion API",
 	"author": "Nakano as a Service",
 	"license": "MIT",
