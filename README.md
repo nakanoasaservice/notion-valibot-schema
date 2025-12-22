@@ -37,33 +37,33 @@ This example shows how to parse a page returned by `notion.pages.retrieve()` (or
 ```ts
 import * as v from "valibot";
 import {
-	CheckboxSchema,
-	FilesSchema,
-	MultiSelectSchema,
-	NullableDateSchema,
-	NullableNumberSchema,
-	NullableUrlSchema,
-	RelationSchema,
-	RichTextSchema,
-	StatusSchema,
-	TitleSchema,
+  CheckboxSchema,
+  FilesSchema,
+  MultiSelectSchema,
+  NullableDateSchema,
+  NullableNumberSchema,
+  NullableUrlSchema,
+  RelationSchema,
+  RichTextSchema,
+  StatusSchema,
+  TitleSchema,
 } from "@nakanoaas/notion-valibot-schema";
 
 // Property keys must match your database property names exactly.
 const NotionTaskPageSchema = v.object({
-	id: v.string(),
-	properties: v.object({
-		Name: TitleSchema, // -> string
-		Notes: RichTextSchema, // -> string
-		Status: StatusSchema(v.picklist(["ToDo", "In Progress", "Done"])), // -> "ToDo" | "In Progress" | "Done"
-		Tags: MultiSelectSchema(v.string()), // -> string[]
-		Due: NullableDateSchema, // -> Date | null
-		Points: NullableNumberSchema, // -> number | null
-		Done: CheckboxSchema, // -> boolean
-		Website: NullableUrlSchema, // -> string | null
-		Attachments: FilesSchema, // -> string[] (URLs)
-		Related: RelationSchema, // -> string[] (page IDs)
-	}),
+  id: v.string(),
+  properties: v.object({
+    Name: TitleSchema, // -> string
+    Notes: RichTextSchema, // -> string
+    Status: StatusSchema(v.picklist(["ToDo", "In Progress", "Done"])), // -> "ToDo" | "In Progress" | "Done"
+    Tags: MultiSelectSchema(v.string()), // -> string[]
+    Due: NullableDateSchema, // -> Date | null
+    Points: NullableNumberSchema, // -> number | null
+    Done: CheckboxSchema, // -> boolean
+    Website: NullableUrlSchema, // -> string | null
+    Attachments: FilesSchema, // -> string[] (URLs)
+    Related: RelationSchema, // -> string[] (page IDs)
+  }),
 });
 
 // Fetch a page with the Notion SDK
