@@ -10,8 +10,7 @@ describe("files", () => {
 	describe("FilesSchema", () => {
 		describe("type checking", () => {
 			it("should accept files property input type", () => {
-				// Note: Type checking for files property
-				// FilesSchema accepts files array with file.url structure
+				expectTypeOf<TargetType>().toExtend<v.InferInput<typeof FilesSchema>>();
 			});
 
 			it("should have correct output type", () => {
