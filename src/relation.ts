@@ -17,3 +17,14 @@ export const SingleRelationSchema = v.pipe(
 	}),
 	v.transform((v) => v.relation[0].id),
 );
+
+export const NullableSingleRelationSchema = v.pipe(
+	v.object({
+		relation: v.array(
+			v.object({
+				id: v.string(),
+			}),
+		),
+	}),
+	v.transform((v) => v.relation[0]?.id ?? null),
+);

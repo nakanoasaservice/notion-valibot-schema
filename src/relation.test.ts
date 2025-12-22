@@ -1,7 +1,11 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { RelationSchema, SingleRelationSchema } from "./relation.ts";
+import {
+	NullableSingleRelationSchema,
+	RelationSchema,
+	SingleRelationSchema,
+} from "./relation.ts";
 import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"relation">;
@@ -86,6 +90,53 @@ describe("relation", () => {
 
 				expect(result).toBe("page-1");
 				expect(typeof result).toBe("string");
+			});
+
+			it("should reject empty relation array", () => {
+				expect(
+					v.safeParse(SingleRelationSchema, {
+						relation: [],
+					} satisfies TargetType).success,
+				).toBe(false);
+			});
+		});
+	});
+
+	describe("NullableSingleRelationSchema", () => {
+		describe("type checking", () => {
+			it("should accept relation property input type", () => {
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof NullableSingleRelationSchema>
+				>();
+			});
+
+			it("should have correct output type", () => {
+				expectTypeOf<
+					v.InferOutput<typeof NullableSingleRelationSchema>
+				>().toEqualTypeOf<string | null>();
+			});
+		});
+
+		describe("parsing", () => {
+			it("should parse single relation property and extract id", () => {
+				const result = v.parse(NullableSingleRelationSchema, {
+					relation: [
+						{
+							id: "page-1",
+						},
+					],
+				} satisfies TargetType);
+
+				expect(result).toBe("page-1");
+				expect(typeof result).toBe("string");
+			});
+
+			it("should parse empty relation array and return null", () => {
+				const result = v.parse(NullableSingleRelationSchema, {
+					relation: [],
+				} satisfies TargetType);
+
+				expect(result).toBe(null);
 			});
 		});
 	});
