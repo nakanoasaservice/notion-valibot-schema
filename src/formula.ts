@@ -1,46 +1,26 @@
 import * as v from "valibot";
 
-export const FormulaSchema = v.pipe(
-	v.object({
-		formula: v.variant("type", [
-			v.object({
-				type: v.literal("string"),
-				string: v.string(),
-			}),
-			v.object({
-				type: v.literal("date"),
-				date: v.nullable(
-					v.object({
-						start: v.string(),
-						end: v.nullable(v.string()),
-					}),
-				),
-			}),
-			v.object({
-				type: v.literal("number"),
-				number: v.number(),
-			}),
-			v.object({
-				type: v.literal("boolean"),
-				boolean: v.nullable(v.boolean(), false),
-			}),
-		]),
-	}),
-	v.transform((v) => {
-		switch (v.formula.type) {
-			case "string":
-				return v.formula.string;
-			case "date":
-				return v.formula.date
-					? {
-							start: new Date(v.formula.date.start),
-							end: v.formula.date.end ? new Date(v.formula.date.end) : null,
-						}
-					: null;
-			case "number":
-				return v.formula.number;
-			case "boolean":
-				return v.formula.boolean;
-		}
-	}),
-);
+export function FormulaSchema<
+	S extends v.GenericSchema<
+		| { type: "string"; string: string | null }
+		| { type: "number"; number: number | null }
+		| { type: "boolean"; boolean: boolean | null }
+		| {
+				type: "date";
+				date: {
+					start: string;
+					end: string | null;
+					time_zone: string | null;
+				} | null;
+		  },
+		unknown
+	>,
+>(schema: S) {
+	return v.pipe(
+		v.object({
+			formula: schema,
+		}),
+		// biome-ignore lint/style/noNonNullAssertion: valibot inference is not working correctly
+		v.transform((v) => v.formula!),
+	);
+}

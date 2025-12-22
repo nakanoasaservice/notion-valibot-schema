@@ -10,25 +10,64 @@ describe("formula", () => {
 	describe("FormulaSchema", () => {
 		describe("type checking", () => {
 			it("should accept formula property input type", () => {
-				// Note: Formula property type checking is complex due to variant types
-				// The schema accepts various formula types (string, date, number, boolean)
+				const Schema = FormulaSchema(
+					v.variant("type", [
+						v.object({
+							type: v.literal("string"),
+							string: v.nullable(v.string()),
+						}),
+						v.object({
+							type: v.literal("number"),
+							number: v.nullable(v.number()),
+						}),
+						v.object({
+							type: v.literal("boolean"),
+							boolean: v.nullable(v.boolean()),
+						}),
+						v.object({
+							type: v.literal("date"),
+							date: v.nullable(
+								v.object({
+									start: v.string(),
+									end: v.nullable(v.string()),
+									time_zone: v.nullable(v.string()),
+								}),
+							),
+						}),
+					]),
+				);
+
+				expectTypeOf<TargetType>().toExtend<v.InferInput<typeof Schema>>();
 			});
 
 			it("should have correct output type", () => {
-				expectTypeOf<v.InferOutput<typeof FormulaSchema>>().toEqualTypeOf<
-					| string
-					| { start: Date; end: Date | null }
-					| null
-					| number
-					| boolean
-					| null
-				>();
+				const Schema = FormulaSchema(
+					v.pipe(
+						v.object({
+							type: v.literal("string"),
+							string: v.string(),
+						}),
+						v.transform((v) => v.string),
+					),
+				);
+
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<string>();
 			});
 		});
 
 		describe("parsing", () => {
 			it("should parse string formula and return string value", () => {
-				const result = v.parse(FormulaSchema, {
+				const Schema = FormulaSchema(
+					v.pipe(
+						v.object({
+							type: v.literal("string"),
+							string: v.string(),
+						}),
+						v.transform((v) => v.string),
+					),
+				);
+
+				const result = v.parse(Schema, {
 					formula: {
 						type: "string",
 						string: "Hello World",
@@ -36,11 +75,24 @@ describe("formula", () => {
 				} satisfies TargetType);
 
 				expect(result).toEqual("Hello World");
-				expect(typeof result).toEqual("string");
 			});
 
 			it("should parse date formula and return date object", () => {
-				const result = v.parse(FormulaSchema, {
+				const Schema = FormulaSchema(
+					v.pipe(
+						v.object({
+							type: v.literal("date"),
+							date: v.object({
+								start: v.string(),
+								end: v.nullable(v.string()),
+								time_zone: v.nullable(v.string()),
+							}),
+						}),
+						v.transform((v) => new Date(v.date.start)),
+					),
+				);
+
+				const result = v.parse(Schema, {
 					formula: {
 						type: "date",
 						date: {
@@ -51,17 +103,25 @@ describe("formula", () => {
 					},
 				} satisfies TargetType);
 
-				expect(result !== null).toBe(true);
-				if (result && typeof result === "object" && "start" in result) {
-					expect(result.start instanceof Date).toBe(true);
-					expect(result.end instanceof Date).toBe(true);
-					expect(result.start.toISOString()).toBe("2024-01-15T00:00:00.000Z");
-					expect(result.end?.toISOString()).toBe("2024-01-20T00:00:00.000Z");
-				}
+				expect(result instanceof Date).toBe(true);
 			});
 
 			it("should parse date formula with null end date", () => {
-				const result = v.parse(FormulaSchema, {
+				const Schema = FormulaSchema(
+					v.pipe(
+						v.object({
+							type: v.literal("date"),
+							date: v.object({
+								start: v.string(),
+								end: v.nullable(v.string()),
+								time_zone: v.nullable(v.string()),
+							}),
+						}),
+						v.transform((v) => new Date(v.date.start)),
+					),
+				);
+
+				const result = v.parse(Schema, {
 					formula: {
 						type: "date",
 						date: {
@@ -73,14 +133,26 @@ describe("formula", () => {
 				} satisfies TargetType);
 
 				expect(result !== null).toBe(true);
-				if (result && typeof result === "object" && "start" in result) {
-					expect(result.start instanceof Date).toBe(true);
-					expect(result.end).toBe(null);
-				}
+				expect(result instanceof Date).toBe(true);
 			});
 
 			it("should parse date formula with null date", () => {
-				const result = v.parse(FormulaSchema, {
+				const Schema = FormulaSchema(
+					v.pipe(
+						v.object({
+							type: v.literal("date"),
+							date: v.nullable(
+								v.object({
+									start: v.string(),
+									end: v.nullable(v.string()),
+									time_zone: v.nullable(v.string()),
+								}),
+							),
+						}),
+						v.transform((v) => (v.date ? new Date(v.date.start) : null)),
+					),
+				);
+				const result = v.parse(Schema, {
 					formula: {
 						type: "date",
 						date: null,
@@ -91,7 +163,17 @@ describe("formula", () => {
 			});
 
 			it("should parse number formula and return number value", () => {
-				const result = v.parse(FormulaSchema, {
+				const Schema = FormulaSchema(
+					v.pipe(
+						v.object({
+							type: v.literal("number"),
+							number: v.number(),
+						}),
+						v.transform((v) => v.number),
+					),
+				);
+
+				const result = v.parse(Schema, {
 					formula: {
 						type: "number",
 						number: 42,
@@ -103,7 +185,17 @@ describe("formula", () => {
 			});
 
 			it("should parse boolean formula and return boolean value", () => {
-				const result = v.parse(FormulaSchema, {
+				const Schema = FormulaSchema(
+					v.pipe(
+						v.object({
+							type: v.literal("boolean"),
+							boolean: v.boolean(),
+						}),
+						v.transform((v) => v.boolean),
+					),
+				);
+
+				const result = v.parse(Schema, {
 					formula: {
 						type: "boolean",
 						boolean: true,
@@ -111,18 +203,6 @@ describe("formula", () => {
 				} satisfies TargetType);
 
 				expect(result).toEqual(true);
-				expect(typeof result).toEqual("boolean");
-			});
-
-			it("should parse boolean formula with null and return false", () => {
-				const result = v.parse(FormulaSchema, {
-					formula: {
-						type: "boolean",
-						boolean: null,
-					},
-				} satisfies TargetType);
-
-				expect(result).toEqual(false);
 				expect(typeof result).toEqual("boolean");
 			});
 		});
