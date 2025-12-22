@@ -1,5 +1,7 @@
 # Notion Valibot Schema
 
+[![npm](https://img.shields.io/npm/v/%40nakanoaas%2Fnotion-valibot-schema)](https://www.npmjs.com/package/@nakanoaas/notion-valibot-schema) [![JSR](https://jsr.io/badges/@nakanoaas/notion-valibot-schema)](https://jsr.io/@nakanoaas/notion-valibot-schema)
+
 A small collection of **[Valibot](https://github.com/fabian-hiller/valibot)** schemas for the Notion API.
 
 It helps you **validate and transform** Notion `properties` into plain JavaScript values (e.g. `string`, `number`, `Date`, `string[]`) so you can work with the results without dealing with Notion’s nested property shapes.
