@@ -1,5 +1,7 @@
 import * as v from "valibot";
 
+import { DateObjectSchema } from "./date";
+
 export const NullableRollupNumberSchema = v.pipe(
 	v.object({
 		rollup: v.object({
@@ -24,13 +26,7 @@ export const NullableRollupDateSchema = v.pipe(
 	v.object({
 		rollup: v.object({
 			type: v.literal("date"),
-			date: v.nullable(
-				v.object({
-					start: v.string(),
-					end: v.nullable(v.string()),
-					time_zone: v.nullable(v.string()),
-				}),
-			),
+			date: v.nullable(DateObjectSchema),
 		}),
 	}),
 	v.transform((v) => (v.rollup.date ? new Date(v.rollup.date.start) : null)),
@@ -40,11 +36,7 @@ export const RollupDateSchema = v.pipe(
 	v.object({
 		rollup: v.object({
 			type: v.literal("date"),
-			date: v.object({
-				start: v.string(),
-				end: v.nullable(v.string()),
-				time_zone: v.nullable(v.string()),
-			}),
+			date: DateObjectSchema,
 		}),
 	}),
 	v.transform((v) => new Date(v.rollup.date.start)),

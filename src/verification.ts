@@ -1,5 +1,6 @@
 import * as v from "valibot";
 
+import { DateObjectSchema } from "./date";
 import { PersonSchema } from "./people";
 
 const InnerVerificationSchema = v.variant("state", [
@@ -10,13 +11,7 @@ const InnerVerificationSchema = v.variant("state", [
 	}),
 	v.object({
 		state: v.union([v.literal("verified"), v.literal("expired")]),
-		date: v.nullable(
-			v.object({
-				start: v.string(),
-				end: v.nullable(v.string()),
-				time_zone: v.nullable(v.string()),
-			}),
-		),
+		date: v.nullable(DateObjectSchema),
 		verified_by: v.nullable(PersonSchema),
 	}),
 ]);
