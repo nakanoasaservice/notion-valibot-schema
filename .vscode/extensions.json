@@ -1,6 +1,7 @@
 {
-  "recommendations": [
-    "denoland.vscode-deno",
-    "streetsidesoftware.code-spell-checker"
-  ]
+	"recommendations": [
+		"biomejs.biome",
+		"streetsidesoftware.code-spell-checker",
+		"vitest.explorer"
+	]
 }

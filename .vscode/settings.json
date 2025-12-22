@@ -1,17 +1,8 @@
 {
-  "deno.enable": true,
-  "deno.lint": true,
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "denoland.vscode-deno",
-  "cSpell.words": [
-    "deno",
-    "denoland",
-    "instanceof",
-    "naas",
-    "nakano",
-    "nakanoaas",
-    "nakanoasaservice",
-    "notionhq",
-    "picklist"
-  ]
+	"editor.defaultFormatter": "biomejs.biome",
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "always"
+	},
+	"extensions.ignoreRecommendations": false
 }
