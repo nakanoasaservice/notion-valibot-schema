@@ -1,14 +1,8 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullableSelectSchema, SelectSchema } from "./select.ts";
-import type {
-	Extends,
-	NonNullableValues,
-	SelectNotionProperty,
-} from "./test-utils.ts";
+import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"select">;
 
@@ -18,15 +12,15 @@ describe("select", () => {
 			it("should accept non-nullable select property input type", () => {
 				const Schema = SelectSchema(v.string());
 
-				assertType<
-					Extends<NonNullableValues<TargetType>, v.InferInput<typeof Schema>>
-				>(true);
+				expectTypeOf<NonNullableValues<TargetType>>().toExtend<
+					v.InferInput<typeof Schema>
+				>();
 			});
 
 			it("should have correct output type", () => {
 				const Schema = SelectSchema(v.string());
 
-				assertType<IsExact<v.InferOutput<typeof Schema>, string>>(true);
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<string>();
 			});
 		});
 
@@ -34,21 +28,19 @@ describe("select", () => {
 			it("should parse select property and extract name value", () => {
 				const Schema = SelectSchema(v.picklist(["Green", "Red", "Blue"]));
 
-				assertEquals(
+				expect(
 					v.parse(Schema, {
 						select: { id: "123", color: "green", name: "Green" },
 					} satisfies TargetType),
-					"Green",
-				);
+				).toEqual("Green");
 			});
 
 			it("should reject null for non-nullable select schema", () => {
 				const Schema = SelectSchema(v.string());
 
-				assertEquals(
+				expect(
 					v.safeParse(Schema, { select: null } satisfies TargetType).success,
-					false,
-				);
+				).toBe(false);
 			});
 		});
 	});
@@ -57,13 +49,15 @@ describe("select", () => {
 		describe("type checking", () => {
 			it("should accept select property or null input type", () => {
 				const Schema = NullableSelectSchema(v.string());
-				assertType<Extends<TargetType, v.InferInput<typeof Schema>>>(true);
+				expectTypeOf<TargetType>().toExtend<v.InferInput<typeof Schema>>();
 			});
 
 			it("should have correct output type", () => {
 				const Schema = NullableSelectSchema(v.string());
 
-				assertType<IsExact<v.InferOutput<typeof Schema>, string | null>>(true);
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<
+					string | null
+				>();
 			});
 		});
 
@@ -73,12 +67,11 @@ describe("select", () => {
 					v.picklist(["Green", "Red", "Blue"]),
 				);
 
-				assertEquals(
+				expect(
 					v.parse(Schema, {
 						select: { id: "123", color: "green", name: "Green" },
 					} satisfies TargetType),
-					"Green",
-				);
+				).toEqual("Green");
 			});
 
 			it("should parse null select property and return null", () => {
@@ -86,8 +79,7 @@ describe("select", () => {
 					v.picklist(["Green", "Red", "Blue"]),
 				);
 
-				assertEquals(
-					v.parse(Schema, { select: null } satisfies TargetType),
+				expect(v.parse(Schema, { select: null } satisfies TargetType)).toBe(
 					null,
 				);
 			});

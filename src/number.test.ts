@@ -1,14 +1,8 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullableNumberSchema, NumberSchema } from "./number.ts";
-import type {
-	Extends,
-	NonNullableValues,
-	SelectNotionProperty,
-} from "./test-utils.ts";
+import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"number">;
 
@@ -16,16 +10,15 @@ describe("number", () => {
 	describe("NumberSchema", () => {
 		describe("type checking", () => {
 			it("should accept non-nullable number property input type", () => {
-				assertType<
-					Extends<
-						NonNullableValues<TargetType>,
-						v.InferInput<typeof NumberSchema>
-					>
-				>(true);
+				expectTypeOf<NonNullableValues<TargetType>>().toExtend<
+					v.InferInput<typeof NumberSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof NumberSchema>, number>>(true);
+				expectTypeOf<
+					v.InferOutput<typeof NumberSchema>
+				>().toEqualTypeOf<number>();
 			});
 		});
 
@@ -35,16 +28,15 @@ describe("number", () => {
 					number: 42,
 				} satisfies TargetType);
 
-				assertEquals(result, 42);
-				assertEquals(typeof result, "number");
+				expect(result).toEqual(42);
+				expect(typeof result).toEqual("number");
 			});
 
 			it("should reject null for non-nullable number schema", () => {
-				assertEquals(
+				expect(
 					v.safeParse(NumberSchema, { number: null } satisfies TargetType)
 						.success,
-					false,
-				);
+				).toBe(false);
 			});
 		});
 	});
@@ -52,15 +44,15 @@ describe("number", () => {
 	describe("NullableNumberSchema", () => {
 		describe("type checking", () => {
 			it("should accept number property or null input type", () => {
-				assertType<
-					Extends<TargetType, v.InferInput<typeof NullableNumberSchema>>
-				>(true);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof NullableNumberSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<v.InferOutput<typeof NullableNumberSchema>, number | null>
-				>(true);
+				expectTypeOf<
+					v.InferOutput<typeof NullableNumberSchema>
+				>().toEqualTypeOf<number | null>();
 			});
 		});
 
@@ -70,15 +62,14 @@ describe("number", () => {
 					number: 42,
 				} satisfies TargetType);
 
-				assertEquals(result, 42);
-				assertEquals(typeof result, "number");
+				expect(result).toEqual(42);
+				expect(typeof result).toEqual("number");
 			});
 
 			it("should parse null number property and return null", () => {
-				assertEquals(
+				expect(
 					v.parse(NullableNumberSchema, { number: null } satisfies TargetType),
-					null,
-				);
+				).toBe(null);
 			});
 		});
 	});

@@ -1,10 +1,8 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { CreatedTimeSchema } from "./created-time.ts";
-import type { Extends, SelectNotionProperty } from "./test-utils.ts";
+import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"created_time">;
 
@@ -12,15 +10,15 @@ describe("created-time", () => {
 	describe("CreatedTimeSchema", () => {
 		describe("type checking", () => {
 			it("should accept created_time property input type", () => {
-				assertType<Extends<TargetType, v.InferInput<typeof CreatedTimeSchema>>>(
-					true,
-				);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof CreatedTimeSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof CreatedTimeSchema>, Date>>(
-					true,
-				);
+				expectTypeOf<
+					v.InferOutput<typeof CreatedTimeSchema>
+				>().toEqualTypeOf<Date>();
 			});
 		});
 
@@ -30,8 +28,8 @@ describe("created-time", () => {
 					created_time: "2024-01-15T00:00:00.000Z",
 				} satisfies TargetType);
 
-				assertEquals(result instanceof Date, true);
-				assertEquals(result.toISOString(), "2024-01-15T00:00:00.000Z");
+				expect(result instanceof Date).toBe(true);
+				expect(result.toISOString()).toBe("2024-01-15T00:00:00.000Z");
 			});
 		});
 	});

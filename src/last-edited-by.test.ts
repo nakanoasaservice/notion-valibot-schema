@@ -1,13 +1,11 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import {
 	LastEditedByIdSchema,
 	NullableLastEditedByNameSchema,
 } from "./last-edited-by.ts";
-import type { Extends, SelectNotionProperty } from "./test-utils.ts";
+import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"last_edited_by">;
 
@@ -19,12 +17,9 @@ describe("last-edited-by", () => {
 			});
 
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<
-						v.InferOutput<typeof NullableLastEditedByNameSchema>,
-						string | null
-					>
-				>(true);
+				expectTypeOf<
+					v.InferOutput<typeof NullableLastEditedByNameSchema>
+				>().toEqualTypeOf<string | null>();
 			});
 		});
 
@@ -43,8 +38,8 @@ describe("last-edited-by", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, "Jane Doe");
-				assertEquals(typeof result, "string");
+				expect(result).toEqual("Jane Doe");
+				expect(typeof result).toEqual("string");
 			});
 
 			it("should parse last_edited_by property with null name and return null", () => {
@@ -61,7 +56,7 @@ describe("last-edited-by", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, null);
+				expect(result).toBe(null);
 			});
 		});
 	});
@@ -69,15 +64,15 @@ describe("last-edited-by", () => {
 	describe("LastEditedByIdSchema", () => {
 		describe("type checking", () => {
 			it("should accept last_edited_by property input type", () => {
-				assertType<
-					Extends<TargetType, v.InferInput<typeof LastEditedByIdSchema>>
-				>(true);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof LastEditedByIdSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof LastEditedByIdSchema>, string>>(
-					true,
-				);
+				expectTypeOf<
+					v.InferOutput<typeof LastEditedByIdSchema>
+				>().toEqualTypeOf<string>();
 			});
 		});
 
@@ -96,8 +91,8 @@ describe("last-edited-by", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, "user-123");
-				assertEquals(typeof result, "string");
+				expect(result).toEqual("user-123");
+				expect(typeof result).toEqual("string");
 			});
 		});
 	});

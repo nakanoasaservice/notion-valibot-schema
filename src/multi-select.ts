@@ -11,6 +11,7 @@ export function MultiSelectSchema<T extends v.GenericSchema<string>>(
 				}),
 			),
 		}),
+		// biome-ignore lint/style/noNonNullAssertion: valibot inference is not working correctly
 		v.transform((v) => v.multi_select.map((v) => v.name!)),
 	);
 }

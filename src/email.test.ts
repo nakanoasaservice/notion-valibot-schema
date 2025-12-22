@@ -1,14 +1,8 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { EmailSchema, NullableEmailSchema } from "./email.ts";
-import type {
-	Extends,
-	NonNullableValues,
-	SelectNotionProperty,
-} from "./test-utils.ts";
+import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"email">;
 
@@ -16,16 +10,15 @@ describe("email", () => {
 	describe("EmailSchema", () => {
 		describe("type checking", () => {
 			it("should accept non-nullable email property input type", () => {
-				assertType<
-					Extends<
-						NonNullableValues<TargetType>,
-						v.InferInput<typeof EmailSchema>
-					>
-				>(true);
+				expectTypeOf<NonNullableValues<TargetType>>().toExtend<
+					v.InferInput<typeof EmailSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof EmailSchema>, string>>(true);
+				expectTypeOf<
+					v.InferOutput<typeof EmailSchema>
+				>().toEqualTypeOf<string>();
 			});
 		});
 
@@ -35,16 +28,15 @@ describe("email", () => {
 					email: "test@example.com",
 				} satisfies TargetType);
 
-				assertEquals(result, "test@example.com");
-				assertEquals(typeof result, "string");
+				expect(result).toEqual("test@example.com");
+				expect(typeof result).toEqual("string");
 			});
 
 			it("should reject null for non-nullable email schema", () => {
-				assertEquals(
+				expect(
 					v.safeParse(EmailSchema, { email: null } satisfies TargetType)
 						.success,
-					false,
-				);
+				).toBe(false);
 			});
 		});
 	});
@@ -52,15 +44,15 @@ describe("email", () => {
 	describe("NullableEmailSchema", () => {
 		describe("type checking", () => {
 			it("should accept email property or null input type", () => {
-				assertType<
-					Extends<TargetType, v.InferInput<typeof NullableEmailSchema>>
-				>(true);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof NullableEmailSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<v.InferOutput<typeof NullableEmailSchema>, string | null>
-				>(true);
+				expectTypeOf<v.InferOutput<typeof NullableEmailSchema>>().toEqualTypeOf<
+					string | null
+				>();
 			});
 		});
 
@@ -70,15 +62,14 @@ describe("email", () => {
 					email: "test@example.com",
 				} satisfies TargetType);
 
-				assertEquals(result, "test@example.com");
-				assertEquals(typeof result, "string");
+				expect(result).toEqual("test@example.com");
+				expect(typeof result).toEqual("string");
 			});
 
 			it("should parse null email property and return null", () => {
-				assertEquals(
+				expect(
 					v.parse(NullableEmailSchema, { email: null } satisfies TargetType),
-					null,
-				);
+				).toBe(null);
 			});
 		});
 	});

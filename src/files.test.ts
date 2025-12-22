@@ -1,7 +1,5 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { FilesSchema } from "./files.ts";
 import type { SelectNotionProperty } from "./test-utils.ts";
@@ -17,7 +15,9 @@ describe("files", () => {
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof FilesSchema>, string[]>>(true);
+				expectTypeOf<v.InferOutput<typeof FilesSchema>>().toEqualTypeOf<
+					string[]
+				>();
 			});
 		});
 
@@ -44,9 +44,9 @@ describe("files", () => {
 					],
 				} satisfies TargetType);
 
-				assertEquals(result.length, 2);
-				assertEquals(result[0], "https://example.com/file1.pdf");
-				assertEquals(result[1], "https://example.com/file2.pdf");
+				expect(result.length).toBe(2);
+				expect(result[0]).toBe("https://example.com/file1.pdf");
+				expect(result[1]).toBe("https://example.com/file2.pdf");
 			});
 
 			it("should parse empty files array", () => {
@@ -54,8 +54,8 @@ describe("files", () => {
 					files: [],
 				} satisfies TargetType);
 
-				assertEquals(result, []);
-				assertEquals(result.length, 0);
+				expect(result).toEqual([]);
+				expect(result.length).toBe(0);
 			});
 		});
 	});

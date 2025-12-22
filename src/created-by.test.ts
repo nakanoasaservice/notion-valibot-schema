@@ -1,10 +1,8 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { CreatedByIdSchema, CreatedBySchema } from "./created-by.ts";
-import type { Extends, SelectNotionProperty } from "./test-utils.ts";
+import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"created_by">;
 
@@ -16,12 +14,11 @@ describe("created-by", () => {
 			});
 
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<
-						v.InferOutput<typeof CreatedBySchema>,
-						{ id: string; object: "user"; name: string | null }
-					>
-				>(true);
+				expectTypeOf<v.InferOutput<typeof CreatedBySchema>>().toEqualTypeOf<{
+					id: string;
+					object: "user";
+					name: string | null;
+				}>();
 			});
 		});
 
@@ -40,7 +37,7 @@ describe("created-by", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, {
+				expect(result).toEqual({
 					id: "user-123",
 					object: "user",
 					name: "John Doe",
@@ -61,7 +58,7 @@ describe("created-by", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, { id: "user-123", object: "user", name: null });
+				expect(result).toEqual({ id: "user-123", object: "user", name: null });
 			});
 		});
 	});
@@ -69,15 +66,15 @@ describe("created-by", () => {
 	describe("CreatedByIdSchema", () => {
 		describe("type checking", () => {
 			it("should accept created_by property input type", () => {
-				assertType<Extends<TargetType, v.InferInput<typeof CreatedByIdSchema>>>(
-					true,
-				);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof CreatedByIdSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof CreatedByIdSchema>, string>>(
-					true,
-				);
+				expectTypeOf<
+					v.InferOutput<typeof CreatedByIdSchema>
+				>().toEqualTypeOf<string>();
 			});
 		});
 
@@ -96,8 +93,8 @@ describe("created-by", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, "user-123");
-				assertEquals(typeof result, "string");
+				expect(result).toEqual("user-123");
+				expect(typeof result).toEqual("string");
 			});
 		});
 	});

@@ -1,10 +1,8 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { RelationSchema } from "./relation.ts";
-import type { Extends, SelectNotionProperty } from "./test-utils.ts";
+import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"relation">;
 
@@ -12,15 +10,15 @@ describe("relation", () => {
 	describe("RelationSchema", () => {
 		describe("type checking", () => {
 			it("should accept relation property input type", () => {
-				assertType<Extends<TargetType, v.InferInput<typeof RelationSchema>>>(
-					true,
-				);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof RelationSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof RelationSchema>, string[]>>(
-					true,
-				);
+				expectTypeOf<v.InferOutput<typeof RelationSchema>>().toEqualTypeOf<
+					string[]
+				>();
 			});
 		});
 
@@ -37,11 +35,11 @@ describe("relation", () => {
 					],
 				} satisfies TargetType);
 
-				assertEquals(result.length, 2);
-				assertEquals(result[0], "page-1");
-				assertEquals(result[1], "page-2");
-				assertEquals(typeof result[0], "string");
-				assertEquals(typeof result[1], "string");
+				expect(result.length).toBe(2);
+				expect(result[0]).toBe("page-1");
+				expect(result[1]).toBe("page-2");
+				expect(typeof result[0]).toBe("string");
+				expect(typeof result[1]).toBe("string");
 			});
 
 			it("should parse empty relation array", () => {
@@ -49,8 +47,8 @@ describe("relation", () => {
 					relation: [],
 				} satisfies TargetType);
 
-				assertEquals(result, []);
-				assertEquals(result.length, 0);
+				expect(result).toEqual([]);
+				expect(result.length).toBe(0);
 			});
 		});
 	});

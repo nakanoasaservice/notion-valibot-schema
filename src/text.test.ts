@@ -1,9 +1,7 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { Extends, SelectNotionProperty } from "./test-utils.ts";
+import type { SelectNotionProperty } from "./test-utils.ts";
 import { RichTextSchema, TitleSchema } from "./text.ts";
 
 describe("text", () => {
@@ -11,11 +9,13 @@ describe("text", () => {
 		describe("type checking", () => {
 			it("should accept title property input type", () => {
 				type TargetType = SelectNotionProperty<"title">;
-				assertType<Extends<TargetType, v.InferInput<typeof TitleSchema>>>(true);
+				expectTypeOf<TargetType>().toExtend<v.InferInput<typeof TitleSchema>>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof TitleSchema>, string>>(true);
+				expectTypeOf<
+					v.InferOutput<typeof TitleSchema>
+				>().toEqualTypeOf<string>();
 			});
 		});
 
@@ -44,8 +44,8 @@ describe("text", () => {
 					],
 				} satisfies TargetType);
 
-				assertEquals(result, "My Title");
-				assertEquals(typeof result, "string");
+				expect(result).toEqual("My Title");
+				expect(typeof result).toEqual("string");
 			});
 		});
 	});
@@ -54,13 +54,15 @@ describe("text", () => {
 		describe("type checking", () => {
 			it("should accept rich_text property input type", () => {
 				type TargetType = SelectNotionProperty<"rich_text">;
-				assertType<Extends<TargetType, v.InferInput<typeof RichTextSchema>>>(
-					true,
-				);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof RichTextSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof RichTextSchema>, string>>(true);
+				expectTypeOf<
+					v.InferOutput<typeof RichTextSchema>
+				>().toEqualTypeOf<string>();
 			});
 		});
 
@@ -106,8 +108,8 @@ describe("text", () => {
 					],
 				} satisfies TargetType);
 
-				assertEquals(result, "Rich Text");
-				assertEquals(typeof result, "string");
+				expect(result).toEqual("Rich Text");
+				expect(typeof result).toEqual("string");
 			});
 		});
 	});

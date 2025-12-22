@@ -1,14 +1,8 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { MultiSelectSchema } from "./multi-select.ts";
-import type {
-	Extends,
-	NonNullableValues,
-	SelectNotionProperty,
-} from "./test-utils.ts";
+import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"multi_select">;
 
@@ -18,17 +12,17 @@ describe("multi-select", () => {
 			it("should accept non-nullable multi-select property input type", () => {
 				const Schema = MultiSelectSchema(v.string());
 
-				assertType<
-					Extends<NonNullableValues<TargetType>, v.InferInput<typeof Schema>>
-				>(true);
+				expectTypeOf<NonNullableValues<TargetType>>().toExtend<
+					v.InferInput<typeof Schema>
+				>();
 			});
 
 			it("should have correct output type", () => {
 				const Schema = MultiSelectSchema(v.picklist(["Green", "Red", "Blue"]));
 
-				assertType<
-					IsExact<v.InferOutput<typeof Schema>, ("Green" | "Red" | "Blue")[]>
-				>(true);
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<
+					("Green" | "Red" | "Blue")[]
+				>();
 			});
 		});
 
@@ -36,38 +30,35 @@ describe("multi-select", () => {
 			it("should parse multi-select property and extract name values", () => {
 				const Schema = MultiSelectSchema(v.picklist(["Green", "Red", "Blue"]));
 
-				assertEquals(
+				expect(
 					v.parse(Schema, {
 						multi_select: [
 							{ id: "123", color: "green", name: "Green" },
 							{ id: "456", color: "red", name: "Red" },
 						],
 					} satisfies TargetType),
-					["Green", "Red"],
-				);
+				).toEqual(["Green", "Red"]);
 			});
 
 			it("should parse empty multi-select array", () => {
 				const Schema = MultiSelectSchema(v.picklist(["Green", "Red", "Blue"]));
 
-				assertEquals(
+				expect(
 					v.parse(Schema, { multi_select: [] } satisfies TargetType),
-					[],
-				);
+				).toEqual([]);
 			});
 
 			it("should reject invalid values not in picklist", () => {
 				const Schema = MultiSelectSchema(v.picklist(["Green", "Red", "Blue"]));
 
-				assertEquals(
+				expect(
 					v.safeParse(Schema, {
 						multi_select: [
 							{ id: "123", color: "green", name: "Green" },
 							{ id: "456", color: "yellow", name: "Yellow" },
 						],
 					} satisfies TargetType).success,
-					false,
-				);
+				).toBe(false);
 			});
 		});
 	});

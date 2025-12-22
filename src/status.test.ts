@@ -1,14 +1,8 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullableStatusSchema, StatusSchema } from "./status.ts";
-import type {
-	Extends,
-	NonNullableValues,
-	SelectNotionProperty,
-} from "./test-utils.ts";
+import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"status">;
 
@@ -18,15 +12,15 @@ describe("status", () => {
 			it("should accept non-nullable status property input type", () => {
 				const Schema = StatusSchema(v.string());
 
-				assertType<
-					Extends<NonNullableValues<TargetType>, v.InferInput<typeof Schema>>
-				>(true);
+				expectTypeOf<NonNullableValues<TargetType>>().toExtend<
+					v.InferInput<typeof Schema>
+				>();
 			});
 
 			it("should have correct output type", () => {
 				const Schema = StatusSchema(v.string());
 
-				assertType<IsExact<v.InferOutput<typeof Schema>, string>>(true);
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<string>();
 			});
 		});
 
@@ -36,7 +30,7 @@ describe("status", () => {
 					v.picklist(["Done", "In Progress", "Todo"]),
 				);
 
-				assertEquals(
+				expect(
 					v.parse(Schema, {
 						status: {
 							id: "123",
@@ -44,17 +38,15 @@ describe("status", () => {
 							color: "green",
 						},
 					} satisfies TargetType),
-					"Done",
-				);
+				).toEqual("Done");
 			});
 
 			it("should reject null for non-nullable status schema", () => {
 				const Schema = StatusSchema(v.string());
 
-				assertEquals(
+				expect(
 					v.safeParse(Schema, { status: null } satisfies TargetType).success,
-					false,
-				);
+				).toBe(false);
 			});
 		});
 	});
@@ -63,13 +55,15 @@ describe("status", () => {
 		describe("type checking", () => {
 			it("should accept status property or null input type", () => {
 				const Schema = NullableStatusSchema(v.string());
-				assertType<Extends<TargetType, v.InferInput<typeof Schema>>>(true);
+				expectTypeOf<TargetType>().toExtend<v.InferInput<typeof Schema>>();
 			});
 
 			it("should have correct output type", () => {
 				const Schema = NullableStatusSchema(v.string());
 
-				assertType<IsExact<v.InferOutput<typeof Schema>, string | null>>(true);
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<
+					string | null
+				>();
 			});
 		});
 
@@ -79,7 +73,7 @@ describe("status", () => {
 					v.picklist(["Done", "In Progress", "Todo"]),
 				);
 
-				assertEquals(
+				expect(
 					v.parse(Schema, {
 						status: {
 							id: "123",
@@ -87,8 +81,7 @@ describe("status", () => {
 							color: "green",
 						},
 					} satisfies TargetType),
-					"Done",
-				);
+				).toEqual("Done");
 			});
 
 			it("should parse null status property and return null", () => {
@@ -96,8 +89,7 @@ describe("status", () => {
 					v.picklist(["Done", "In Progress", "Todo"]),
 				);
 
-				assertEquals(
-					v.parse(Schema, { status: null } satisfies TargetType),
+				expect(v.parse(Schema, { status: null } satisfies TargetType)).toBe(
 					null,
 				);
 			});

@@ -1,10 +1,8 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { PeopleSchema } from "./people.ts";
-import type { Extends, SelectNotionProperty } from "./test-utils.ts";
+import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"people">;
 
@@ -12,18 +10,15 @@ describe("people", () => {
 	describe("PeopleSchema", () => {
 		describe("type checking", () => {
 			it("should accept people property input type", () => {
-				assertType<Extends<TargetType, v.InferInput<typeof PeopleSchema>>>(
-					true,
-				);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof PeopleSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<
-						v.InferOutput<typeof PeopleSchema>,
-						Array<{ id: string; name: string | null }>
-					>
-				>(true);
+				expectTypeOf<v.InferOutput<typeof PeopleSchema>>().toEqualTypeOf<
+					Array<{ id: string; name: string | null }>
+				>();
 			});
 		});
 
@@ -54,13 +49,13 @@ describe("people", () => {
 					],
 				} satisfies TargetType);
 
-				assertEquals(result.length, 2);
+				expect(result.length).toBe(2);
 				const first = result[0];
 				const second = result[1];
-				assertEquals(first?.id, "user-1");
-				assertEquals(first?.name, "John Doe");
-				assertEquals(second?.id, "user-2");
-				assertEquals(second?.name, "Jane Doe");
+				expect(first?.id).toBe("user-1");
+				expect(first?.name).toBe("John Doe");
+				expect(second?.id).toBe("user-2");
+				expect(second?.name).toBe("Jane Doe");
 			});
 
 			it("should parse people property with null names", () => {
@@ -79,10 +74,10 @@ describe("people", () => {
 					],
 				} satisfies TargetType);
 
-				assertEquals(result.length, 1);
+				expect(result.length).toBe(1);
 				const first = result[0];
-				assertEquals(first?.id, "user-1");
-				assertEquals(first?.name, null);
+				expect(first?.id).toBe("user-1");
+				expect(first?.name).toBe(null);
 			});
 
 			it("should parse empty people array", () => {
@@ -90,8 +85,8 @@ describe("people", () => {
 					people: [],
 				} satisfies TargetType);
 
-				assertEquals(result, []);
-				assertEquals(result.length, 0);
+				expect(result).toEqual([]);
+				expect(result.length).toBe(0);
 			});
 		});
 	});

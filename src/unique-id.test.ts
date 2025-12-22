@@ -1,9 +1,7 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { Extends, SelectNotionProperty } from "./test-utils.ts";
+import type { SelectNotionProperty } from "./test-utils.ts";
 import { UniqueIdSchema } from "./unique-id.ts";
 
 type TargetType = SelectNotionProperty<"unique_id">;
@@ -12,18 +10,16 @@ describe("unique-id", () => {
 	describe("UniqueIdSchema", () => {
 		describe("type checking", () => {
 			it("should accept unique_id property input type", () => {
-				assertType<Extends<TargetType, v.InferInput<typeof UniqueIdSchema>>>(
-					true,
-				);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof UniqueIdSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<
-						v.InferOutput<typeof UniqueIdSchema>,
-						{ prefix: string | null; number: number | null }
-					>
-				>(true);
+				expectTypeOf<v.InferOutput<typeof UniqueIdSchema>>().toEqualTypeOf<{
+					prefix: string | null;
+					number: number | null;
+				}>();
 			});
 		});
 
@@ -36,10 +32,10 @@ describe("unique-id", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result.prefix, "PREFIX");
-				assertEquals(result.number, 123);
-				assertEquals(typeof result.prefix, "string");
-				assertEquals(typeof result.number, "number");
+				expect(result.prefix).toBe("PREFIX");
+				expect(result.number).toBe(123);
+				expect(typeof result.prefix).toBe("string");
+				expect(typeof result.number).toBe("number");
 			});
 
 			it("should parse unique_id property with null prefix and number", () => {
@@ -50,8 +46,8 @@ describe("unique-id", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result.prefix, null);
-				assertEquals(result.number, null);
+				expect(result.prefix).toBe(null);
+				expect(result.number).toBe(null);
 			});
 
 			it("should parse unique_id property with prefix only", () => {
@@ -62,8 +58,8 @@ describe("unique-id", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result.prefix, "PREFIX");
-				assertEquals(result.number, null);
+				expect(result.prefix).toBe("PREFIX");
+				expect(result.number).toBe(null);
 			});
 
 			it("should parse unique_id property with number only", () => {
@@ -74,8 +70,8 @@ describe("unique-id", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result.prefix, null);
-				assertEquals(result.number, 456);
+				expect(result.prefix).toBe(null);
+				expect(result.number).toBe(456);
 			});
 		});
 	});

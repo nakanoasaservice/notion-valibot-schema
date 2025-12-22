@@ -1,7 +1,5 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import {
 	DateSchema,
@@ -9,11 +7,7 @@ import {
 	NullableDateSchema,
 	NullableFullDateSchema,
 } from "./date.ts";
-import type {
-	Extends,
-	NonNullableValues,
-	SelectNotionProperty,
-} from "./test-utils.ts";
+import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"date">;
 
@@ -21,16 +15,13 @@ describe("date", () => {
 	describe("DateSchema", () => {
 		describe("type checking", () => {
 			it("should accept non-nullable date property input type", () => {
-				assertType<
-					Extends<
-						NonNullableValues<TargetType>,
-						v.InferInput<typeof DateSchema>
-					>
-				>(true);
+				expectTypeOf<NonNullableValues<TargetType>>().toExtend<
+					v.InferInput<typeof DateSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof DateSchema>, Date>>(true);
+				expectTypeOf<v.InferOutput<typeof DateSchema>>().toEqualTypeOf<Date>();
 			});
 		});
 
@@ -44,15 +35,14 @@ describe("date", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result instanceof Date, true);
-				assertEquals(result.toISOString(), "2024-01-15T00:00:00.000Z");
+				expect(result instanceof Date).toBe(true);
+				expect(result.toISOString()).toBe("2024-01-15T00:00:00.000Z");
 			});
 
 			it("should reject null for non-nullable date schema", () => {
-				assertEquals(
+				expect(
 					v.safeParse(DateSchema, { date: null } satisfies TargetType).success,
-					false,
-				);
+				).toBe(false);
 			});
 		});
 	});
@@ -60,15 +50,15 @@ describe("date", () => {
 	describe("NullableDateSchema", () => {
 		describe("type checking", () => {
 			it("should accept date property or null input type", () => {
-				assertType<
-					Extends<TargetType, v.InferInput<typeof NullableDateSchema>>
-				>(true);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof NullableDateSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<v.InferOutput<typeof NullableDateSchema>, Date | null>
-				>(true);
+				expectTypeOf<
+					v.InferOutput<typeof NullableDateSchema>
+				>().toEqualTypeOf<Date | null>();
 			});
 		});
 
@@ -82,15 +72,14 @@ describe("date", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result instanceof Date, true);
-				assertEquals(result?.toISOString(), "2024-01-15T00:00:00.000Z");
+				expect(result instanceof Date).toBe(true);
+				expect(result?.toISOString()).toBe("2024-01-15T00:00:00.000Z");
 			});
 
 			it("should parse null date property and return null", () => {
-				assertEquals(
+				expect(
 					v.parse(NullableDateSchema, { date: null } satisfies TargetType),
-					null,
-				);
+				).toBe(null);
 			});
 		});
 	});
@@ -98,12 +87,10 @@ describe("date", () => {
 	describe("FullDateSchema", () => {
 		describe("type checking", () => {
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<
-						v.InferOutput<typeof FullDateSchema>,
-						{ start: Date; end: Date }
-					>
-				>(true);
+				expectTypeOf<v.InferOutput<typeof FullDateSchema>>().toEqualTypeOf<{
+					start: Date;
+					end: Date;
+				}>();
 			});
 		});
 
@@ -117,18 +104,17 @@ describe("date", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result.start instanceof Date, true);
-				assertEquals(result.end instanceof Date, true);
-				assertEquals(result.start.toISOString(), "2024-01-15T00:00:00.000Z");
-				assertEquals(result.end.toISOString(), "2024-01-20T00:00:00.000Z");
+				expect(result.start instanceof Date).toBe(true);
+				expect(result.end instanceof Date).toBe(true);
+				expect(result.start.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+				expect(result.end.toISOString()).toBe("2024-01-20T00:00:00.000Z");
 			});
 
 			it("should reject null for non-nullable full date schema", () => {
-				assertEquals(
+				expect(
 					v.safeParse(FullDateSchema, { date: null } satisfies TargetType)
 						.success,
-					false,
-				);
+				).toBe(false);
 			});
 		});
 	});
@@ -136,18 +122,15 @@ describe("date", () => {
 	describe("NullableFullDateSchema", () => {
 		describe("type checking", () => {
 			it("should accept date property or null input type", () => {
-				assertType<
-					Extends<TargetType, v.InferInput<typeof NullableFullDateSchema>>
-				>(true);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof NullableFullDateSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<
-						v.InferOutput<typeof NullableFullDateSchema>,
-						{ start: Date; end: Date | null } | null
-					>
-				>(true);
+				expectTypeOf<
+					v.InferOutput<typeof NullableFullDateSchema>
+				>().toEqualTypeOf<{ start: Date; end: Date | null } | null>();
 			});
 		});
 
@@ -161,10 +144,10 @@ describe("date", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result?.start instanceof Date, true);
-				assertEquals(result?.end instanceof Date, true);
-				assertEquals(result?.start.toISOString(), "2024-01-15T00:00:00.000Z");
-				assertEquals(result?.end?.toISOString(), "2024-01-20T00:00:00.000Z");
+				expect(result?.start instanceof Date).toBe(true);
+				expect(result?.end instanceof Date).toBe(true);
+				expect(result?.start.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+				expect(result?.end?.toISOString()).toBe("2024-01-20T00:00:00.000Z");
 			});
 
 			it("should parse date property with null end date", () => {
@@ -176,16 +159,15 @@ describe("date", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result?.start instanceof Date, true);
-				assertEquals(result?.end, null);
-				assertEquals(result?.start.toISOString(), "2024-01-15T00:00:00.000Z");
+				expect(result?.start instanceof Date).toBe(true);
+				expect(result?.end).toBe(null);
+				expect(result?.start.toISOString()).toBe("2024-01-15T00:00:00.000Z");
 			});
 
 			it("should parse null date property and return null", () => {
-				assertEquals(
+				expect(
 					v.parse(NullableFullDateSchema, { date: null } satisfies TargetType),
-					null,
-				);
+				).toBe(null);
 			});
 		});
 	});

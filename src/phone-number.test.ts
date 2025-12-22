@@ -1,17 +1,11 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import {
 	NullablePhoneNumberSchema,
 	PhoneNumberSchema,
 } from "./phone-number.ts";
-import type {
-	Extends,
-	NonNullableValues,
-	SelectNotionProperty,
-} from "./test-utils.ts";
+import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"phone_number">;
 
@@ -19,18 +13,15 @@ describe("phone-number", () => {
 	describe("PhoneNumberSchema", () => {
 		describe("type checking", () => {
 			it("should accept non-nullable phone_number property input type", () => {
-				assertType<
-					Extends<
-						NonNullableValues<TargetType>,
-						v.InferInput<typeof PhoneNumberSchema>
-					>
-				>(true);
+				expectTypeOf<NonNullableValues<TargetType>>().toExtend<
+					v.InferInput<typeof PhoneNumberSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<IsExact<v.InferOutput<typeof PhoneNumberSchema>, string>>(
-					true,
-				);
+				expectTypeOf<
+					v.InferOutput<typeof PhoneNumberSchema>
+				>().toEqualTypeOf<string>();
 			});
 		});
 
@@ -40,17 +31,16 @@ describe("phone-number", () => {
 					phone_number: "+81-90-1234-5678",
 				} satisfies TargetType);
 
-				assertEquals(result, "+81-90-1234-5678");
-				assertEquals(typeof result, "string");
+				expect(result).toEqual("+81-90-1234-5678");
+				expect(typeof result).toEqual("string");
 			});
 
 			it("should reject null for non-nullable phone_number schema", () => {
-				assertEquals(
+				expect(
 					v.safeParse(PhoneNumberSchema, {
 						phone_number: null,
 					} satisfies TargetType).success,
-					false,
-				);
+				).toBe(false);
 			});
 		});
 	});
@@ -58,18 +48,15 @@ describe("phone-number", () => {
 	describe("NullablePhoneNumberSchema", () => {
 		describe("type checking", () => {
 			it("should accept phone_number property or null input type", () => {
-				assertType<
-					Extends<TargetType, v.InferInput<typeof NullablePhoneNumberSchema>>
-				>(true);
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof NullablePhoneNumberSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<
-						v.InferOutput<typeof NullablePhoneNumberSchema>,
-						string | null
-					>
-				>(true);
+				expectTypeOf<
+					v.InferOutput<typeof NullablePhoneNumberSchema>
+				>().toEqualTypeOf<string | null>();
 			});
 		});
 
@@ -79,17 +66,16 @@ describe("phone-number", () => {
 					phone_number: "+81-90-1234-5678",
 				} satisfies TargetType);
 
-				assertEquals(result, "+81-90-1234-5678");
-				assertEquals(typeof result, "string");
+				expect(result).toEqual("+81-90-1234-5678");
+				expect(typeof result).toEqual("string");
 			});
 
 			it("should parse null phone_number property and return null", () => {
-				assertEquals(
+				expect(
 					v.parse(NullablePhoneNumberSchema, {
 						phone_number: null,
 					} satisfies TargetType),
-					null,
-				);
+				).toBe(null);
 			});
 		});
 	});

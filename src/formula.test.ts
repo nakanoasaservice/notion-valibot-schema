@@ -1,7 +1,5 @@
-import { assertEquals } from "@std/assert/equals";
-import { describe, it } from "@std/testing/bdd";
-import { assertType, type IsExact } from "@std/testing/types";
 import * as v from "valibot";
+import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { FormulaSchema } from "./formula.ts";
 import type { SelectNotionProperty } from "./test-utils.ts";
@@ -17,17 +15,14 @@ describe("formula", () => {
 			});
 
 			it("should have correct output type", () => {
-				assertType<
-					IsExact<
-						v.InferOutput<typeof FormulaSchema>,
-						| string
-						| { start: Date; end: Date | null }
-						| null
-						| number
-						| boolean
-						| null
-					>
-				>(true);
+				expectTypeOf<v.InferOutput<typeof FormulaSchema>>().toEqualTypeOf<
+					| string
+					| { start: Date; end: Date | null }
+					| null
+					| number
+					| boolean
+					| null
+				>();
 			});
 		});
 
@@ -40,8 +35,8 @@ describe("formula", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, "Hello World");
-				assertEquals(typeof result, "string");
+				expect(result).toEqual("Hello World");
+				expect(typeof result).toEqual("string");
 			});
 
 			it("should parse date formula and return date object", () => {
@@ -56,12 +51,12 @@ describe("formula", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result !== null, true);
+				expect(result !== null).toBe(true);
 				if (result && typeof result === "object" && "start" in result) {
-					assertEquals(result.start instanceof Date, true);
-					assertEquals(result.end instanceof Date, true);
-					assertEquals(result.start.toISOString(), "2024-01-15T00:00:00.000Z");
-					assertEquals(result.end?.toISOString(), "2024-01-20T00:00:00.000Z");
+					expect(result.start instanceof Date).toBe(true);
+					expect(result.end instanceof Date).toBe(true);
+					expect(result.start.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+					expect(result.end?.toISOString()).toBe("2024-01-20T00:00:00.000Z");
 				}
 			});
 
@@ -77,10 +72,10 @@ describe("formula", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result !== null, true);
+				expect(result !== null).toBe(true);
 				if (result && typeof result === "object" && "start" in result) {
-					assertEquals(result.start instanceof Date, true);
-					assertEquals(result.end, null);
+					expect(result.start instanceof Date).toBe(true);
+					expect(result.end).toBe(null);
 				}
 			});
 
@@ -92,7 +87,7 @@ describe("formula", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, null);
+				expect(result).toBe(null);
 			});
 
 			it("should parse number formula and return number value", () => {
@@ -103,8 +98,8 @@ describe("formula", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, 42);
-				assertEquals(typeof result, "number");
+				expect(result).toEqual(42);
+				expect(typeof result).toEqual("number");
 			});
 
 			it("should parse boolean formula and return boolean value", () => {
@@ -115,8 +110,8 @@ describe("formula", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, true);
-				assertEquals(typeof result, "boolean");
+				expect(result).toEqual(true);
+				expect(typeof result).toEqual("boolean");
 			});
 
 			it("should parse boolean formula with null and return false", () => {
@@ -127,8 +122,8 @@ describe("formula", () => {
 					},
 				} satisfies TargetType);
 
-				assertEquals(result, false);
-				assertEquals(typeof result, "boolean");
+				expect(result).toEqual(false);
+				expect(typeof result).toEqual("boolean");
 			});
 		});
 	});
