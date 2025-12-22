@@ -32,7 +32,7 @@ deno add @nakanoaas/notion-valibot-schema @valibot/valibot
 
 ### Parse a Notion database page (common pattern)
 
-This example shows how to parse a page returned by `notion.pages.retrieve()` (or an item from `notion.databases.query().results`) and turn its `properties` into plain values.
+This example shows how to parse a page returned by `notion.pages.retrieve()` (or an item from `notion.dataSources.query().results`) and turn its `properties` into plain values.
 
 ```ts
 import * as v from "valibot";
@@ -42,10 +42,10 @@ import {
 	MultiSelectSchema,
 	NullableDateSchema,
 	NullableNumberSchema,
-	NullableStatusSchema,
 	NullableUrlSchema,
 	RelationSchema,
 	RichTextSchema,
+	StatusSchema,
 	TitleSchema,
 } from "@nakanoaas/notion-valibot-schema";
 
@@ -55,7 +55,7 @@ const NotionTaskPageSchema = v.object({
 	properties: v.object({
 		Name: TitleSchema, // -> string
 		Notes: RichTextSchema, // -> string
-		Status: NullableStatusSchema(v.string()), // -> string | null
+		Status: StatusSchema(v.picklist(["ToDo", "In Progress", "Done"])), // -> "ToDo" | "In Progress" | "Done"
 		Tags: MultiSelectSchema(v.string()), // -> string[]
 		Due: NullableDateSchema, // -> Date | null
 		Points: NullableNumberSchema, // -> number | null
