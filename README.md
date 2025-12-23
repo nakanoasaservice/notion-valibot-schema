@@ -1,28 +1,72 @@
 # Notion Valibot Schema
 
-[![npm](https://img.shields.io/npm/v/%40nakanoaas%2Fnotion-valibot-schema)](https://www.npmjs.com/package/@nakanoaas/notion-valibot-schema) [![JSR](https://jsr.io/badges/@nakanoaas/notion-valibot-schema)](https://jsr.io/@nakanoaas/notion-valibot-schema)
+[![npm version](https://img.shields.io/npm/v/%40nakanoaas%2Fnotion-valibot-schema)](https://www.npmjs.com/package/@nakanoaas/notion-valibot-schema)
+[![JSR version](https://jsr.io/badges/@nakanoaas/notion-valibot-schema)](https://jsr.io/@nakanoaas/notion-valibot-schema)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A small collection of **[Valibot](https://github.com/fabian-hiller/valibot)** schemas for the Notion API.
+**Turn Notion's nested API responses into clean, typed JavaScript values.**
 
-It helps you **validate and transform** Notion `properties` into plain JavaScript values (e.g. `string`, `number`, `Date`, `string[]`) so you can work with the results without dealing with Notion’s nested property shapes.
+This library provides a collection of [Valibot](https://github.com/fabian-hiller/valibot) schemas specifically designed to handle Notion API objects. It doesn't just validate; it **transforms** deeply nested Notion properties into simple, usable primitives like `string`, `number`, `Date`, and `boolean`.
 
-## Install
+## The Problem
 
-### npm / pnpm / yarn
+When you fetch a page from Notion, properties are deeply nested. To access them type-safely, you end up writing **verbose type guards for every single property**.
+
+```ts
+// 😫 The "Native" Way (Boilerplate Hell)
+
+// 1. Get the property
+const statusProp = page.properties["Status"];
+
+// 2. Check if it exists and has the correct type
+if (statusProp?.type === "status" && statusProp.status) {
+  // 3. Finally access the value
+  console.log(statusProp.status.name); // "In Progress"
+}
+
+// Repeat this for every property... 
+const tagsProp = page.properties["Tags"];
+if (tagsProp?.type === "multi_select") {
+  console.log(tagsProp.multi_select.map(t => t.name)); 
+}
+```
+
+## The Solution
+
+With `@nakanoaas/notion-valibot-schema`, you get this:
+
+```ts
+// After parsing
+{
+  Status: "In Progress",
+  Tags: ["Urgent", "Work"],
+  DueDate: new Date("2023-12-25")
+}
+```
+
+No more checking for `property.type === 'date'`, handling `null`, or digging through 3 layers of objects just to get a string.
+
+## Features
+
+- 🧩 **Composable**: Works seamlessly with standard Valibot schemas (`v.object`, `v.array`, etc.).
+- ✨ **Transformative**: Automatically extracts values (e.g., `RichText[]` -> `string`).
+- 🔒 **Type-Safe**: Full TypeScript support with inferred types.
+- ✅ **Well Tested**: Backed by a comprehensive test suite covering edge cases.
+- 🛠 **Comprehensive**: Supports complex properties like Rollups, Formulas, and Relations.
+
+## Installation
+
+### Node.js (npm / pnpm / yarn / bun)
 
 ```bash
-npm i @nakanoaas/notion-valibot-schema valibot
+npm install @nakanoaas/notion-valibot-schema valibot
 ```
 
 ```bash
 pnpm add @nakanoaas/notion-valibot-schema valibot
 ```
 
-```bash
-yarn add @nakanoaas/notion-valibot-schema valibot
-```
-
-### JSR
+### Deno / JSR
 
 ```bash
 deno add @nakanoaas/notion-valibot-schema @valibot/valibot
@@ -30,103 +74,126 @@ deno add @nakanoaas/notion-valibot-schema @valibot/valibot
 
 ## Usage
 
-### Parse a Notion database page (common pattern)
+### Basic Example
 
-This example shows how to parse a page returned by `notion.pages.retrieve()` (or an item from `notion.dataSources.query().results`) and turn its `properties` into plain values.
+Here is how to validate and transform a Notion page retrieved from the API.
 
 ```ts
 import * as v from "valibot";
 import {
-  CheckboxSchema,
-  FilesSchema,
-  MultiSelectSchema,
-  NullableDateSchema,
-  NullableNumberSchema,
-  NullableUrlSchema,
-  RelationSchema,
+  TitleSchema,
   RichTextSchema,
   StatusSchema,
-  TitleSchema,
+  MultiSelectSchema,
+  NullableDateSchema,
+  CheckboxSchema,
 } from "@nakanoaas/notion-valibot-schema";
 
-// Property keys must match your database property names exactly.
-const NotionTaskPageSchema = v.object({
+// 1. Define your schema based on your Database properties
+const TaskPageSchema = v.object({
   id: v.string(),
   properties: v.object({
-    Name: TitleSchema, // -> string
-    Notes: RichTextSchema, // -> string
-    Status: StatusSchema(v.picklist(["ToDo", "In Progress", "Done"])), // -> "ToDo" | "In Progress" | "Done"
-    Tags: MultiSelectSchema(v.string()), // -> string[]
-    Due: NullableDateSchema, // -> Date | null
-    Points: NullableNumberSchema, // -> number | null
-    Done: CheckboxSchema, // -> boolean
-    Website: NullableUrlSchema, // -> string | null
-    Attachments: FilesSchema, // -> string[] (URLs)
-    Related: RelationSchema, // -> string[] (page IDs)
+    // Map "Name" property -> string
+    Name: TitleSchema,
+    
+    // Map "Description" property -> string
+    Description: RichTextSchema,
+    
+    // Map "Status" property -> "ToDo" | "Doing" | "Done"
+    Status: StatusSchema(v.picklist(["ToDo", "Doing", "Done"])),
+    
+    // Map "Tags" -> string[]
+    Tags: MultiSelectSchema(v.string()),
+    
+    // Map "Due Date" -> Date | null
+    DueDate: NullableDateSchema,
+    
+    // Map "IsUrgent" -> boolean
+    IsUrgent: CheckboxSchema,
   }),
 });
 
-// Fetch a page with the Notion SDK
-// const page = await notion.pages.retrieve({ page_id: "..." });
+// 2. Fetch data from Notion
+const page = await notion.pages.retrieve({ page_id: "..." });
 
-// Validate + transform
-const task = v.parse(NotionTaskPageSchema, page);
+// 3. Parse and transform
+const task = v.parse(TaskPageSchema, page);
 
-// task.properties is now easy to use
-task.properties.Name; // string
-task.properties.Due; // Date | null
-task.properties.Tags; // string[]
+// 4. Use your clean data
+console.log(task.properties.Name);       // "Buy Milk" (string)
+console.log(task.properties.DueDate);    // Date object or null
+console.log(task.properties.Tags);       // ["Personal", "Shopping"] (string[])
 ```
 
-### Parse query results
+### Handling Lists (Query Results)
+
+To parse the results of a database query:
 
 ```ts
-import * as v from "valibot";
+const TaskListSchema = v.array(TaskPageSchema);
 
-const NotionTaskListSchema = v.array(NotionTaskPageSchema);
-
-// const { results } = await notion.dataSources.query({ data_source_id: "..." });
-const tasks = v.parse(NotionTaskListSchema, results);
+const { results } = await notion.databases.query({ database_id: "..." });
+const tasks = v.parse(TaskListSchema, results);
 ```
 
-## Exports
+## Schema Reference
 
-> 📚 **For complete API documentation**, see the [automatically generated JSR docs](https://jsr.io/@nakanoaas/notion-valibot-schema/doc), which provide a comprehensive reference for all available schemas.
+> 📚 **For complete API documentation, including all available schemas and types, please visit the [JSR Documentation](https://jsr.io/@nakanoaas/notion-valibot-schema/doc).**
 
-This package re-exports all schemas from `src/index.ts`.
+| Notion Property | Schema | Transformed Output (Type) |
+| :--- | :--- | :--- |
+| **Text** / Title | `TitleSchema` / `RichTextSchema` | `string` |
+| **Number** | `NumberSchema` / `NullableNumberSchema` | `number` / `number \| null` |
+| **Checkbox** | `CheckboxSchema` | `boolean` |
+| **Select** | `SelectSchema(schema)` | `Inferred<schema>` |
+| **Multi-Select** | `MultiSelectSchema(schema)` | `Inferred<schema>[]` |
+| **Status** | `StatusSchema(schema)` | `Inferred<schema>` |
+| **Date** | `DateSchema` / `NullableDateSchema` | `Date` / `Date \| null` |
+| **Relation** | `RelationSchema` | `string[]` (Page IDs) |
+| **Relation** (Single) | `SingleRelationSchema` | `string` (Page ID) |
+| **URL** | `UrlSchema` | `string` |
+| **Email** | `EmailSchema` | `string` |
+| **Phone** | `PhoneNumberSchema` | `string` |
+| **Files** | `FilesSchema` | `string[]` (URLs) |
+| **Created/Edited By** | `CreatedBySchema` / `LastEditedBySchema` | `string` (User ID) |
+| **Created/Edited Time**| `CreatedTimeSchema` / `LastEditedTimeSchema` | `Date` |
 
-- **Text**
-  - `TitleSchema`: `{ title: RichText[] }` → `string`
-  - `RichTextSchema`: `{ rich_text: RichText[] }` → `string`
-- **Numbers**
-  - `NumberSchema`: `{ number: number }` → `number`
-  - `NullableNumberSchema`: `{ number: number | null }` → `number | null`
-- **Dates**
-  - `DateSchema`: `{ date: { start: string } }` → `Date`
-  - `NullableDateSchema`: `{ date: { start: string } | null }` → `Date | null`
-  - `FullDateSchema`: `{ date: { start: string; end: string } }` → `{ start: Date; end: Date }`
-  - `NullableFullDateSchema`: `{ date: { start: string; end: string | null } | null }` → `{ start: Date; end: Date | null } | null`
-- **Select-like**
-  - `SelectSchema(schema)`: `{ select: { name: ... } }` → inferred
-  - `NullableSelectSchema(schema)`: `{ select: { name: ... } | null }` → inferred | `null`
-  - `StatusSchema(schema)`: `{ status: { name: ... } }` → inferred
-  - `NullableStatusSchema(schema)`: `{ status: { name: ... } | null }` → inferred | `null`
-  - `MultiSelectSchema(schema)`: `{ multi_select: { name: ... }[] }` → inferred[]
-- **Other common property types**
-  - `CheckboxSchema`: `{ checkbox: boolean }` → `boolean`
-  - `EmailSchema` / `NullableEmailSchema`
-  - `PhoneNumberSchema` / `NullablePhoneNumberSchema`
-  - `UrlSchema` / `NullableUrlSchema`
-  - `RelationSchema`: `{ relation: { id: string }[] }` → `string[]`
-  - `FilesSchema`: `{ files: (file | external)[] }` → `string[]` (URLs)
+### Advanced Schemas
 
-And more: created/last-edited fields, rollup, formula, unique_id, people, place, verification, etc.
+#### Formulas
+Formulas in Notion can return different types (string, number, boolean, date). Use `FormulaSchema` with a specific inner schema to handle this.
 
-## Notes
+```ts
+import { FormulaSchema, RichTextSchema } from "@nakanoaas/notion-valibot-schema";
 
-- **Property names are user-defined** in Notion. In your schema, keys like `Name` / `Status` must match the names in your database.
-- These schemas focus on **parsing property values**, so you can embed them in your own page/database schemas.
+const MySchema = v.object({
+  // If your formula returns text
+  MyFormula: FormulaSchema(RichTextSchema), 
+});
+```
+
+#### Rollups
+Rollups are powerful but complex. We provide helpers for common rollup types.
+
+```ts
+import { 
+  RollupNumberSchema, 
+  RollupDateSchema, 
+  RollupArraySchema 
+} from "@nakanoaas/notion-valibot-schema";
+
+const MySchema = v.object({
+  // Sum/Average rollup (returns number)
+  TotalCost: RollupNumberSchema,
+  
+  // Date rollup (returns Date)
+  LatestMeeting: RollupDateSchema,
+  
+  // Array rollup (e.g., pulling tags from related items)
+  AllTags: RollupArraySchema(v.string())
+});
+```
 
 ## License
 
-MIT
+MIT © [Nakano as a Service](https://github.com/nakanoasaservice)
