@@ -6,6 +6,11 @@ A small collection of **[Valibot](https://github.com/fabian-hiller/valibot)** sc
 
 It helps you **validate and transform** Notion `properties` into plain JavaScript values (e.g. `string`, `number`, `Date`, `string[]`) so you can work with the results without dealing with Notion’s nested property shapes.
 
+## Documentation
+
+- **API reference (recommended)**: JSR auto-generated docs — [JSR Docs](https://jsr.io/@nakanoaas/notion-valibot-schema/doc)
+  - 日本語: APIの詳細（エクスポート一覧/型/使用例）は、上記のJSR Docsがいちばん見やすいです。
+
 ## Install
 
 ### npm / pnpm / yarn
@@ -91,7 +96,7 @@ const tasks = v.parse(NotionTaskListSchema, results);
 
 ## Exports
 
-This package re-exports all schemas from `src/index.ts`.
+This package re-exports all schemas from `src/index.ts`. For a browsable API reference, see the [JSR Docs](https://jsr.io/@nakanoaas/notion-valibot-schema/doc).
 
 - **Text**
   - `TitleSchema`: `{ title: RichText[] }` → `string`
