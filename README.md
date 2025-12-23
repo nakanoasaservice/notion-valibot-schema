@@ -91,6 +91,8 @@ const tasks = v.parse(NotionTaskListSchema, results);
 
 ## Exports
 
+> 📚 **For complete API documentation**, see the [automatically generated JSR docs](https://jsr.io/@nakanoaas/notion-valibot-schema/doc), which provide a comprehensive reference for all available schemas.
+
 This package re-exports all schemas from `src/index.ts`.
 
 - **Text**
