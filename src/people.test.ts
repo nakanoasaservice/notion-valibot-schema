@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { PeopleSchema } from "./people.ts";
+import { PeopleIdSchema, PeopleSchema } from "./people.ts";
 import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"people">;
@@ -86,6 +86,86 @@ describe("people", () => {
 
 			it("should parse empty people array", () => {
 				const result = v.parse(PeopleSchema, {
+					people: [],
+				} satisfies TargetType);
+
+				expect(result).toEqual([]);
+				expect(result.length).toBe(0);
+			});
+		});
+	});
+
+	describe("PeopleIdSchema", () => {
+		describe("type checking", () => {
+			it("should accept people property input type", () => {
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof PeopleIdSchema>
+				>();
+			});
+
+			it("should have correct output type", () => {
+				expectTypeOf<v.InferOutput<typeof PeopleIdSchema>>().toEqualTypeOf<
+					string[]
+				>();
+			});
+		});
+
+		describe("parsing", () => {
+			it("should parse people property and extract id array", () => {
+				const result = v.parse(PeopleIdSchema, {
+					people: [
+						{
+							object: "user",
+							id: "user-1",
+							name: "John Doe",
+							avatar_url: null,
+							type: "person",
+							person: {
+								email: "john@example.com",
+							},
+						},
+						{
+							object: "user",
+							id: "user-2",
+							name: "Jane Doe",
+							avatar_url: null,
+							type: "person",
+							person: {
+								email: "jane@example.com",
+							},
+						},
+					],
+				} satisfies TargetType);
+
+				expect(result).toEqual(["user-1", "user-2"]);
+				expect(result.length).toBe(2);
+				expect(typeof result[0]).toEqual("string");
+				expect(typeof result[1]).toEqual("string");
+			});
+
+			it("should parse people property with null names and extract id array", () => {
+				const result = v.parse(PeopleIdSchema, {
+					people: [
+						{
+							object: "user",
+							id: "user-1",
+							name: null,
+							avatar_url: null,
+							type: "person",
+							person: {
+								email: "john@example.com",
+							},
+						},
+					],
+				} satisfies TargetType);
+
+				expect(result).toEqual(["user-1"]);
+				expect(result.length).toBe(1);
+				expect(typeof result[0]).toEqual("string");
+			});
+
+			it("should parse empty people array and return empty array", () => {
+				const result = v.parse(PeopleIdSchema, {
 					people: [],
 				} satisfies TargetType);
 

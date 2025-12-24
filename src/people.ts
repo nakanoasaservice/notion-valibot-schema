@@ -96,3 +96,49 @@ export const PeopleSchema = v.pipe(
 	}),
 	v.transform((v) => v.people),
 );
+
+/**
+ * Schema to extract the `people` array of IDs from a Notion property.
+ *
+ * **Input:**
+ * ```
+ * {
+ *   people: [
+ *     {
+ *       id: string;
+ *       object: "user" | "bot" | "group";
+ *       name: string | null;
+ *       ...
+ *     }
+ *   ]
+ * }
+ * ```
+ *
+ * **Output:**
+ * ```
+ * [string]
+ * ```
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { PeopleIdSchema } from "@nakanoaas/notion-valibot-schema";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     People: PeopleIdSchema,
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.People: [string]
+ * ```
+ */
+export const PeopleIdSchema = v.pipe(
+	v.object({
+		people: v.array(PersonSchema),
+	}),
+	v.transform((v) => v.people.map((p) => p.id)),
+);
