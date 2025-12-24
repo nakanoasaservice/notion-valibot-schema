@@ -3,6 +3,54 @@ import * as v from "valibot";
 import { PersonSchema } from "./people";
 
 /**
+ * Schema to extract the `last_edited_by` person object from a Notion page.
+ *
+ * **Input:**
+ * ```
+ * {
+ *   last_edited_by: {
+ *     id: string;
+ *     object: "user" | "bot" | "group";
+ *     name: string | null;
+ *     ...
+ *   }
+ * }
+ * ```
+ *
+ * **Output:**
+ * ```
+ * {
+ *   id: string;
+ *   object: "user" | "bot" | "group";
+ *   name: string | null;
+ * }
+ * ```
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { LastEditedBySchema } from "@nakanoaas/notion-valibot-schema";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     LastEditedBy: LastEditedBySchema,
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.LastEditedBy: { id: string; object: "user" | "bot" | "group"; name: string | null }
+ * ```
+ */
+export const LastEditedBySchema = v.pipe(
+	v.object({
+		last_edited_by: PersonSchema,
+	}),
+	v.transform((v) => v.last_edited_by),
+);
+
+/**
  * Schema to extract the `last_edited_by` person name from a Notion page.
  *
  * **Input:**

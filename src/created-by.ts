@@ -51,6 +51,47 @@ export const CreatedBySchema = v.pipe(
 );
 
 /**
+ * Schema to extract the `created_by` person name from a Notion page.
+ *
+ * **Input:**
+ * ```
+ * {
+ *   created_by: {
+ *     id: string;
+ *     object: "user" | "bot" | "group";
+ *     name: string | null;
+ *     ...
+ *   }
+ * }
+ * ```
+ *
+ * **Output:** `string | null`
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { NullableCreatedByNameSchema } from "@nakanoaas/notion-valibot-schema";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     CreatedByName: NullableCreatedByNameSchema,
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.CreatedByName: string | null
+ * ```
+ */
+export const NullableCreatedByNameSchema = v.pipe(
+	v.object({
+		created_by: PersonSchema,
+	}),
+	v.transform((v) => v.created_by.name),
+);
+
+/**
  * Schema to extract the `created_by` person ID from a Notion page.
  *
  * **Input:**
