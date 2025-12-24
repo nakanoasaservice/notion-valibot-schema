@@ -1,7 +1,7 @@
 {
 	"name": "@nakanoaas/notion-valibot-schema",
 	"version": "0.0.6",
-	"description": "A small collection of Valibot schemas for the Notion API",
+	"description": "Turn Notion's nested API responses into clean, typed JavaScript values.",
 	"author": "Nakano as a Service",
 	"license": "MIT",
 	"type": "module",
