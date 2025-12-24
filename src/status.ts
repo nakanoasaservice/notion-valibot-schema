@@ -60,7 +60,7 @@ import * as v from "valibot";
  * // parsed.properties.Status: "not-started" | "in-progress" | "completed"
  * ```
  */
-export function StatusSchema<T extends v.GenericSchema<string>>(schema: T) {
+export function StatusSchema<S extends v.GenericSchema<string>>(schema: S) {
 	return v.pipe(
 		v.object({
 			status: v.object({
@@ -132,8 +132,8 @@ export function StatusSchema<T extends v.GenericSchema<string>>(schema: T) {
  * // parsed.properties.Status: "not-started" | "in-progress" | "completed" | null
  * ```
  */
-export function NullableStatusSchema<T extends v.GenericSchema<string>>(
-	schema: T,
+export function NullableStatusSchema<S extends v.GenericSchema<string>>(
+	schema: S,
 ) {
 	return v.pipe(
 		v.object({

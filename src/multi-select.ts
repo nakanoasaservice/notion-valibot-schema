@@ -60,8 +60,8 @@ import * as v from "valibot";
  * // parsed.properties.Tags: ("urgent" | "important" | "normal")[]
  * ```
  */
-export function MultiSelectSchema<T extends v.GenericSchema<string>>(
-	schema: T,
+export function MultiSelectSchema<S extends v.GenericSchema<string>>(
+	schema: S,
 ) {
 	return v.pipe(
 		v.object({

@@ -60,7 +60,7 @@ import * as v from "valibot";
  * // parsed.properties.Status: "todo" | "in-progress" | "done"
  * ```
  */
-export function SelectSchema<T extends v.GenericSchema<string>>(schema: T) {
+export function SelectSchema<S extends v.GenericSchema<string>>(schema: S) {
 	return v.pipe(
 		v.object({
 			select: v.object({
@@ -132,8 +132,8 @@ export function SelectSchema<T extends v.GenericSchema<string>>(schema: T) {
  * // parsed.properties.Status: "todo" | "in-progress" | "done" | null
  * ```
  */
-export function NullableSelectSchema<T extends v.GenericSchema<string>>(
-	schema: T,
+export function NullableSelectSchema<S extends v.GenericSchema<string>>(
+	schema: S,
 ) {
 	return v.pipe(
 		v.object({
