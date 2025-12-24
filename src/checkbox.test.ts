@@ -10,9 +10,9 @@ describe("checkbox", () => {
 	describe("CheckboxSchema", () => {
 		describe("type checking", () => {
 			it("should accept checkbox property input type", () => {
-				expectTypeOf<
+				expectTypeOf<TargetType>().toExtend<
 					v.InferInput<typeof CheckboxSchema>
-				>().toExtend<TargetType>();
+				>();
 			});
 
 			it("should have correct output type", () => {
