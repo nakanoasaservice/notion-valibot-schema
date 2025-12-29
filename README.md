@@ -85,7 +85,7 @@ import {
   RichTextSchema,
   StatusSchema,
   MultiSelectSchema,
-  NullableDateSchema,
+  NullableSingleDateSchema,
   CheckboxSchema,
 } from "@nakanoaas/notion-valibot-schema";
 
@@ -106,7 +106,7 @@ const TaskPageSchema = v.object({
     Tags: MultiSelectSchema(v.string()),
     
     // Map "Due Date" -> Date | null
-    DueDate: NullableDateSchema,
+    DueDate: NullableSingleDateSchema,
     
     // Map "IsUrgent" -> boolean
     IsUrgent: CheckboxSchema,
@@ -148,7 +148,9 @@ const tasks = v.parse(TaskListSchema, results);
 | **Select** | `SelectSchema(schema)` | `Inferred<schema>` |
 | **Multi-Select** | `MultiSelectSchema(schema)` | `Inferred<schema>[]` |
 | **Status** | `StatusSchema(schema)` | `Inferred<schema>` |
-| **Date** | `DateSchema` / `NullableDateSchema` | `Date` / `Date \| null` |
+| **Date** (Single) | `SingleDateSchema` / `NullableSingleDateSchema` | `Date` / `Date \| null` |
+| **Date** (Range) | `RangeDateSchema` / `NullableRangeDateSchema` | `{ start: Date; end: Date; time_zone: string \| null }` / `{ start: Date; end: Date; time_zone: string \| null } \| null` |
+| **Date** (Full) | `FullDateSchema` / `NullableFullDateSchema` | `{ start: Date; end: Date \| null; time_zone: string \| null }` / `{ start: Date; end: Date \| null; time_zone: string \| null } \| null` |
 | **Relation** | `RelationSchema` | `string[]` (Page IDs) |
 | **Relation** (Single) | `SingleRelationSchema` | `string` (Page ID) |
 | **URL** | `UrlSchema` | `string` |
@@ -159,6 +161,41 @@ const tasks = v.parse(TaskListSchema, results);
 | **Created/Edited Time**| `CreatedTimeSchema` / `LastEditedTimeSchema` | `Date` |
 
 ### Advanced Schemas
+
+#### Date Properties
+Notion date properties can represent single dates, date ranges, or date ranges with optional end dates. Choose the appropriate schema based on your needs:
+
+- **Single**: Returns just the start date as a `Date` object
+  - `SingleDateSchema`: Requires start date → `Date`
+  - `NullableSingleDateSchema`: Allows null → `Date | null`
+
+- **Range**: Requires both start and end dates
+  - `RangeDateSchema`: Requires start and end dates → `{ start: Date; end: Date; time_zone: string | null }`
+  - `NullableRangeDateSchema`: Allows null → `{ start: Date; end: Date; time_zone: string | null } | null`
+
+- **Full**: Start date required, end date optional
+  - `FullDateSchema`: Requires start date, optional end date → `{ start: Date; end: Date | null; time_zone: string | null }`
+  - `NullableFullDateSchema`: Allows null → `{ start: Date; end: Date | null; time_zone: string | null } | null`
+
+```ts
+import {
+  SingleDateSchema,
+  NullableSingleDateSchema,
+  RangeDateSchema,
+  FullDateSchema,
+} from "@nakanoaas/notion-valibot-schema";
+
+const MySchema = v.object({
+  // Single date (start date only)
+  DueDate: NullableSingleDateSchema,
+  
+  // Date range (both start and end required)
+  EventPeriod: RangeDateSchema,
+  
+  // Full date range (end date optional)
+  ProjectTimeline: FullDateSchema,
+});
+```
 
 #### Formulas
 Formulas in Notion can return different types (string, number, boolean, date). Use `FormulaSchema` with a specific inner schema to handle this.

@@ -49,44 +49,33 @@ export const DateObjectSchema = v.object({
 });
 
 /**
- * Schema to extract the `date` property from a Notion page property and transform it to a `Date` object.
+ * Schema for a Notion date object structure with required end date.
  *
  * **Input:**
  * ```
  * {
- *   date: {
- *     start: string;
- *     end: string | null;
- *     time_zone: string | null;
- *   }
+ *   start: string;
+ *   end: string;
+ *   time_zone: string | null;
  * }
  * ```
  *
- * **Output:** `Date`
- *
- * @example
- * ```ts
- * import * as v from "valibot";
- * import { DateSchema } from "@nakanoaas/notion-valibot-utils";
- *
- * const PageSchema = v.object({
- *   id: v.string(),
- *   properties: v.object({
- *     Date: DateSchema,
- *   }),
- * });
- *
- * const page = await notion.pages.retrieve({ page_id: "..." });
- * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.Date: Date
+ * **Output:**
  * ```
+ * {
+ *   start: string;
+ *   end: string;
+ *   time_zone: string | null;
+ * }
+ * ```
+ *
+ * @internal
  */
-export const DateSchema = v.pipe(
-	v.object({
-		date: DateObjectSchema,
-	}),
-	v.transform((v) => new Date(v.date.start)),
-);
+const DateRangeObjectSchema = v.object({
+	start: v.string(),
+	end: v.string(),
+	time_zone: v.nullable(v.string()),
+});
 
 /**
  * Schema to extract the `date` property from a Notion page property and transform it to a `Date` object or `null`.
@@ -107,12 +96,12 @@ export const DateSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableDateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableSingleDateSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     Date: NullableDateSchema,
+ *     Date: NullableSingleDateSchema,
  *   }),
  * });
  *
@@ -121,7 +110,7 @@ export const DateSchema = v.pipe(
  * // parsed.properties.Date: Date | null
  * ```
  */
-export const NullableDateSchema = v.pipe(
+export const NullableSingleDateSchema = v.pipe(
 	v.object({
 		date: v.nullable(DateObjectSchema),
 	}),
@@ -129,7 +118,7 @@ export const NullableDateSchema = v.pipe(
 );
 
 /**
- * Schema to extract the `date` property from a Notion page property and transform it to a date range object.
+ * Schema to extract the `date` property from a Notion page property and transform it to a `Date` object.
  *
  * **Input:**
  * ```
@@ -142,11 +131,108 @@ export const NullableDateSchema = v.pipe(
  * }
  * ```
  *
+ * **Output:** `Date`
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { SingleDateSchema } from "@nakanoaas/notion-valibot-utils";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     Date: SingleDateSchema,
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.Date: Date
+ * ```
+ */
+export const SingleDateSchema = v.pipe(
+	v.object({
+		date: DateObjectSchema,
+	}),
+	v.transform((v) => new Date(v.date.start)),
+);
+
+/**
+ * Schema to extract the `date` property from a Notion page property and transform it to a date range object or `null`.
+ * Requires both start and end dates.
+ *
+ * **Input:**
+ * ```
+ * {
+ *   date: {
+ *     start: string;
+ *     end: string;
+ *     time_zone: string | null;
+ *   } | null
+ * }
+ * ```
+ *
  * **Output:**
  * ```
  * {
  *   start: Date;
- *   end: Date | null;
+ *   end: Date;
+ *   time_zone: string | null;
+ * } | null
+ * ```
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { NullableRangeDateSchema } from "@nakanoaas/notion-valibot-utils";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     DateRange: NullableRangeDateSchema,
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.DateRange: { start: Date; end: Date; time_zone: string | null } | null
+ * ```
+ */
+export const NullableRangeDateSchema = v.pipe(
+	v.object({
+		date: v.nullable(DateRangeObjectSchema),
+	}),
+	v.transform((v) =>
+		v.date
+			? {
+					start: new Date(v.date.start),
+					end: new Date(v.date.end),
+					time_zone: v.date.time_zone,
+				}
+			: null,
+	),
+);
+
+/**
+ * Schema to extract the `date` property from a Notion page property and transform it to a date range object.
+ * Requires both start and end dates.
+ *
+ * **Input:**
+ * ```
+ * {
+ *   date: {
+ *     start: string;
+ *     end: string;
+ *     time_zone: string | null;
+ *   }
+ * }
+ * ```
+ *
+ * **Output:**
+ * ```
+ * {
+ *   start: Date;
+ *   end: Date;
  *   time_zone: string | null;
  * }
  * ```
@@ -154,33 +240,34 @@ export const NullableDateSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { DateRangeSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RangeDateSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     DateRange: DateRangeSchema,
+ *     DateRange: RangeDateSchema,
  *   }),
  * });
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.DateRange: { start: Date; end: Date | null; time_zone: string | null }
+ * // parsed.properties.DateRange: { start: Date; end: Date; time_zone: string | null }
  * ```
  */
-export const DateRangeSchema = v.pipe(
+export const RangeDateSchema = v.pipe(
 	v.object({
-		date: DateObjectSchema,
+		date: DateRangeObjectSchema,
 	}),
 	v.transform((v) => ({
 		start: new Date(v.date.start),
-		end: v.date.end ? new Date(v.date.end) : null,
+		end: new Date(v.date.end),
 		time_zone: v.date.time_zone,
 	})),
 );
 
 /**
  * Schema to extract the `date` property from a Notion page property and transform it to a date range object or `null`.
+ * End date is optional.
  *
  * **Input:**
  * ```
@@ -205,12 +292,12 @@ export const DateRangeSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableDateRangeSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableFullDateSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     DateRange: NullableDateRangeSchema,
+ *     DateRange: NullableFullDateSchema,
  *   }),
  * });
  *
@@ -219,7 +306,7 @@ export const DateRangeSchema = v.pipe(
  * // parsed.properties.DateRange: { start: Date; end: Date | null; time_zone: string | null } | null
  * ```
  */
-export const NullableDateRangeSchema = v.pipe(
+export const NullableFullDateSchema = v.pipe(
 	v.object({
 		date: v.nullable(DateObjectSchema),
 	}),
@@ -232,4 +319,56 @@ export const NullableDateRangeSchema = v.pipe(
 				}
 			: null,
 	),
+);
+
+/**
+ * Schema to extract the `date` property from a Notion page property and transform it to a date range object.
+ * End date is optional.
+ *
+ * **Input:**
+ * ```
+ * {
+ *   date: {
+ *     start: string;
+ *     end: string | null;
+ *     time_zone: string | null;
+ *   }
+ * }
+ * ```
+ *
+ * **Output:**
+ * ```
+ * {
+ *   start: Date;
+ *   end: Date | null;
+ *   time_zone: string | null;
+ * }
+ * ```
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { FullDateSchema } from "@nakanoaas/notion-valibot-utils";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     DateRange: FullDateSchema,
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.DateRange: { start: Date; end: Date | null; time_zone: string | null }
+ * ```
+ */
+export const FullDateSchema = v.pipe(
+	v.object({
+		date: DateObjectSchema,
+	}),
+	v.transform((v) => ({
+		start: new Date(v.date.start),
+		end: v.date.end ? new Date(v.date.end) : null,
+		time_zone: v.date.time_zone,
+	})),
 );
