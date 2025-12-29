@@ -89,7 +89,7 @@ import {
   CheckboxSchema,
 } from "@nakanoaas/notion-valibot-schema";
 
-// 1. Define your schema based on your Database properties
+// 1. Define your schema based on your Data Source properties
 const TaskPageSchema = v.object({
   id: v.string(),
   properties: v.object({
@@ -127,12 +127,12 @@ console.log(task.properties.Tags);       // ["Personal", "Shopping"] (string[])
 
 ### Handling Lists (Query Results)
 
-To parse the results of a database query:
+To parse the results of a data source query:
 
 ```ts
 const TaskListSchema = v.array(TaskPageSchema);
 
-const { results } = await notion.databases.query({ database_id: "..." });
+const { results } = await notion.dataSources.query({ data_source_id: "..." });
 const tasks = v.parse(TaskListSchema, results);
 ```
 
