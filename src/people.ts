@@ -98,6 +98,100 @@ export const PeopleSchema = v.pipe(
 );
 
 /**
+ * Schema to extract the `people` array from a Notion property and transform it to a single person.
+ *
+ * This is useful when you configure a People property to contain exactly one person,
+ * but the Notion API still returns it as an array.
+ *
+ * **Input:**
+ * ```
+ * {
+ *   people: [
+ *     {
+ *       id: string;
+ *       object: "user" | "bot" | "group";
+ *       name: string | null;
+ *       ...
+ *     }
+ *   ]
+ * }
+ * ```
+ *
+ * **Output:**
+ * ```
+ * {
+ *   id: string;
+ *   object: "user" | "bot" | "group";
+ *   name: string | null;
+ * }
+ * ```
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { SinglePeopleSchema } from "@nakanoaas/notion-valibot-schema";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     Owner: SinglePeopleSchema,
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.Owner: { id: string; object: "user" | "bot" | "group"; name: string | null }
+ * ```
+ */
+export const SinglePeopleSchema = v.pipe(
+	v.object({
+		people: v.tuple([PersonSchema]),
+	}),
+	v.transform((v) => v.people[0]),
+);
+
+/**
+ * Schema to extract the `people` array from a Notion property and transform it to a single person or `null`.
+ *
+ * **Input:**
+ * ```
+ * {
+ *   people: Array<{
+ *     id: string;
+ *     object: "user" | "bot" | "group";
+ *     name: string | null;
+ *     ...
+ *   }>;
+ * }
+ * ```
+ *
+ * **Output:** `{ id: string; object: "user" | "bot" | "group"; name: string | null } | null`
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { NullableSinglePeopleSchema } from "@nakanoaas/notion-valibot-schema";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     Owner: NullableSinglePeopleSchema,
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.Owner: { id: string; object: "user" | "bot" | "group"; name: string | null } | null
+ * ```
+ */
+export const NullableSinglePeopleSchema = v.pipe(
+	v.object({
+		people: v.array(PersonSchema),
+	}),
+	v.transform((v) => v.people[0] ?? null),
+);
+
+/**
  * Schema to extract the `people` array of IDs from a Notion property.
  *
  * **Input:**
