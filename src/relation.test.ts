@@ -99,6 +99,21 @@ describe("relation", () => {
 					} satisfies TargetType).success,
 				).toBe(false);
 			});
+
+			it("should reject multiple relations", () => {
+				expect(
+					v.safeParse(SingleRelationSchema, {
+						relation: [
+							{
+								id: "page-1",
+							},
+							{
+								id: "page-2",
+							},
+						],
+					} satisfies TargetType).success,
+				).toBe(false);
+			});
 		});
 	});
 
