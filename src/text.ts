@@ -93,13 +93,13 @@ export const TitleSchema = v.pipe(
  * {
  *   title: Array<{
  *     plain_text: string;
- *   }> | null;
+ *   }>;
  * }
  * ```
  *
  * **Output:** `string | null`
  *
- * If the `title` property is `null`, this schema returns `null`. Otherwise, it joins all `plain_text` values into a single string.
+ * If the `title` array is empty or all `plain_text` values are empty strings, this schema returns `null`. Otherwise, it joins all `plain_text` values into a single string.
  *
  * @example
  * ```ts
@@ -174,13 +174,13 @@ export const RichTextSchema = v.pipe(
  * {
  *   rich_text: Array<{
  *     plain_text: string;
- *   }> | null;
+ *   }>;
  * }
  * ```
  *
  * **Output:** `string | null`
  *
- * If the `rich_text` property is `null`, this schema returns `null`. Otherwise, it joins all `plain_text` values into a single string.
+ * If the `rich_text` array is empty or all `plain_text` values are empty strings, this schema returns `null`. Otherwise, it joins all `plain_text` values into a single string.
  *
  * @example
  * ```ts
