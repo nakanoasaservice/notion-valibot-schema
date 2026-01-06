@@ -142,7 +142,7 @@ const tasks = v.parse(TaskListSchema, results);
 
 | Notion Property | Schema | Transformed Output (Type) |
 | :--- | :--- | :--- |
-| **Text** / Title | `TitleSchema` / `RichTextSchema` | `string` |
+| **Text** / Title | `TitleSchema` / `RichTextSchema` / `NullableTitleSchema` / `NullableRichTextSchema` | `string` / `string \| null` |
 | **Number** | `NumberSchema` / `NullableNumberSchema` | `number` / `number \| null` |
 | **Checkbox** | `CheckboxSchema` | `boolean` |
 | **Select** | `SelectSchema(schema)` | `Inferred<schema>` |
