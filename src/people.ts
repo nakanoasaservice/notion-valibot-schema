@@ -145,7 +145,7 @@ export const PeopleSchema = v.pipe(
  */
 export const SinglePeopleSchema = v.pipe(
 	v.object({
-		people: v.tuple([PersonSchema]),
+		people: v.pipe(v.array(PersonSchema), v.length(1)),
 	}),
 	v.transform((v) => v.people[0]),
 );
