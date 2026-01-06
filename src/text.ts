@@ -20,13 +20,13 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RichTextArraySchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RichTextItemArraySchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
  *     Text: v.object({
- *       rich_text: RichTextArraySchema,
+ *       rich_text: RichTextItemArraySchema,
  *     }),
  *   }),
  * });
@@ -38,7 +38,7 @@ import * as v from "valibot";
  *
  * @internal
  */
-const RichTextArraySchema = v.array(
+const RichTextItemArraySchema = v.array(
 	v.object({
 		plain_text: v.string(),
 	}),
@@ -79,7 +79,7 @@ const RichTextArraySchema = v.array(
  */
 export const TitleSchema = v.pipe(
 	v.object({
-		title: RichTextArraySchema,
+		title: RichTextItemArraySchema,
 	}),
 	v.transform((v) => v.title.map((v) => v.plain_text).join("")),
 	v.nonEmpty(),
@@ -120,9 +120,9 @@ export const TitleSchema = v.pipe(
  */
 export const NullableTitleSchema = v.pipe(
 	v.object({
-		title: v.nullable(RichTextArraySchema),
+		title: RichTextItemArraySchema,
 	}),
-	v.transform((v) => v.title?.map((v) => v.plain_text).join("") || null),
+	v.transform((v) => v.title.map((v) => v.plain_text).join("") || null),
 );
 
 /**
@@ -160,7 +160,7 @@ export const NullableTitleSchema = v.pipe(
  */
 export const RichTextSchema = v.pipe(
 	v.object({
-		rich_text: RichTextArraySchema,
+		rich_text: RichTextItemArraySchema,
 	}),
 	v.transform((v) => v.rich_text.map((v) => v.plain_text).join("")),
 	v.nonEmpty(),
@@ -201,7 +201,7 @@ export const RichTextSchema = v.pipe(
  */
 export const NullableRichTextSchema = v.pipe(
 	v.object({
-		rich_text: v.nullable(RichTextArraySchema),
+		rich_text: RichTextItemArraySchema,
 	}),
-	v.transform((v) => v.rich_text?.map((v) => v.plain_text).join("") || null),
+	v.transform((v) => v.rich_text.map((v) => v.plain_text).join("") || null),
 );
