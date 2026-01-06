@@ -191,7 +191,7 @@ describe("text", () => {
 
 	describe("NullableTitleSchema", () => {
 		describe("type checking", () => {
-			it("should accept title property or null input type", () => {
+			it("should accept title property input type", () => {
 				type TargetType = SelectNotionProperty<"title">;
 				expectTypeOf<TargetType>().toExtend<
 					v.InferInput<typeof NullableTitleSchema>
@@ -234,15 +234,6 @@ describe("text", () => {
 				expect(typeof result).toEqual("string");
 			});
 
-			it("should parse null title property and return null", () => {
-				type TargetType = SelectNotionProperty<"title">;
-				expect(
-					v.parse(NullableTitleSchema, { title: null } as TargetType & {
-						title: null;
-					}),
-				).toBe(null);
-			});
-
 			it("should parse empty title array and return null", () => {
 				type TargetType = SelectNotionProperty<"title">;
 				const result = v.parse(NullableTitleSchema, {
@@ -256,7 +247,7 @@ describe("text", () => {
 
 	describe("NullableRichTextSchema", () => {
 		describe("type checking", () => {
-			it("should accept rich_text property or null input type", () => {
+			it("should accept rich_text property input type", () => {
 				type TargetType = SelectNotionProperty<"rich_text">;
 				expectTypeOf<TargetType>().toExtend<
 					v.InferInput<typeof NullableRichTextSchema>
@@ -314,15 +305,6 @@ describe("text", () => {
 
 				expect(result).toEqual("Rich Text");
 				expect(typeof result).toEqual("string");
-			});
-
-			it("should parse null rich_text property and return null", () => {
-				type TargetType = SelectNotionProperty<"rich_text">;
-				expect(
-					v.parse(NullableRichTextSchema, { rich_text: null } as TargetType & {
-						rich_text: null;
-					}),
-				).toBe(null);
 			});
 
 			it("should parse empty rich_text array and return null", () => {
