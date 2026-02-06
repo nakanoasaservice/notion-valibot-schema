@@ -1,10 +1,16 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { PeopleIdSchema, PeopleSchema } from "./people.ts";
+import {
+	NullableSinglePeopleSchema,
+	PeopleIdSchema,
+	PeopleSchema,
+	SinglePeopleSchema,
+} from "./people.ts";
 import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"people">;
+type TargetPerson = TargetType["people"][number];
 
 describe("people", () => {
 	describe("PeopleSchema", () => {
@@ -91,6 +97,164 @@ describe("people", () => {
 
 				expect(result).toEqual([]);
 				expect(result.length).toBe(0);
+			});
+		});
+	});
+
+	describe("SinglePeopleSchema", () => {
+		describe("type checking", () => {
+			it("should accept people property input type", () => {
+				expectTypeOf<TargetType & { people: [TargetPerson] }>().toExtend<
+					v.InferInput<typeof SinglePeopleSchema>
+				>();
+			});
+
+			it("should have correct output type", () => {
+				expectTypeOf<
+					v.InferOutput<typeof SinglePeopleSchema>
+				>().toEqualTypeOf<{
+					id: string;
+					object: "user" | "bot" | "group";
+					name: string | null;
+				}>();
+			});
+		});
+
+		describe("parsing", () => {
+			it("should parse people property and return single person", () => {
+				const result = v.parse(SinglePeopleSchema, {
+					people: [
+						{
+							object: "user",
+							id: "user-1",
+							name: "John Doe",
+							avatar_url: null,
+							type: "person",
+							person: {
+								email: "john@example.com",
+							},
+						},
+					],
+				} satisfies TargetType);
+
+				expect(result.id).toBe("user-1");
+				expect(result.name).toBe("John Doe");
+			});
+
+			it("should reject empty people array", () => {
+				expect(
+					v.safeParse(SinglePeopleSchema, {
+						people: [],
+					} satisfies TargetType).success,
+				).toBe(false);
+			});
+
+			it("should reject multiple people", () => {
+				expect(
+					v.safeParse(SinglePeopleSchema, {
+						people: [
+							{
+								object: "user",
+								id: "user-1",
+								name: "John Doe",
+								avatar_url: null,
+								type: "person",
+								person: {
+									email: "john@example.com",
+								},
+							},
+							{
+								object: "user",
+								id: "user-2",
+								name: "Jane Doe",
+								avatar_url: null,
+								type: "person",
+								person: {
+									email: "jane@example.com",
+								},
+							},
+						],
+					} satisfies TargetType).success,
+				).toBe(false);
+			});
+		});
+	});
+
+	describe("NullableSinglePeopleSchema", () => {
+		describe("type checking", () => {
+			it("should accept people property input type", () => {
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof NullableSinglePeopleSchema>
+				>();
+			});
+
+			it("should have correct output type", () => {
+				expectTypeOf<
+					v.InferOutput<typeof NullableSinglePeopleSchema>
+				>().toEqualTypeOf<{
+					id: string;
+					object: "user" | "bot" | "group";
+					name: string | null;
+				} | null>();
+			});
+		});
+
+		describe("parsing", () => {
+			it("should parse people property and return single person", () => {
+				const result = v.parse(NullableSinglePeopleSchema, {
+					people: [
+						{
+							object: "user",
+							id: "user-1",
+							name: "John Doe",
+							avatar_url: null,
+							type: "person",
+							person: {
+								email: "john@example.com",
+							},
+						},
+					],
+				} satisfies TargetType);
+
+				expect(result?.id).toBe("user-1");
+				expect(result?.name).toBe("John Doe");
+			});
+
+			it("should parse empty people array and return null", () => {
+				const result = v.parse(NullableSinglePeopleSchema, {
+					people: [],
+				} satisfies TargetType);
+
+				expect(result).toBe(null);
+			});
+
+			it("should take first person when multiple people are set", () => {
+				const result = v.parse(NullableSinglePeopleSchema, {
+					people: [
+						{
+							object: "user",
+							id: "user-1",
+							name: "John Doe",
+							avatar_url: null,
+							type: "person",
+							person: {
+								email: "john@example.com",
+							},
+						},
+						{
+							object: "user",
+							id: "user-2",
+							name: "Jane Doe",
+							avatar_url: null,
+							type: "person",
+							person: {
+								email: "jane@example.com",
+							},
+						},
+					],
+				} satisfies TargetType);
+
+				expect(result?.id).toBe("user-1");
 			});
 		});
 	});
