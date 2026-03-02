@@ -242,9 +242,9 @@ export const RollupDateSchema = v.pipe(
  * // parsed.properties.RollupRelations: Array<{ type: "relation"; relation: Array<{ id: string }> }>
  * ```
  */
-export function RollupArraySchema<
-	S extends v.GenericSchema<{ type: string }, unknown>,
->(schema: S) {
+export function RollupArraySchema<S extends v.GenericSchema<object, unknown>>(
+	schema: S,
+) {
 	return v.pipe(
 		v.object({
 			rollup: v.object({
@@ -253,5 +253,156 @@ export function RollupArraySchema<
 			}),
 		}),
 		v.transform((v) => v.rollup.array),
+	);
+}
+
+/**
+ * Schema factory to extract the single element from the `rollup` property with array type.
+ *
+ * This is similar to {@link RollupArraySchema} but expects exactly one element in the array
+ * and returns that element directly instead of an array. Useful when the rollup is configured
+ * to return a single value (e.g., `show_unique_values` with one relation).
+ *
+ * **Input:**
+ * ```
+ * {
+ *   rollup: {
+ *     type: "array";
+ *     array: [T];  // exactly one element
+ *   };
+ * }
+ * ```
+ *
+ * **Output:** The output type of the schema passed as a parameter (single element, not array).
+ * For example, if a schema for number properties is passed, the output will be `number`.
+ *
+ * @param schema - A schema that validates the single element in the rollup array.
+ *                  Must accept an object with a `type` field.
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { SingleRollupArraySchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     SingleRollupNumber: SingleRollupArraySchema(NumberSchema),
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.SingleRollupNumber: number
+ * ```
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { SingleRollupArraySchema } from "@nakanoaas/notion-valibot-utils";
+ *
+ * const RelationItemSchema = v.object({
+ *   type: v.literal("relation"),
+ *   relation: v.array(v.object({ id: v.string() })),
+ * });
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     SingleRelation: SingleRollupArraySchema(RelationItemSchema),
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.SingleRelation: { type: "relation"; relation: Array<{ id: string }> }
+ * ```
+ */
+export function SingleRollupArraySchema<
+	S extends v.GenericSchema<object, unknown>,
+>(schema: S) {
+	return v.pipe(
+		v.object({
+			rollup: v.object({
+				type: v.literal("array"),
+				array: v.tuple([schema]),
+			}),
+		}),
+		v.transform((v) => v.rollup.array[0] as v.InferOutput<S>),
+	);
+}
+
+/**
+ * Schema factory to extract the single element from the `rollup` property with array type, or `null` when the array is empty.
+ *
+ * This is similar to {@link SingleRollupArraySchema} but accepts empty arrays and returns `null` instead of requiring
+ * exactly one element. Useful when the rollup may return zero or one value.
+ *
+ * **Input:**
+ * ```
+ * {
+ *   rollup: {
+ *     type: "array";
+ *     array: Array<T>;  // zero or one element
+ *   };
+ * }
+ * ```
+ *
+ * **Output:** The output type of the schema passed as a parameter, or `null`.
+ * For example, if a schema for number properties is passed, the output will be `number | null`.
+ *
+ * @param schema - A schema that validates each element in the rollup array.
+ *                  Must accept an object with a `type` field.
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { NullableSingleRollupArraySchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     SingleRollupNumber: NullableSingleRollupArraySchema(NumberSchema),
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.SingleRollupNumber: number | null
+ * ```
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { NullableSingleRollupArraySchema } from "@nakanoaas/notion-valibot-utils";
+ *
+ * const RelationItemSchema = v.object({
+ *   type: v.literal("relation"),
+ *   relation: v.array(v.object({ id: v.string() })),
+ * });
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     SingleRelation: NullableSingleRollupArraySchema(RelationItemSchema),
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.SingleRelation: { type: "relation"; relation: Array<{ id: string }> } | null
+ * ```
+ */
+export function NullableSingleRollupArraySchema<
+	S extends v.GenericSchema<object, unknown>,
+>(schema: S) {
+	return v.pipe(
+		v.object({
+			rollup: v.object({
+				type: v.literal("array"),
+				array: v.array(schema),
+			}),
+		}),
+		v.transform((v) => (v.rollup.array[0] ?? null) as v.InferOutput<S> | null),
 	);
 }
