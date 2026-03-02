@@ -153,6 +153,9 @@ const tasks = v.parse(TaskListSchema, results);
 | **Date** (Full) | `FullDateSchema` / `NullableFullDateSchema` | `{ start: Date; end: Date \| null; time_zone: string \| null }` / `{ start: Date; end: Date \| null; time_zone: string \| null } \| null` |
 | **Relation** | `RelationSchema` | `string[]` (Page IDs) |
 | **Relation** (Single) | `SingleRelationSchema` | `string` (Page ID) |
+| **Rollup** (Array) | `RollupArraySchema(schema)` | `Inferred<schema>[]` |
+| **Rollup** (Single) | `SingleRollupArraySchema(schema)` | `Inferred<schema>` |
+| **Rollup** (Single, Nullable) | `NullableSingleRollupArraySchema(schema)` | `Inferred<schema> \| null` |
 | **URL** | `UrlSchema` | `string` |
 | **Email** | `EmailSchema` | `string` |
 | **Phone** | `PhoneNumberSchema` | `string` |
@@ -185,7 +188,9 @@ Rollups are powerful but complex. We provide helpers for common rollup types.
 import { 
   RollupNumberSchema, 
   RollupDateSchema, 
-  RollupArraySchema 
+  RollupArraySchema,
+  SingleRollupArraySchema,
+  NullableSingleRollupArraySchema,
 } from "@nakanoaas/notion-valibot-schema";
 
 const MySchema = v.object({
@@ -196,7 +201,13 @@ const MySchema = v.object({
   LatestMeeting: RollupDateSchema,
   
   // Array rollup (e.g., pulling tags from related items)
-  AllTags: RollupArraySchema(v.string())
+  AllTags: RollupArraySchema(v.string()),
+  
+  // Single-element array rollup (returns the one item, not an array)
+  PrimaryTag: SingleRollupArraySchema(v.string()),
+  
+  // Single-element or empty array rollup (returns item or null)
+  OptionalPrimaryTag: NullableSingleRollupArraySchema(v.string()),
 });
 ```
 

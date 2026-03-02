@@ -1,12 +1,15 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import { NumberSchema } from "./number.ts";
 import {
 	NullableRollupDateSchema,
 	NullableRollupNumberSchema,
+	NullableSingleRollupArraySchema,
 	RollupArraySchema,
 	RollupDateSchema,
 	RollupNumberSchema,
+	SingleRollupArraySchema,
 } from "./rollup.ts";
 import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
@@ -257,15 +260,7 @@ describe("rollup", () => {
 
 		describe("parsing", () => {
 			it("should parse rollup array property with string array and extract array", () => {
-				const Schema = RollupArraySchema(
-					v.pipe(
-						v.object({
-							type: v.literal("number"),
-							number: v.number(),
-						}),
-						v.transform((v) => v.number),
-					),
-				);
+				const Schema = RollupArraySchema(NumberSchema);
 				const result = v.parse(Schema, {
 					rollup: {
 						function: "sum",
@@ -286,7 +281,6 @@ describe("rollup", () => {
 			it("should parse empty rollup array", () => {
 				const Schema = RollupArraySchema(
 					v.object({
-						type: v.literal("number"),
 						number: v.number(),
 					}),
 				);
@@ -304,7 +298,122 @@ describe("rollup", () => {
 			it("should reject invalid values not matching schema", () => {
 				const Schema = RollupArraySchema(
 					v.object({
-						type: v.literal("string"),
+						string: v.string(),
+					}),
+				);
+				expect(
+					v.safeParse(Schema, {
+						rollup: {
+							function: "sum",
+							type: "array",
+							array: [
+								{
+									type: "number",
+									number: 42,
+								},
+							],
+						},
+					} satisfies RollupArrayType).success,
+				).toBe(false);
+			});
+		});
+	});
+
+	describe("SingleRollupArraySchema", () => {
+		describe("parsing", () => {
+			it("should parse rollup array with single element and extract that element", () => {
+				const Schema = SingleRollupArraySchema(NumberSchema);
+				const result = v.parse(Schema, {
+					rollup: {
+						function: "sum",
+						type: "array",
+						array: [
+							{
+								type: "number",
+								number: 42,
+							},
+						],
+					},
+				} satisfies RollupArrayType);
+
+				expect(result).toEqual(42);
+				expect(typeof result).toEqual("number");
+			});
+
+			it("should reject empty rollup array", () => {
+				const Schema = SingleRollupArraySchema(NumberSchema);
+				expect(
+					v.safeParse(Schema, {
+						rollup: {
+							function: "sum",
+							type: "array",
+							array: [],
+						},
+					} satisfies RollupArrayType).success,
+				).toBe(false);
+			});
+
+			it("should reject invalid values not matching schema", () => {
+				const Schema = SingleRollupArraySchema(
+					v.object({
+						string: v.string(),
+					}),
+				);
+				expect(
+					v.safeParse(Schema, {
+						rollup: {
+							function: "sum",
+							type: "array",
+							array: [
+								{
+									type: "number",
+									number: 42,
+								},
+							],
+						},
+					} satisfies RollupArrayType).success,
+				).toBe(false);
+			});
+		});
+	});
+
+	describe("NullableSingleRollupArraySchema", () => {
+		describe("parsing", () => {
+			it("should parse rollup array with single element and extract that element", () => {
+				const Schema = NullableSingleRollupArraySchema(NumberSchema);
+				const result = v.parse(Schema, {
+					rollup: {
+						function: "sum",
+						type: "array",
+						array: [
+							{
+								type: "number",
+								number: 42,
+							},
+						],
+					},
+				} satisfies RollupArrayType);
+
+				expect(result).toEqual(42);
+				expect(typeof result).toEqual("number");
+			});
+
+			it("should parse empty rollup array and return null", () => {
+				const Schema = NullableSingleRollupArraySchema(NumberSchema);
+				expect(
+					v.parse(Schema, {
+						rollup: {
+							function: "sum",
+							type: "array",
+							array: [],
+						},
+					} satisfies RollupArrayType),
+				).toBe(null);
+			});
+
+			it("should reject invalid values not matching schema", () => {
+				const Schema = NullableSingleRollupArraySchema(
+					v.object({
 						string: v.string(),
 					}),
 				);
