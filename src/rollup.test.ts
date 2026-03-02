@@ -1,6 +1,7 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import { NumberSchema } from "./number.ts";
 import {
 	NullableRollupDateSchema,
 	NullableRollupNumberSchema,
@@ -259,15 +260,7 @@ describe("rollup", () => {
 
 		describe("parsing", () => {
 			it("should parse rollup array property with string array and extract array", () => {
-				const Schema = RollupArraySchema(
-					v.pipe(
-						v.object({
-							type: v.literal("number"),
-							number: v.number(),
-						}),
-						v.transform((v) => v.number),
-					),
-				);
+				const Schema = RollupArraySchema(NumberSchema);
 				const result = v.parse(Schema, {
 					rollup: {
 						function: "sum",
@@ -329,15 +322,7 @@ describe("rollup", () => {
 	describe("SingleRollupArraySchema", () => {
 		describe("parsing", () => {
 			it("should parse rollup array with single element and extract that element", () => {
-				const Schema = SingleRollupArraySchema(
-					v.pipe(
-						v.object({
-							type: v.literal("number"),
-							number: v.number(),
-						}),
-						v.transform((v) => v.number),
-					),
-				);
+				const Schema = SingleRollupArraySchema(NumberSchema);
 				const result = v.parse(Schema, {
 					rollup: {
 						function: "sum",
@@ -356,12 +341,7 @@ describe("rollup", () => {
 			});
 
 			it("should reject empty rollup array", () => {
-				const Schema = SingleRollupArraySchema(
-					v.object({
-						type: v.literal("number"),
-						number: v.number(),
-					}),
-				);
+				const Schema = SingleRollupArraySchema(NumberSchema);
 				expect(
 					v.safeParse(Schema, {
 						rollup: {
@@ -400,15 +380,7 @@ describe("rollup", () => {
 	describe("NullableSingleRollupArraySchema", () => {
 		describe("parsing", () => {
 			it("should parse rollup array with single element and extract that element", () => {
-				const Schema = NullableSingleRollupArraySchema(
-					v.pipe(
-						v.object({
-							type: v.literal("number"),
-							number: v.number(),
-						}),
-						v.transform((v) => v.number),
-					),
-				);
+				const Schema = NullableSingleRollupArraySchema(NumberSchema);
 				const result = v.parse(Schema, {
 					rollup: {
 						function: "sum",
@@ -427,12 +399,7 @@ describe("rollup", () => {
 			});
 
 			it("should parse empty rollup array and return null", () => {
-				const Schema = NullableSingleRollupArraySchema(
-					v.object({
-						type: v.literal("number"),
-						number: v.number(),
-					}),
-				);
+				const Schema = NullableSingleRollupArraySchema(NumberSchema);
 				expect(
 					v.parse(Schema, {
 						rollup: {
