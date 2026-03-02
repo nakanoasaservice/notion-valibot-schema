@@ -320,12 +320,22 @@ export function RollupArraySchema<S extends v.GenericSchema<object, unknown>>(
  */
 export function SingleRollupArraySchema<
 	S extends v.GenericSchema<object, unknown>,
->(schema: S) {
+>(
+	schema: S,
+): v.GenericSchema<
+	{
+		rollup: {
+			type: "array";
+			array: v.InferInput<S>[];
+		};
+	},
+	v.InferOutput<S>
+> {
 	return v.pipe(
 		v.object({
 			rollup: v.object({
 				type: v.literal("array"),
-				array: v.tuple([schema]),
+				array: v.array(schema),
 			}),
 		}),
 		v.transform((v) => v.rollup.array[0] as v.InferOutput<S>),
@@ -395,7 +405,17 @@ export function SingleRollupArraySchema<
  */
 export function NullableSingleRollupArraySchema<
 	S extends v.GenericSchema<object, unknown>,
->(schema: S) {
+>(
+	schema: S,
+): v.GenericSchema<
+	{
+		rollup: {
+			type: "array";
+			array: v.InferInput<S>[];
+		};
+	},
+	v.InferOutput<S> | null
+> {
 	return v.pipe(
 		v.object({
 			rollup: v.object({

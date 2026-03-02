@@ -31,6 +31,7 @@ import * as v from "valibot";
  */
 export const NumberSchema = v.pipe(
 	v.object({
+		type: v.literal("number"),
 		number: v.number(),
 	}),
 	v.transform((v) => v.number),

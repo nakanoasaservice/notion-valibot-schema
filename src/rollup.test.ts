@@ -320,6 +320,28 @@ describe("rollup", () => {
 	});
 
 	describe("SingleRollupArraySchema", () => {
+		describe("type checking", () => {
+			it("should accept rollup array property input type", () => {
+				const Schema = SingleRollupArraySchema(
+					v.object({
+						type: v.string(),
+					}),
+				);
+				expectTypeOf<
+					RollupArrayType & {
+						rollup: {
+							array: [{ type: string }];
+						};
+					}
+				>().toExtend<v.InferInput<typeof Schema>>();
+			});
+
+			it("should have correct output type", () => {
+				const Schema = SingleRollupArraySchema(NumberSchema);
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<number>();
+			});
+		});
+
 		describe("parsing", () => {
 			it("should parse rollup array with single element and extract that element", () => {
 				const Schema = SingleRollupArraySchema(NumberSchema);
@@ -378,6 +400,24 @@ describe("rollup", () => {
 	});
 
 	describe("NullableSingleRollupArraySchema", () => {
+		describe("type checking", () => {
+			it("should accept rollup array property input type", () => {
+				const Schema = NullableSingleRollupArraySchema(
+					v.object({
+						type: v.string(),
+					}),
+				);
+				expectTypeOf<RollupArrayType>().toExtend<v.InferInput<typeof Schema>>();
+			});
+
+			it("should have correct output type", () => {
+				const Schema = NullableSingleRollupArraySchema(NumberSchema);
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<
+					number | null
+				>();
+			});
+		});
+
 		describe("parsing", () => {
 			it("should parse rollup array with single element and extract that element", () => {
 				const Schema = NullableSingleRollupArraySchema(NumberSchema);
