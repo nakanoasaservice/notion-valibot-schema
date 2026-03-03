@@ -335,10 +335,10 @@ export function SingleRollupArraySchema<
 		v.object({
 			rollup: v.object({
 				type: v.literal("array"),
-				array: v.array(schema),
+				array: v.tuple([schema]),
 			}),
 		}),
-		v.transform((v) => v.rollup.array[0] as v.InferOutput<S>),
+		v.transform((v) => v.rollup.array[0]),
 	);
 }
 
