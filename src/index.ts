@@ -3,7 +3,7 @@ export * from "./created-by.ts";
 export * from "./created-time.ts";
 export * from "./date.ts";
 export * from "./email.ts";
-export * from "./files.ts";
+export * from "./file.ts";
 export * from "./formula.ts";
 export * from "./last-edited-by.ts";
 export * from "./last-edited-time.ts";

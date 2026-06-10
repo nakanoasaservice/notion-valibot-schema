@@ -25,12 +25,12 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { FilesSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { FileSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     Files: FilesSchema,
+ *     Files: FileSchema,
  *   }),
  * });
  *
@@ -39,7 +39,7 @@ import * as v from "valibot";
  * // parsed.properties.Files: string[]
  * ```
  */
-export const FilesSchema = v.pipe(
+export const FileSchema = v.pipe(
 	v.object({
 		files: v.array(
 			v.variant("type", [
