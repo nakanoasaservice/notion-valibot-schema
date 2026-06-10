@@ -1,6 +1,7 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
+import { SingleDateSchema } from "./date.ts";
 import { NumberSchema } from "./number.ts";
 import {
 	NullableRollupDateSchema,
@@ -9,6 +10,7 @@ import {
 	RollupArraySchema,
 	RollupDateSchema,
 	RollupNumberSchema,
+	RollupSimpleSchema,
 	SingleRollupArraySchema,
 } from "./rollup.ts";
 import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
@@ -37,7 +39,76 @@ type RollupArrayType = RollupTypeOf<
 	NonNullableValues<Extract<TargetType["rollup"], { type: "array" }>>
 >;
 
+type SimpleRollupType = RollupTypeOf<
+	NonNullableValues<Extract<TargetType["rollup"], { type: "number" | "date" }>>
+>;
+
 describe("rollup", () => {
+	describe("RollupSimpleSchema", () => {
+		describe("type checking", () => {
+			it("should accept rollup property input type", () => {
+				const Schema = RollupSimpleSchema(
+					v.union([
+						v.object({
+							type: v.literal("number"),
+							number: v.unknown(),
+						}),
+						v.object({
+							type: v.literal("date"),
+							date: v.unknown(),
+						}),
+					]),
+				);
+
+				expectTypeOf<SimpleRollupType>().toExtend<
+					v.InferInput<typeof Schema>
+				>();
+			});
+
+			it("should return the correct output type for number schema", () => {
+				const Schema = RollupSimpleSchema(NumberSchema);
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<number>();
+			});
+
+			it("should return the correct output type for date schema", () => {
+				const Schema = RollupSimpleSchema(SingleDateSchema);
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<Date>();
+			});
+		});
+
+		describe("parsing", () => {
+			it("should parse rollup number property and extract number value", () => {
+				const result = v.parse(RollupSimpleSchema(NumberSchema), {
+					rollup: {
+						function: "sum",
+						type: "number",
+						number: 42,
+					},
+				} satisfies SimpleRollupType);
+
+				expect(result).toEqual(42);
+				expect(typeof result).toEqual("number");
+			});
+
+			it("should parse rollup date property and convert to Date object", () => {
+				const result = v.parse(RollupSimpleSchema(SingleDateSchema), {
+					rollup: {
+						function: "latest_date",
+						type: "date",
+						date: {
+							start: "2024-01-15T00:00:00.000Z",
+							end: null,
+							time_zone: null,
+						},
+					},
+				} satisfies SimpleRollupType);
+
+				expect(result instanceof Date).toBe(true);
+				expect(result.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+			});
+		});
+	});
+
 	describe("RollupNumberSchema", () => {
 		describe("type checking", () => {
 			it("should accept non-nullable rollup number property input type", () => {
