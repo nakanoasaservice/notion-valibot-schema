@@ -159,7 +159,8 @@ const tasks = v.parse(TaskListSchema, results);
 | **URL** | `UrlSchema` | `string` |
 | **Email** | `EmailSchema` | `string` |
 | **Phone** | `PhoneNumberSchema` | `string` |
-| **Files** | `FileSchema` | `string[]` (URLs) |
+| **Files** | `FileArraySchema` | `string[]` (URLs) |
+| **Files** (Single) | `SingleFileSchema` / `NullableSingleFileSchema` | `string` (URL) / `string \| null` |
 | **Created/Edited By** | `CreatedBySchema` / `LastEditedBySchema` | `string` (User ID) |
 | **Created/Edited Time**| `CreatedTimeSchema` / `LastEditedTimeSchema` | `Date` |
 | **People** | `PeopleSchema` / `PeopleIdSchema` | `Array<{ id: string; object: "user" \| "bot" \| "group"; name: string \| null }>` / `string[]` |
