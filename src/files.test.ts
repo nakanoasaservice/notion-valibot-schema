@@ -2,25 +2,25 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import {
-	FileArraySchema,
+	FileSchema,
 	NullableSingleFileSchema,
 	SingleFileSchema,
-} from "./file.ts";
+} from "./files.ts";
 import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"files">;
 
 describe("files", () => {
-	describe("FileArraySchema", () => {
+	describe("FileSchema", () => {
 		describe("type checking", () => {
 			it("should accept files property input type", () => {
 				expectTypeOf<TargetType>().toExtend<
-					v.InferInput<typeof FileArraySchema>
+					v.InferInput<typeof FileSchema>
 				>();
 			});
 
 			it("should have correct output type", () => {
-				expectTypeOf<v.InferOutput<typeof FileArraySchema>>().toEqualTypeOf<
+				expectTypeOf<v.InferOutput<typeof FileSchema>>().toEqualTypeOf<
 					string[]
 				>();
 			});
@@ -28,7 +28,7 @@ describe("files", () => {
 
 		describe("parsing", () => {
 			it("should parse files property and extract url values", () => {
-				const result = v.parse(FileArraySchema, {
+				const result = v.parse(FileSchema, {
 					files: [
 						{
 							name: "file1.pdf",
@@ -55,7 +55,7 @@ describe("files", () => {
 			});
 
 			it("should parse empty files array", () => {
-				const result = v.parse(FileArraySchema, {
+				const result = v.parse(FileSchema, {
 					files: [],
 				} satisfies TargetType);
 
