@@ -3,6 +3,78 @@ import * as v from "valibot";
 import { DateObjectSchema } from "./date";
 
 /**
+ * Schema factory to extract the `rollup` property with a simple (non-array) type from a Notion page property.
+ *
+ * This is a generic schema factory that accepts another schema as a parameter,
+ * allowing you to combine it with the number and date schemas in this library
+ * to extract typed rollup results (e.g. number or date rollups).
+ *
+ * **Input:**
+ * ```
+ * {
+ *   rollup: InferInput<S>; // e.g. { number: number } or { date: { start: string; ... } }
+ * }
+ * ```
+ *
+ * **Output:** The output type depends on the schema passed as a parameter.
+ * For example, if `NumberSchema` is passed, the output will be `number`.
+ *
+ * @param schema - A schema that validates the rollup value.
+ *                  Must accept an object with a `number` or `date` field.
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { RollupSimpleSchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     Sum: RollupSimpleSchema(NumberSchema),
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.Sum: number
+ * ```
+ *
+ * @example
+ * ```ts
+ * import * as v from "valibot";
+ * import { RollupSimpleSchema, SingleDateSchema } from "@nakanoaas/notion-valibot-utils";
+ *
+ * const PageSchema = v.object({
+ *   id: v.string(),
+ *   properties: v.object({
+ *     LatestDate: RollupSimpleSchema(SingleDateSchema),
+ *   }),
+ * });
+ *
+ * const page = await notion.pages.retrieve({ page_id: "..." });
+ * const parsed = v.parse(PageSchema, page);
+ * // parsed.properties.LatestDate: Date
+ * ```
+ */
+export function RollupSimpleSchema<
+	S extends v.GenericSchema<{ number: unknown } | { date: unknown }, unknown>,
+>(
+	schema: S,
+): v.GenericSchema<
+	{
+		rollup: v.InferInput<S>;
+	},
+	v.InferOutput<S>
+> {
+	return v.pipe(
+		v.object({
+			rollup: schema,
+		}),
+		v.transform((v) => v.rollup),
+	) as v.GenericSchema<{ rollup: v.InferInput<S> }, v.InferOutput<S>>;
+}
+
+/**
  * Schema to extract the `rollup` property with number type from a Notion page property or `null`.
  *
  * **Input:**
@@ -33,6 +105,8 @@ import { DateObjectSchema } from "./date";
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.Sum: number | null
  * ```
+ *
+ * @deprecated Use {@link RollupSimpleSchema} with `NullableNumberSchema` instead: `RollupSimpleSchema(NullableNumberSchema)`.
  */
 export const NullableRollupNumberSchema = v.pipe(
 	v.object({
@@ -75,6 +149,8 @@ export const NullableRollupNumberSchema = v.pipe(
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.Sum: number
  * ```
+ *
+ * @deprecated Use {@link RollupSimpleSchema} with `NumberSchema` instead: `RollupSimpleSchema(NumberSchema)`.
  */
 export const RollupNumberSchema = v.pipe(
 	v.object({
@@ -121,6 +197,8 @@ export const RollupNumberSchema = v.pipe(
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.LatestDate: Date | null
  * ```
+ *
+ * @deprecated Use {@link RollupSimpleSchema} with `NullableSingleDateSchema` instead: `RollupSimpleSchema(NullableSingleDateSchema)`.
  */
 export const NullableRollupDateSchema = v.pipe(
 	v.object({
@@ -167,6 +245,8 @@ export const NullableRollupDateSchema = v.pipe(
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.LatestDate: Date
  * ```
+ *
+ * @deprecated Use {@link RollupSimpleSchema} with `SingleDateSchema` instead: `RollupSimpleSchema(SingleDateSchema)`.
  */
 export const RollupDateSchema = v.pipe(
 	v.object({

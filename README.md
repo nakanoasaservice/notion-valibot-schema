@@ -153,13 +153,14 @@ const tasks = v.parse(TaskListSchema, results);
 | **Date** (Full) | `FullDateSchema` / `NullableFullDateSchema` | `{ start: Date; end: Date \| null; time_zone: string \| null }` / `{ start: Date; end: Date \| null; time_zone: string \| null } \| null` |
 | **Relation** | `RelationSchema` | `string[]` (Page IDs) |
 | **Relation** (Single) | `SingleRelationSchema` | `string` (Page ID) |
+| **Rollup** (Simple) | `RollupSimpleSchema(schema)` | `Inferred<schema>` |
 | **Rollup** (Array) | `RollupArraySchema(schema)` | `Inferred<schema>[]` |
 | **Rollup** (Single) | `SingleRollupArraySchema(schema)` | `Inferred<schema>` |
 | **Rollup** (Single, Nullable) | `NullableSingleRollupArraySchema(schema)` | `Inferred<schema> \| null` |
 | **URL** | `UrlSchema` | `string` |
 | **Email** | `EmailSchema` | `string` |
 | **Phone** | `PhoneNumberSchema` | `string` |
-| **Files** | `FileArraySchema` | `string[]` (URLs) |
+| **Files** | `FileSchema` | `string[]` (URLs) |
 | **Files** (Single) | `SingleFileSchema` / `NullableSingleFileSchema` | `string` (URL) / `string \| null` |
 | **Created/Edited By** | `CreatedBySchema` / `LastEditedBySchema` | `string` (User ID) |
 | **Created/Edited Time**| `CreatedTimeSchema` / `LastEditedTimeSchema` | `Date` |
@@ -187,19 +188,20 @@ Rollups are powerful but complex. We provide helpers for common rollup types.
 
 ```ts
 import { 
-  RollupNumberSchema, 
-  RollupDateSchema, 
+  RollupSimpleSchema,
   RollupArraySchema,
   SingleRollupArraySchema,
   NullableSingleRollupArraySchema,
+  NumberSchema,
+  SingleDateSchema,
 } from "@nakanoaas/notion-valibot-schema";
 
 const MySchema = v.object({
   // Sum/Average rollup (returns number)
-  TotalCost: RollupNumberSchema,
+  TotalCost: RollupSimpleSchema(NumberSchema),
   
   // Date rollup (returns Date)
-  LatestMeeting: RollupDateSchema,
+  LatestMeeting: RollupSimpleSchema(SingleDateSchema),
   
   // Array rollup (e.g., pulling tags from related items)
   AllTags: RollupArraySchema(v.string()),
