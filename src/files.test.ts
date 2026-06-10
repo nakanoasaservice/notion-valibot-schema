@@ -14,9 +14,7 @@ describe("files", () => {
 	describe("FileSchema", () => {
 		describe("type checking", () => {
 			it("should accept files property input type", () => {
-				expectTypeOf<TargetType>().toExtend<
-					v.InferInput<typeof FileSchema>
-				>();
+				expectTypeOf<TargetType>().toExtend<v.InferInput<typeof FileSchema>>();
 			});
 
 			it("should have correct output type", () => {
