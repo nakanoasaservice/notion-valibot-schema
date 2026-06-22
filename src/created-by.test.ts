@@ -116,7 +116,6 @@ describe("created-by", () => {
 
 			it("should have correct output type", () => {
 				const Schema = CreatedBySchema(UserSchema);
-				type SchemaType = v.InferOutput<typeof Schema>;
 
 				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<{
 					id: string;

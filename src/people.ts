@@ -367,7 +367,7 @@ export function PeopleSchema<S extends v.GenericSchema<object, unknown>>(
 			people: v.array(schema),
 		}),
 		v.transform((v) => v.people),
-	) as v.GenericSchema<{ people: v.InferInput<S>[] }, v.InferOutput<S>[]>;
+	);
 }
 
 /**
@@ -411,7 +411,7 @@ export function SinglePeopleSchema<S extends v.GenericSchema<object, unknown>>(
 			people: v.tuple([schema]),
 		}),
 		v.transform((v) => v.people[0]),
-	) as v.GenericSchema<{ people: [v.InferInput<S>] }, v.InferOutput<S>>;
+	);
 }
 
 /**
@@ -460,5 +460,5 @@ export function NullableSinglePeopleSchema<
 			people: v.array(schema),
 		}),
 		v.transform((v) => v.people[0] ?? null),
-	) as v.GenericSchema<{ people: v.InferInput<S>[] }, v.InferOutput<S> | null>;
+	);
 }
