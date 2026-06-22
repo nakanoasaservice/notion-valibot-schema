@@ -40,7 +40,8 @@ With `@nakanoaas/notion-valibot-schema`, you get this:
 {
   Status: "In Progress",
   Tags: ["Urgent", "Work"],
-  DueDate: new Date("2023-12-25")
+  DueDate: new Date("2023-12-25"),
+  Assignee: ["user-id-1", "user-id-2"]
 }
 ```
 
@@ -87,6 +88,7 @@ import {
   MultiSelectSchema,
   NullableSingleDateSchema,
   CheckboxSchema,
+  PeopleIdSchema,
 } from "@nakanoaas/notion-valibot-schema";
 
 // 1. Define your schema based on your Data Source properties
@@ -110,6 +112,9 @@ const TaskPageSchema = v.object({
     
     // Map "IsUrgent" -> boolean
     IsUrgent: CheckboxSchema,
+
+    // Map "Assignee" -> string[] (User IDs)
+    Assignee: PeopleIdSchema,
   }),
 });
 
@@ -123,6 +128,7 @@ const task = v.parse(TaskPageSchema, page);
 console.log(task.properties.Name);       // "Buy Milk" (string)
 console.log(task.properties.DueDate);    // Date object or null
 console.log(task.properties.Tags);       // ["Personal", "Shopping"] (string[])
+console.log(task.properties.Assignee);   // ["user-id-1", "user-id-2"] (string[])
 ```
 
 ### Handling Lists (Query Results)
