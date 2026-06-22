@@ -163,12 +163,15 @@ const tasks = v.parse(TaskListSchema, results);
 | **Phone** | `PhoneNumberSchema` | `string` |
 | **Files** | `FileSchema` | `string[]` (URLs) |
 | **Files** (Single) | `SingleFileSchema` / `NullableSingleFileSchema` | `string` (URL) / `string \| null` |
-| **Created/Edited By** | `CreatedBySchema` / `LastEditedBySchema` | `string` (User ID) |
+| **People** (building blocks) | `UserOrGroupIdSchema` / `UserOrGroupSchema` / `UserSchema` / `PersonSchema` / `BotSchema` | Building-block object types |
+| **People** (generic) | `PeopleSchema(schema)` / `SinglePeopleSchema(schema)` / `NullableSinglePeopleSchema(schema)` | `Inferred<schema>[]` / `Inferred<schema>` / `Inferred<schema> \| null` |
+| **People** (convenience) | `PeopleIdSchema` / `SinglePeopleIdSchema` / `NullableSinglePeopleIdSchema` | `string[]` / `string` / `string \| null` |
+| **Created/Edited By** (generic) | `CreatedBySchema(schema)` / `LastEditedBySchema(schema)` | `Inferred<schema>` |
+| **Created/Edited By** (convenience) | `CreatedByIdSchema` / `NullableCreatedByNameSchema` / `LastEditedByIdSchema` / `NullableLastEditedByNameSchema` | `string` / `string \| null` |
 | **Created/Edited Time**| `CreatedTimeSchema` / `LastEditedTimeSchema` | `Date` |
-| **People** | `PeopleSchema` / `PeopleIdSchema` | `Array<{ id: string; object: "user" \| "bot" \| "group"; name: string \| null }>` / `string[]` |
 | **Place** | `PlaceSchema` / `NullablePlaceSchema` | `{ lat: number; lon: number; name?: string \| null; address?: string \| null }` / `{ lat: number; lon: number; name?: string \| null; address?: string \| null } \| null` |
 | **Unique ID** | `UniqueIdNumberSchema` / `NullableUniqueIdSchema` | `number` / `{ prefix: string \| null; number: number \| null }` |
-| **Verification** | `VerificationSchema` / `NullableVerificationSchema` | `{ state: "unverified" \| "verified" \| "expired"; date: DateObject \| null; verified_by: Person \| null }` / `{ state: "unverified" \| "verified" \| "expired"; date: DateObject \| null; verified_by: Person \| null } \| null` |
+| **Verification** | `VerificationSchema` / `NullableVerificationSchema` | `{ state: "unverified" \| "verified" \| "expired"; date: DateObject \| null; verified_by: { id: string; object: "user" \| "group"; name: string \| null } \| null }` / same \| `null` |
 
 ### Advanced Schemas
 
@@ -233,6 +236,56 @@ const MySchema = v.object({
   OptionalPrimaryTag: NullableSingleRollupArraySchema(v.string()),
 });
 ```
+
+#### People & Created/Edited By
+
+People-related schemas are organized into **building blocks**, **generic factories**, and **convenience schemas**:
+
+- **Building blocks** (`UserOrGroupIdSchema`, `UserOrGroupSchema`, `UserSchema`, `PersonSchema`, `BotSchema`) validate individual user/group objects.
+- **Generic factories** (`PeopleSchema`, `SinglePeopleSchema`, `NullableSinglePeopleSchema`, `CreatedBySchema`, `LastEditedBySchema`) accept a building-block schema and extract the property value.
+- **Convenience schemas** (`PeopleIdSchema`, `CreatedByIdSchema`, etc.) require no generic parameter and extract common primitives like IDs or names.
+
+```ts
+import * as v from "valibot";
+import {
+  CreatedByIdSchema,
+  CreatedBySchema,
+  PeopleIdSchema,
+  PeopleSchema,
+  PersonSchema,
+  UserOrGroupSchema,
+  UserSchema,
+} from "@nakanoaas/notion-valibot-schema";
+
+const PageSchema = v.object({
+  id: v.string(),
+  properties: v.object({
+    // Full person details
+    People: PeopleSchema(PersonSchema),
+
+    // IDs only (no generic needed)
+    AssigneeIds: PeopleIdSchema,
+
+    // created_by ID extraction
+    CreatedById: CreatedByIdSchema,
+
+    // Custom user schema
+    CreatedBy: CreatedBySchema(UserSchema),
+  }),
+});
+```
+
+### Migration Guide (Breaking Changes)
+
+The following schemas changed from constants to generic factories:
+
+| Before | After |
+| :--- | :--- |
+| `PeopleSchema` | `PeopleSchema(UserOrGroupSchema)` or `PeopleSchema(PersonSchema)` |
+| `CreatedBySchema` | `CreatedBySchema(UserOrGroupSchema)` |
+| `LastEditedBySchema` | `LastEditedBySchema(UserOrGroupSchema)` |
+
+For ID-only extraction, use the convenience schemas instead: `PeopleIdSchema`, `CreatedByIdSchema`, `LastEditedByIdSchema`.
 
 ## License
 
