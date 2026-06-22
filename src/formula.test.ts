@@ -12,10 +12,9 @@ import {
 	FormulaSchema,
 	NullableBooleanFormulaSchema,
 	NullableStringFormulaSchema,
-	NumberFormulaSchema,
 	StringFormulaSchema,
 } from "./formula.ts";
-import { NullableNumberSchema } from "./number.ts";
+import { NullableNumberSchema, NumberSchema } from "./number.ts";
 import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"formula">;
@@ -108,7 +107,7 @@ describe("formula", () => {
 			});
 
 			it("should parse number formula and return number value", () => {
-				const Schema = FormulaSchema(NumberFormulaSchema);
+				const Schema = FormulaSchema(NumberSchema);
 
 				const result = v.parse(Schema, {
 					formula: {

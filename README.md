@@ -180,7 +180,7 @@ import * as v from "valibot";
 import {
   BooleanFormulaSchema,
   FormulaSchema,
-  NumberFormulaSchema,
+  NumberSchema,
   SingleDateSchema,
   StringFormulaSchema,
 } from "@nakanoaas/notion-valibot-schema";
@@ -189,7 +189,7 @@ const PageSchema = v.object({
   id: v.string(),
   properties: v.object({
     FormulaText: FormulaSchema(StringFormulaSchema),
-    FormulaNumber: FormulaSchema(NumberFormulaSchema),
+    FormulaNumber: FormulaSchema(NumberSchema),
     FormulaBoolean: FormulaSchema(BooleanFormulaSchema),
     FormulaDate: FormulaSchema(SingleDateSchema),
   }),

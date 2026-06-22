@@ -28,7 +28,8 @@ import * as v from "valibot";
  * For example, if `StringFormulaSchema` is passed, the output will be `string`.
  *
  * @param schema - A schema that validates the formula result object.
- *                  Use the pre-built `*FormulaSchema` helpers for string, number, and boolean,
+ *                  Use the pre-built `*FormulaSchema` helpers for string and boolean,
+ *                  `NumberSchema` / `NullableNumberSchema` for number,
  *                  or the date schemas from this library for date formulas.
  *
  * @example
@@ -37,7 +38,7 @@ import * as v from "valibot";
  * import {
  *   BooleanFormulaSchema,
  *   FormulaSchema,
- *   NumberFormulaSchema,
+ *   NumberSchema,
  *   SingleDateSchema,
  *   StringFormulaSchema,
  * } from "@nakanoaas/notion-valibot-schema";
@@ -46,7 +47,7 @@ import * as v from "valibot";
  *   id: v.string(),
  *   properties: v.object({
  *     FormulaText: FormulaSchema(StringFormulaSchema),
- *     FormulaNumber: FormulaSchema(NumberFormulaSchema),
+ *     FormulaNumber: FormulaSchema(NumberSchema),
  *     FormulaBoolean: FormulaSchema(BooleanFormulaSchema),
  *     FormulaDate: FormulaSchema(SingleDateSchema),
  *   }),
@@ -148,72 +149,6 @@ export const NullableStringFormulaSchema = v.pipe(
 		string: v.nullable(v.string()),
 	}),
 	v.transform((v) => v.string),
-);
-
-/**
- * Pre-built inner schema for a non-nullable number formula result.
- *
- * Validates `{ number: number }` and extracts the `number` value.
- * Use with {@link FormulaSchema} when the formula is guaranteed to return a number.
- *
- * **Input:** `{ number: number }`
- * **Output:** `number`
- *
- * @example
- * ```ts
- * import * as v from "valibot";
- * import { FormulaSchema, NumberFormulaSchema } from "@nakanoaas/notion-valibot-schema";
- *
- * const PageSchema = v.object({
- *   id: v.string(),
- *   properties: v.object({
- *     MyFormula: FormulaSchema(NumberFormulaSchema),
- *   }),
- * });
- *
- * const page = await notion.pages.retrieve({ page_id: "..." });
- * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.MyFormula: number
- * ```
- */
-export const NumberFormulaSchema = v.pipe(
-	v.object({
-		number: v.number(),
-	}),
-	v.transform((v) => v.number),
-);
-
-/**
- * Pre-built inner schema for a nullable number formula result.
- *
- * Validates `{ number: number | null }` and extracts the `number` value.
- * Use with {@link FormulaSchema} when the number formula result may be null.
- *
- * **Input:** `{ number: number | null }`
- * **Output:** `number | null`
- *
- * @example
- * ```ts
- * import * as v from "valibot";
- * import { FormulaSchema, NullableNumberFormulaSchema } from "@nakanoaas/notion-valibot-schema";
- *
- * const PageSchema = v.object({
- *   id: v.string(),
- *   properties: v.object({
- *     MyFormula: FormulaSchema(NullableNumberFormulaSchema),
- *   }),
- * });
- *
- * const page = await notion.pages.retrieve({ page_id: "..." });
- * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.MyFormula: number | null
- * ```
- */
-export const NullableNumberFormulaSchema = v.pipe(
-	v.object({
-		number: v.nullable(v.number()),
-	}),
-	v.transform((v) => v.number),
 );
 
 /**
