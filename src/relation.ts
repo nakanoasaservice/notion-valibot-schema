@@ -111,7 +111,7 @@ export const RelationSchema = v.pipe(
  */
 export const SingleRelationSchema = v.pipe(
 	v.object({
-		relation: v.tuple([InnerRelationSchema]),
+		relation: v.pipe(v.array(InnerRelationSchema), v.length(1)),
 	}),
 	v.transform((v) => v.relation[0].id),
 );
