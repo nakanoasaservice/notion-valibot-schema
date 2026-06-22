@@ -1,7 +1,21 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { FormulaSchema } from "./formula.ts";
+import {
+	FullDateSchema,
+	NullableFullDateSchema,
+	NullableSingleDateSchema,
+	SingleDateSchema,
+} from "./date.ts";
+import {
+	BooleanFormulaSchema,
+	FormulaSchema,
+	NullableBooleanFormulaSchema,
+	NullableStringFormulaSchema,
+	NumberFormulaSchema,
+	StringFormulaSchema,
+} from "./formula.ts";
+import { NullableNumberSchema } from "./number.ts";
 import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"formula">;
@@ -11,23 +25,11 @@ describe("formula", () => {
 		describe("type checking", () => {
 			it("should accept formula property input type", () => {
 				const Schema = FormulaSchema(
-					v.variant("type", [
-						v.object({
-							type: v.literal("string"),
-							string: v.any(),
-						}),
-						v.object({
-							type: v.literal("number"),
-							number: v.any(),
-						}),
-						v.object({
-							type: v.literal("boolean"),
-							boolean: v.any(),
-						}),
-						v.object({
-							type: v.literal("date"),
-							date: v.any(),
-						}),
+					v.union([
+						NullableBooleanFormulaSchema,
+						NullableFullDateSchema,
+						NullableNumberSchema,
+						NullableStringFormulaSchema,
 					]),
 				);
 
@@ -35,15 +37,7 @@ describe("formula", () => {
 			});
 
 			it("should have correct output type", () => {
-				const Schema = FormulaSchema(
-					v.pipe(
-						v.object({
-							type: v.literal("string"),
-							string: v.string(),
-						}),
-						v.transform((v) => v.string),
-					),
-				);
+				const Schema = FormulaSchema(StringFormulaSchema);
 
 				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<string>();
 			});
@@ -51,15 +45,7 @@ describe("formula", () => {
 
 		describe("parsing", () => {
 			it("should parse string formula and return string value", () => {
-				const Schema = FormulaSchema(
-					v.pipe(
-						v.object({
-							type: v.literal("string"),
-							string: v.string(),
-						}),
-						v.transform((v) => v.string),
-					),
-				);
+				const Schema = FormulaSchema(StringFormulaSchema);
 
 				const result = v.parse(Schema, {
 					formula: {
@@ -72,19 +58,7 @@ describe("formula", () => {
 			});
 
 			it("should parse date formula and return date object", () => {
-				const Schema = FormulaSchema(
-					v.pipe(
-						v.object({
-							type: v.literal("date"),
-							date: v.object({
-								start: v.string(),
-								end: v.nullable(v.string()),
-								time_zone: v.nullable(v.string()),
-							}),
-						}),
-						v.transform((v) => new Date(v.date.start)),
-					),
-				);
+				const Schema = FormulaSchema(FullDateSchema);
 
 				const result = v.parse(Schema, {
 					formula: {
@@ -97,23 +71,14 @@ describe("formula", () => {
 					},
 				} satisfies TargetType);
 
-				expect(result instanceof Date).toBe(true);
+				expect(result.start.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+				expect(result.end instanceof Date).toBe(true);
+				expect(result.end?.toISOString()).toBe("2024-01-20T00:00:00.000Z");
+				expect(result.time_zone).toBe(null);
 			});
 
 			it("should parse date formula with null end date", () => {
-				const Schema = FormulaSchema(
-					v.pipe(
-						v.object({
-							type: v.literal("date"),
-							date: v.object({
-								start: v.string(),
-								end: v.nullable(v.string()),
-								time_zone: v.nullable(v.string()),
-							}),
-						}),
-						v.transform((v) => new Date(v.date.start)),
-					),
-				);
+				const Schema = FormulaSchema(SingleDateSchema);
 
 				const result = v.parse(Schema, {
 					formula: {
@@ -131,21 +96,7 @@ describe("formula", () => {
 			});
 
 			it("should parse date formula with null date", () => {
-				const Schema = FormulaSchema(
-					v.pipe(
-						v.object({
-							type: v.literal("date"),
-							date: v.nullable(
-								v.object({
-									start: v.string(),
-									end: v.nullable(v.string()),
-									time_zone: v.nullable(v.string()),
-								}),
-							),
-						}),
-						v.transform((v) => (v.date ? new Date(v.date.start) : null)),
-					),
-				);
+				const Schema = FormulaSchema(NullableSingleDateSchema);
 				const result = v.parse(Schema, {
 					formula: {
 						type: "date",
@@ -157,15 +108,7 @@ describe("formula", () => {
 			});
 
 			it("should parse number formula and return number value", () => {
-				const Schema = FormulaSchema(
-					v.pipe(
-						v.object({
-							type: v.literal("number"),
-							number: v.number(),
-						}),
-						v.transform((v) => v.number),
-					),
-				);
+				const Schema = FormulaSchema(NumberFormulaSchema);
 
 				const result = v.parse(Schema, {
 					formula: {
@@ -179,15 +122,7 @@ describe("formula", () => {
 			});
 
 			it("should parse boolean formula and return boolean value", () => {
-				const Schema = FormulaSchema(
-					v.pipe(
-						v.object({
-							type: v.literal("boolean"),
-							boolean: v.boolean(),
-						}),
-						v.transform((v) => v.boolean),
-					),
-				);
+				const Schema = FormulaSchema(BooleanFormulaSchema);
 
 				const result = v.parse(Schema, {
 					formula: {

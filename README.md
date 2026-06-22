@@ -157,6 +157,7 @@ const tasks = v.parse(TaskListSchema, results);
 | **Rollup** (Array) | `RollupArraySchema(schema)` | `Inferred<schema>[]` |
 | **Rollup** (Single) | `SingleRollupArraySchema(schema)` | `Inferred<schema>` |
 | **Rollup** (Single, Nullable) | `NullableSingleRollupArraySchema(schema)` | `Inferred<schema> \| null` |
+| **Formula** | `FormulaSchema(schema)` | `Inferred<schema>` |
 | **URL** | `UrlSchema` | `string` |
 | **Email** | `EmailSchema` | `string` |
 | **Phone** | `PhoneNumberSchema` | `string` |
@@ -172,15 +173,34 @@ const tasks = v.parse(TaskListSchema, results);
 ### Advanced Schemas
 
 #### Formulas
-Formulas in Notion can return different types (string, number, boolean, date). Use `FormulaSchema` with a specific inner schema to handle this.
+Formulas in Notion can return different types (string, number, boolean, date). Use `FormulaSchema` with the matching inner schema for each formula property.
 
 ```ts
-import { FormulaSchema, RichTextSchema } from "@nakanoaas/notion-valibot-schema";
+import * as v from "valibot";
+import {
+  BooleanFormulaSchema,
+  FormulaSchema,
+  NumberFormulaSchema,
+  SingleDateSchema,
+  StringFormulaSchema,
+} from "@nakanoaas/notion-valibot-schema";
 
-const MySchema = v.object({
-  // If your formula returns text
-  MyFormula: FormulaSchema(RichTextSchema), 
+const PageSchema = v.object({
+  id: v.string(),
+  properties: v.object({
+    FormulaText: FormulaSchema(StringFormulaSchema),
+    FormulaNumber: FormulaSchema(NumberFormulaSchema),
+    FormulaBoolean: FormulaSchema(BooleanFormulaSchema),
+    FormulaDate: FormulaSchema(SingleDateSchema),
+  }),
 });
+
+const page = await notion.pages.retrieve({ page_id: "..." });
+const parsed = v.parse(PageSchema, page);
+// parsed.properties.FormulaText: string
+// parsed.properties.FormulaNumber: number
+// parsed.properties.FormulaBoolean: boolean
+// parsed.properties.FormulaDate: Date
 ```
 
 #### Rollups
