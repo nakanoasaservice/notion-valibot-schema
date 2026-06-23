@@ -27,13 +27,13 @@ import { UserOrGroupIdSchema, UserOrGroupSchema } from "./people";
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     CreatedById: CreatedByIdSchema,
+ *     "Created By": CreatedByIdSchema,
  *   }),
  * });
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.CreatedById: string
+ * // parsed.properties["Created By"]: string
  * ```
  */
 export const CreatedByIdSchema = v.pipe(
@@ -68,13 +68,13 @@ export const CreatedByIdSchema = v.pipe(
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     CreatedByName: NullableCreatedByNameSchema,
+ *     "Created By": NullableCreatedByNameSchema,
  *   }),
  * });
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.CreatedByName: string | null
+ * // parsed.properties["Created By"]: string | null
  * ```
  */
 export const NullableCreatedByNameSchema = v.pipe(
@@ -118,13 +118,13 @@ export const NullableCreatedByNameSchema = v.pipe(
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     CreatedBy: CreatedBySchema(UserOrGroupSchema),
+ *     "Created By": CreatedBySchema(UserOrGroupSchema),
  *   }),
  * });
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.CreatedBy: { id: string; object: "user" | "group"; name: string | null }
+ * // parsed.properties["Created By"]: { id: string; object: "user" | "group"; name: string | null }
  * ```
  */
 export function CreatedBySchema<

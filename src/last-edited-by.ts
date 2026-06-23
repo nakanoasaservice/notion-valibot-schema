@@ -36,13 +36,13 @@ import { UserOrGroupIdSchema, UserOrGroupSchema } from "./people";
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     LastEditedBy: LastEditedBySchema(UserOrGroupSchema),
+ *     "Last Edited By": LastEditedBySchema(UserOrGroupSchema),
  *   }),
  * });
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.LastEditedBy: { id: string; object: "user" | "group"; name: string | null }
+ * // parsed.properties["Last Edited By"]: { id: string; object: "user" | "group"; name: string | null }
  * ```
  */
 export function LastEditedBySchema<
@@ -83,13 +83,13 @@ export function LastEditedBySchema<
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     LastEditedByName: NullableLastEditedByNameSchema,
+ *     "Last Edited By": NullableLastEditedByNameSchema,
  *   }),
  * });
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.LastEditedByName: string | null
+ * // parsed.properties["Last Edited By"]: string | null
  * ```
  */
 export const NullableLastEditedByNameSchema = v.pipe(
@@ -122,13 +122,13 @@ export const NullableLastEditedByNameSchema = v.pipe(
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     LastEditedById: LastEditedByIdSchema,
+ *     "Last Edited By": LastEditedByIdSchema,
  *   }),
  * });
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.LastEditedById: string
+ * // parsed.properties["Last Edited By"]: string
  * ```
  */
 export const LastEditedByIdSchema = v.pipe(
