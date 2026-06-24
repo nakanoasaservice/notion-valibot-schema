@@ -3,32 +3,32 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 import {
-	NullableUniqueIdSchema,
-	PrefixedUniqueIdStringSchema,
-	UniqueIdNumberSchema,
+	FullUniqueIdSchema,
+	PrefixedUniqueIdSchema,
+	UniqueIdSchema,
 } from "./unique-id.ts";
 
 type TargetType = SelectNotionProperty<"unique_id">;
 
 describe("unique-id", () => {
-	describe("UniqueIdNumberSchema", () => {
+	describe("UniqueIdSchema", () => {
 		describe("type checking", () => {
 			it("should accept non-nullable unique_id number property input type", () => {
 				expectTypeOf<
 					NonNullableValues<TargetType> & { unique_id: { number: number } }
-				>().toExtend<v.InferInput<typeof UniqueIdNumberSchema>>();
+				>().toExtend<v.InferInput<typeof UniqueIdSchema>>();
 			});
 
 			it("should have correct output type", () => {
 				expectTypeOf<
-					v.InferOutput<typeof UniqueIdNumberSchema>
+					v.InferOutput<typeof UniqueIdSchema>
 				>().toEqualTypeOf<number>();
 			});
 		});
 
 		describe("parsing", () => {
 			it("should parse unique_id property and extract number value", () => {
-				const result = v.parse(UniqueIdNumberSchema, {
+				const result = v.parse(UniqueIdSchema, {
 					unique_id: {
 						prefix: "PREFIX",
 						number: 123,
@@ -41,7 +41,7 @@ describe("unique-id", () => {
 
 			it("should reject null for non-nullable unique_id number schema", () => {
 				expect(
-					v.safeParse(UniqueIdNumberSchema, {
+					v.safeParse(UniqueIdSchema, {
 						unique_id: {
 							prefix: null,
 							number: null,
@@ -52,26 +52,26 @@ describe("unique-id", () => {
 		});
 	});
 
-	describe("PrefixedUniqueIdStringSchema", () => {
+	describe("PrefixedUniqueIdSchema", () => {
 		describe("type checking", () => {
 			it("should accept non-nullable unique_id prefixed property input type", () => {
 				expectTypeOf<
 					NonNullableValues<TargetType> & {
 						unique_id: { prefix: string; number: number };
 					}
-				>().toExtend<v.InferInput<typeof PrefixedUniqueIdStringSchema>>();
+				>().toExtend<v.InferInput<typeof PrefixedUniqueIdSchema>>();
 			});
 
 			it("should have correct output type", () => {
 				expectTypeOf<
-					v.InferOutput<typeof PrefixedUniqueIdStringSchema>
+					v.InferOutput<typeof PrefixedUniqueIdSchema>
 				>().toEqualTypeOf<string>();
 			});
 		});
 
 		describe("parsing", () => {
 			it("should parse unique_id property and return prefixed string", () => {
-				const result = v.parse(PrefixedUniqueIdStringSchema, {
+				const result = v.parse(PrefixedUniqueIdSchema, {
 					unique_id: {
 						prefix: "PREFIX",
 						number: 123,
@@ -84,7 +84,7 @@ describe("unique-id", () => {
 
 			it("should reject null for non-nullable unique_id prefixed schema", () => {
 				expect(
-					v.safeParse(PrefixedUniqueIdStringSchema, {
+					v.safeParse(PrefixedUniqueIdSchema, {
 						unique_id: {
 							prefix: null,
 							number: null,
@@ -95,18 +95,16 @@ describe("unique-id", () => {
 		});
 	});
 
-	describe("NullableUniqueIdSchema", () => {
+	describe("FullUniqueIdSchema", () => {
 		describe("type checking", () => {
 			it("should accept unique_id property input type", () => {
 				expectTypeOf<TargetType>().toExtend<
-					v.InferInput<typeof NullableUniqueIdSchema>
+					v.InferInput<typeof FullUniqueIdSchema>
 				>();
 			});
 
 			it("should have correct output type", () => {
-				expectTypeOf<
-					v.InferOutput<typeof NullableUniqueIdSchema>
-				>().toEqualTypeOf<{
+				expectTypeOf<v.InferOutput<typeof FullUniqueIdSchema>>().toEqualTypeOf<{
 					prefix: string | null;
 					number: number | null;
 				}>();
@@ -115,7 +113,7 @@ describe("unique-id", () => {
 
 		describe("parsing", () => {
 			it("should parse unique_id property and return unique_id object", () => {
-				const result = v.parse(NullableUniqueIdSchema, {
+				const result = v.parse(FullUniqueIdSchema, {
 					unique_id: {
 						prefix: "PREFIX",
 						number: 123,
@@ -129,7 +127,7 @@ describe("unique-id", () => {
 			});
 
 			it("should parse unique_id property with null prefix and number", () => {
-				const result = v.parse(NullableUniqueIdSchema, {
+				const result = v.parse(FullUniqueIdSchema, {
 					unique_id: {
 						prefix: null,
 						number: null,
@@ -141,7 +139,7 @@ describe("unique-id", () => {
 			});
 
 			it("should parse unique_id property with prefix only", () => {
-				const result = v.parse(NullableUniqueIdSchema, {
+				const result = v.parse(FullUniqueIdSchema, {
 					unique_id: {
 						prefix: "PREFIX",
 						number: null,
@@ -153,7 +151,7 @@ describe("unique-id", () => {
 			});
 
 			it("should parse unique_id property with number only", () => {
-				const result = v.parse(NullableUniqueIdSchema, {
+				const result = v.parse(FullUniqueIdSchema, {
 					unique_id: {
 						prefix: null,
 						number: 456,

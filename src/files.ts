@@ -60,12 +60,12 @@ const InnerFileSchema = v.variant("type", [
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { FileSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { FilesSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     Files: FileSchema,
+ *     Files: FilesSchema,
  *   }),
  * });
  *
@@ -74,7 +74,7 @@ const InnerFileSchema = v.variant("type", [
  * // parsed.properties.Files: string[]
  * ```
  */
-export const FileSchema = v.pipe(
+export const FilesSchema = v.pipe(
 	v.object({
 		files: v.array(InnerFileSchema),
 	}),

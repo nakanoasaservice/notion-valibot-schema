@@ -2,10 +2,10 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import {
+	DateSchema,
 	FullDateSchema,
+	NullableDateSchema,
 	NullableFullDateSchema,
-	NullableSingleDateSchema,
-	SingleDateSchema,
 } from "./date.ts";
 import {
 	BooleanFormulaSchema,
@@ -77,7 +77,7 @@ describe("formula", () => {
 			});
 
 			it("should parse date formula with null end date", () => {
-				const Schema = FormulaSchema(SingleDateSchema);
+				const Schema = FormulaSchema(DateSchema);
 
 				const result = v.parse(Schema, {
 					formula: {
@@ -95,7 +95,7 @@ describe("formula", () => {
 			});
 
 			it("should parse date formula with null date", () => {
-				const Schema = FormulaSchema(NullableSingleDateSchema);
+				const Schema = FormulaSchema(NullableDateSchema);
 				const result = v.parse(Schema, {
 					formula: {
 						type: "date",

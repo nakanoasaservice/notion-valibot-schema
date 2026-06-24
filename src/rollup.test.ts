@@ -1,13 +1,13 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { SingleDateSchema } from "./date.ts";
+import { DateSchema } from "./date.ts";
 import { NumberSchema } from "./number.ts";
 import {
-	NullableSingleRollupArraySchema,
-	RollupArraySchema,
-	RollupSimpleSchema,
-	SingleRollupArraySchema,
+	NullableSingleRollupSchema,
+	RollupScalarSchema,
+	RollupSchema,
+	SingleRollupSchema,
 } from "./rollup.ts";
 import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
@@ -26,10 +26,10 @@ type SimpleRollupType = RollupTypeOf<
 >;
 
 describe("rollup", () => {
-	describe("RollupSimpleSchema", () => {
+	describe("RollupScalarSchema", () => {
 		describe("type checking", () => {
 			it("should accept rollup property input type", () => {
-				const Schema = RollupSimpleSchema(
+				const Schema = RollupScalarSchema(
 					v.union([
 						v.object({
 							type: v.literal("number"),
@@ -48,19 +48,19 @@ describe("rollup", () => {
 			});
 
 			it("should return the correct output type for number schema", () => {
-				const Schema = RollupSimpleSchema(NumberSchema);
+				const Schema = RollupScalarSchema(NumberSchema);
 				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<number>();
 			});
 
 			it("should return the correct output type for date schema", () => {
-				const Schema = RollupSimpleSchema(SingleDateSchema);
+				const Schema = RollupScalarSchema(DateSchema);
 				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<Date>();
 			});
 		});
 
 		describe("parsing", () => {
 			it("should parse rollup number property and extract number value", () => {
-				const result = v.parse(RollupSimpleSchema(NumberSchema), {
+				const result = v.parse(RollupScalarSchema(NumberSchema), {
 					rollup: {
 						function: "sum",
 						type: "number",
@@ -73,7 +73,7 @@ describe("rollup", () => {
 			});
 
 			it("should parse rollup date property and convert to Date object", () => {
-				const result = v.parse(RollupSimpleSchema(SingleDateSchema), {
+				const result = v.parse(RollupScalarSchema(DateSchema), {
 					rollup: {
 						function: "latest_date",
 						type: "date",
@@ -91,10 +91,10 @@ describe("rollup", () => {
 		});
 	});
 
-	describe("RollupArraySchema", () => {
+	describe("RollupSchema", () => {
 		describe("type checking", () => {
 			it("should accept rollup array property input type", () => {
-				const Schema = RollupArraySchema(
+				const Schema = RollupSchema(
 					v.object({
 						type: v.string(),
 					}),
@@ -104,7 +104,7 @@ describe("rollup", () => {
 			});
 
 			it("should have correct output type for string array", () => {
-				const Schema = RollupArraySchema(
+				const Schema = RollupSchema(
 					v.pipe(
 						v.object({
 							type: v.literal("number"),
@@ -118,7 +118,7 @@ describe("rollup", () => {
 			});
 
 			it("should have correct output type for number array", () => {
-				const Schema = RollupArraySchema(
+				const Schema = RollupSchema(
 					v.object({
 						type: v.literal("number"),
 						number: v.number(),
@@ -133,7 +133,7 @@ describe("rollup", () => {
 
 		describe("parsing", () => {
 			it("should parse rollup array property with string array and extract array", () => {
-				const Schema = RollupArraySchema(NumberSchema);
+				const Schema = RollupSchema(NumberSchema);
 				const result = v.parse(Schema, {
 					rollup: {
 						function: "sum",
@@ -152,7 +152,7 @@ describe("rollup", () => {
 			});
 
 			it("should parse empty rollup array", () => {
-				const Schema = RollupArraySchema(
+				const Schema = RollupSchema(
 					v.object({
 						number: v.number(),
 					}),
@@ -169,7 +169,7 @@ describe("rollup", () => {
 			});
 
 			it("should reject invalid values not matching schema", () => {
-				const Schema = RollupArraySchema(
+				const Schema = RollupSchema(
 					v.object({
 						string: v.string(),
 					}),
@@ -192,10 +192,10 @@ describe("rollup", () => {
 		});
 	});
 
-	describe("SingleRollupArraySchema", () => {
+	describe("SingleRollupSchema", () => {
 		describe("type checking", () => {
 			it("should accept rollup array property input type", () => {
-				const Schema = SingleRollupArraySchema(
+				const Schema = SingleRollupSchema(
 					v.object({
 						type: v.string(),
 					}),
@@ -210,14 +210,14 @@ describe("rollup", () => {
 			});
 
 			it("should have correct output type", () => {
-				const Schema = SingleRollupArraySchema(NumberSchema);
+				const Schema = SingleRollupSchema(NumberSchema);
 				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<number>();
 			});
 		});
 
 		describe("parsing", () => {
 			it("should parse rollup array with single element and extract that element", () => {
-				const Schema = SingleRollupArraySchema(NumberSchema);
+				const Schema = SingleRollupSchema(NumberSchema);
 				const result = v.parse(Schema, {
 					rollup: {
 						function: "sum",
@@ -236,7 +236,7 @@ describe("rollup", () => {
 			});
 
 			it("should reject empty rollup array", () => {
-				const Schema = SingleRollupArraySchema(NumberSchema);
+				const Schema = SingleRollupSchema(NumberSchema);
 				expect(
 					v.safeParse(Schema, {
 						rollup: {
@@ -249,7 +249,7 @@ describe("rollup", () => {
 			});
 
 			it("should reject invalid values not matching schema", () => {
-				const Schema = SingleRollupArraySchema(
+				const Schema = SingleRollupSchema(
 					v.object({
 						string: v.string(),
 					}),
@@ -272,10 +272,10 @@ describe("rollup", () => {
 		});
 	});
 
-	describe("NullableSingleRollupArraySchema", () => {
+	describe("NullableSingleRollupSchema", () => {
 		describe("type checking", () => {
 			it("should accept rollup array property input type", () => {
-				const Schema = NullableSingleRollupArraySchema(
+				const Schema = NullableSingleRollupSchema(
 					v.object({
 						type: v.string(),
 					}),
@@ -284,7 +284,7 @@ describe("rollup", () => {
 			});
 
 			it("should have correct output type", () => {
-				const Schema = NullableSingleRollupArraySchema(NumberSchema);
+				const Schema = NullableSingleRollupSchema(NumberSchema);
 				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<
 					number | null
 				>();
@@ -293,7 +293,7 @@ describe("rollup", () => {
 
 		describe("parsing", () => {
 			it("should parse rollup array with single element and extract that element", () => {
-				const Schema = NullableSingleRollupArraySchema(NumberSchema);
+				const Schema = NullableSingleRollupSchema(NumberSchema);
 				const result = v.parse(Schema, {
 					rollup: {
 						function: "sum",
@@ -312,7 +312,7 @@ describe("rollup", () => {
 			});
 
 			it("should parse empty rollup array and return null", () => {
-				const Schema = NullableSingleRollupArraySchema(NumberSchema);
+				const Schema = NullableSingleRollupSchema(NumberSchema);
 				expect(
 					v.parse(Schema, {
 						rollup: {
@@ -325,7 +325,7 @@ describe("rollup", () => {
 			});
 
 			it("should reject invalid values not matching schema", () => {
-				const Schema = NullableSingleRollupArraySchema(
+				const Schema = NullableSingleRollupSchema(
 					v.object({
 						string: v.string(),
 					}),
