@@ -176,7 +176,7 @@ const tasks = v.parse(TaskListSchema, results);
 | **Created/Edited By** (convenience) | `CreatedByIdSchema` / `NullableCreatedByNameSchema` / `LastEditedByIdSchema` / `NullableLastEditedByNameSchema` | `string` / `string \| null` |
 | **Created/Edited Time**| `CreatedTimeSchema` / `LastEditedTimeSchema` | `Date` |
 | **Place** | `PlaceSchema` / `NullablePlaceSchema` | `{ lat: number; lon: number; name?: string \| null; address?: string \| null }` / `{ lat: number; lon: number; name?: string \| null; address?: string \| null } \| null` |
-| **Unique ID** | `UniqueIdNumberSchema` / `NullableUniqueIdSchema` | `number` / `{ prefix: string \| null; number: number \| null }` |
+| **Unique ID** | `UniqueIdNumberSchema` / `PrefixedUniqueIdStringSchema` / `NullableUniqueIdSchema` | `number` / `string` (e.g. `"PREFIX-123"`) / `{ prefix: string \| null; number: number \| null }` |
 | **Verification** | `VerificationSchema` / `NullableVerificationSchema` | `{ state: "unverified" \| "verified" \| "expired"; date: DateObject \| null; verified_by: { id: string; object: "user"; name: string \| null; avatar_url: string \| null } \| null }` / same \| `null` |
 
 ### Advanced Schemas
