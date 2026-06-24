@@ -39,7 +39,7 @@ import * as v from "valibot";
  *   BooleanFormulaSchema,
  *   FormulaSchema,
  *   NumberSchema,
- *   SingleDateSchema,
+ *   DateSchema,
  *   StringFormulaSchema,
  * } from "@nakanoaas/notion-valibot-schema";
  *
@@ -49,7 +49,7 @@ import * as v from "valibot";
  *     FormulaText: FormulaSchema(StringFormulaSchema),
  *     FormulaNumber: FormulaSchema(NumberSchema),
  *     FormulaBoolean: FormulaSchema(BooleanFormulaSchema),
- *     FormulaDate: FormulaSchema(SingleDateSchema),
+ *     FormulaDate: FormulaSchema(DateSchema),
  *   }),
  * });
  *

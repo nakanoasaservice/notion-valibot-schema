@@ -23,12 +23,12 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RollupSimpleSchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RollupScalarSchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     Sum: RollupSimpleSchema(NumberSchema),
+ *     Sum: RollupScalarSchema(NumberSchema),
  *   }),
  * });
  *
@@ -40,12 +40,12 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RollupSimpleSchema, SingleDateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RollupScalarSchema, DateSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     LatestDate: RollupSimpleSchema(SingleDateSchema),
+ *     LatestDate: RollupScalarSchema(DateSchema),
  *   }),
  * });
  *
@@ -54,7 +54,7 @@ import * as v from "valibot";
  * // parsed.properties.LatestDate: Date
  * ```
  */
-export function RollupSimpleSchema<
+export function RollupScalarSchema<
 	S extends v.GenericSchema<{ number: unknown } | { date: unknown }, unknown>,
 >(
 	schema: S,
@@ -99,12 +99,12 @@ export function RollupSimpleSchema<
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RollupArraySchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RollupSchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     RollupNumbers: RollupArraySchema(NumberSchema),
+ *     RollupNumbers: RollupSchema(NumberSchema),
  *   }),
  * });
  *
@@ -116,7 +116,7 @@ export function RollupSimpleSchema<
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RollupArraySchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RollupSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * // Custom schema for relation rollup
  * const RelationItemSchema = v.object({
@@ -127,7 +127,7 @@ export function RollupSimpleSchema<
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     RollupRelations: RollupArraySchema(RelationItemSchema),
+ *     RollupRelations: RollupSchema(RelationItemSchema),
  *   }),
  * });
  *
@@ -136,7 +136,7 @@ export function RollupSimpleSchema<
  * // parsed.properties.RollupRelations: Array<{ type: "relation"; relation: Array<{ id: string }> }>
  * ```
  */
-export function RollupArraySchema<S extends v.GenericSchema<object, unknown>>(
+export function RollupSchema<S extends v.GenericSchema<object, unknown>>(
 	schema: S,
 ) {
 	return v.pipe(
@@ -153,7 +153,7 @@ export function RollupArraySchema<S extends v.GenericSchema<object, unknown>>(
 /**
  * Schema factory to extract the single element from the `rollup` property with array type.
  *
- * This is similar to {@link RollupArraySchema} but expects exactly one element in the array
+ * This is similar to {@link RollupSchema} but expects exactly one element in the array
  * and returns that element directly instead of an array. Useful when the rollup is configured
  * to return a single value (e.g., `show_unique_values` with one relation).
  *
@@ -176,12 +176,12 @@ export function RollupArraySchema<S extends v.GenericSchema<object, unknown>>(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { SingleRollupArraySchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { SingleRollupSchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     SingleRollupNumber: SingleRollupArraySchema(NumberSchema),
+ *     SingleRollupNumber: SingleRollupSchema(NumberSchema),
  *   }),
  * });
  *
@@ -193,7 +193,7 @@ export function RollupArraySchema<S extends v.GenericSchema<object, unknown>>(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { SingleRollupArraySchema } from "@nakanoaas/notion-valibot-utils";
+ * import { SingleRollupSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const RelationItemSchema = v.object({
  *   type: v.literal("relation"),
@@ -203,7 +203,7 @@ export function RollupArraySchema<S extends v.GenericSchema<object, unknown>>(
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     SingleRelation: SingleRollupArraySchema(RelationItemSchema),
+ *     SingleRelation: SingleRollupSchema(RelationItemSchema),
  *   }),
  * });
  *
@@ -212,7 +212,7 @@ export function RollupArraySchema<S extends v.GenericSchema<object, unknown>>(
  * // parsed.properties.SingleRelation: { type: "relation"; relation: Array<{ id: string }> }
  * ```
  */
-export function SingleRollupArraySchema<
+export function SingleRollupSchema<
 	S extends v.GenericSchema<object, unknown>,
 >(
 	schema: S,
@@ -239,7 +239,7 @@ export function SingleRollupArraySchema<
 /**
  * Schema factory to extract the single element from the `rollup` property with array type, or `null` when the array is empty.
  *
- * This is similar to {@link SingleRollupArraySchema} but accepts empty arrays and returns `null` instead of requiring
+ * This is similar to {@link SingleRollupSchema} but accepts empty arrays and returns `null` instead of requiring
  * exactly one element. Useful when the rollup may return zero or one value.
  *
  * **Input:**
@@ -261,12 +261,12 @@ export function SingleRollupArraySchema<
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableSingleRollupArraySchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableSingleRollupSchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     SingleRollupNumber: NullableSingleRollupArraySchema(NumberSchema),
+ *     SingleRollupNumber: NullableSingleRollupSchema(NumberSchema),
  *   }),
  * });
  *
@@ -278,7 +278,7 @@ export function SingleRollupArraySchema<
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableSingleRollupArraySchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableSingleRollupSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const RelationItemSchema = v.object({
  *   type: v.literal("relation"),
@@ -288,7 +288,7 @@ export function SingleRollupArraySchema<
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     SingleRelation: NullableSingleRollupArraySchema(RelationItemSchema),
+ *     SingleRelation: NullableSingleRollupSchema(RelationItemSchema),
  *   }),
  * });
  *
@@ -297,7 +297,7 @@ export function SingleRollupArraySchema<
  * // parsed.properties.SingleRelation: { type: "relation"; relation: Array<{ id: string }> } | null
  * ```
  */
-export function NullableSingleRollupArraySchema<
+export function NullableSingleRollupSchema<
 	S extends v.GenericSchema<object, unknown>,
 >(
 	schema: S,

@@ -96,12 +96,12 @@ const DateRangeObjectSchema = v.object({
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableSingleDateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableDateSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     Date: NullableSingleDateSchema,
+ *     Date: NullableDateSchema,
  *   }),
  * });
  *
@@ -110,7 +110,7 @@ const DateRangeObjectSchema = v.object({
  * // parsed.properties.Date: Date | null
  * ```
  */
-export const NullableSingleDateSchema = v.pipe(
+export const NullableDateSchema = v.pipe(
 	v.object({
 		date: v.nullable(DateObjectSchema),
 	}),
@@ -136,12 +136,12 @@ export const NullableSingleDateSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { SingleDateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { DateSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     Date: SingleDateSchema,
+ *     Date: DateSchema,
  *   }),
  * });
  *
@@ -150,7 +150,7 @@ export const NullableSingleDateSchema = v.pipe(
  * // parsed.properties.Date: Date
  * ```
  */
-export const SingleDateSchema = v.pipe(
+export const DateSchema = v.pipe(
 	v.object({
 		date: DateObjectSchema,
 	}),
@@ -184,12 +184,12 @@ export const SingleDateSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableRangeDateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableDateRangeSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     DateRange: NullableRangeDateSchema,
+ *     DateRange: NullableDateRangeSchema,
  *   }),
  * });
  *
@@ -198,7 +198,7 @@ export const SingleDateSchema = v.pipe(
  * // parsed.properties.DateRange: { start: Date; end: Date; time_zone: string | null } | null
  * ```
  */
-export const NullableRangeDateSchema = v.pipe(
+export const NullableDateRangeSchema = v.pipe(
 	v.object({
 		date: v.nullable(DateRangeObjectSchema),
 	}),
@@ -240,12 +240,12 @@ export const NullableRangeDateSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RangeDateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { DateRangeSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     DateRange: RangeDateSchema,
+ *     DateRange: DateRangeSchema,
  *   }),
  * });
  *
@@ -254,7 +254,7 @@ export const NullableRangeDateSchema = v.pipe(
  * // parsed.properties.DateRange: { start: Date; end: Date; time_zone: string | null }
  * ```
  */
-export const RangeDateSchema = v.pipe(
+export const DateRangeSchema = v.pipe(
 	v.object({
 		date: DateRangeObjectSchema,
 	}),

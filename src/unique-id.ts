@@ -17,12 +17,12 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { UniqueIdNumberSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { UniqueIdSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     ID: UniqueIdNumberSchema,
+ *     ID: UniqueIdSchema,
  *   }),
  * });
  *
@@ -31,7 +31,7 @@ import * as v from "valibot";
  * // parsed.properties.ID: number
  * ```
  */
-export const UniqueIdNumberSchema = v.pipe(
+export const UniqueIdSchema = v.pipe(
 	v.object({
 		unique_id: v.object({
 			number: v.number(),
@@ -58,12 +58,12 @@ export const UniqueIdNumberSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { PrefixedUniqueIdStringSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { PrefixedUniqueIdSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     ID: PrefixedUniqueIdStringSchema,
+ *     ID: PrefixedUniqueIdSchema,
  *   }),
  * });
  *
@@ -72,7 +72,7 @@ export const UniqueIdNumberSchema = v.pipe(
  * // parsed.properties.ID: string (e.g. "PREFIX-123")
  * ```
  */
-export const PrefixedUniqueIdStringSchema = v.pipe(
+export const PrefixedUniqueIdSchema = v.pipe(
 	v.object({
 		unique_id: v.object({
 			prefix: v.string(),
@@ -106,12 +106,12 @@ export const PrefixedUniqueIdStringSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableUniqueIdSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { FullUniqueIdSchema } from "@nakanoaas/notion-valibot-utils";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     ID: NullableUniqueIdSchema,
+ *     ID: FullUniqueIdSchema,
  *   }),
  * });
  *
@@ -120,7 +120,7 @@ export const PrefixedUniqueIdStringSchema = v.pipe(
  * // parsed.properties.ID: { prefix: string | null; number: number | null }
  * ```
  */
-export const NullableUniqueIdSchema = v.pipe(
+export const FullUniqueIdSchema = v.pipe(
 	v.object({
 		unique_id: v.object({
 			prefix: v.nullable(v.string()),
