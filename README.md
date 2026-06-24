@@ -86,7 +86,7 @@ import {
   RichTextSchema,
   StatusSchema,
   MultiSelectSchema,
-  NullableSingleDateSchema,
+  NullableDateSchema,
   CheckboxSchema,
   PeopleIdSchema,
 } from "@nakanoaas/notion-valibot-schema";
@@ -108,7 +108,7 @@ const TaskPageSchema = v.object({
     Tags: MultiSelectSchema(v.string()),
     
     // Map "Due Date" -> Date | null
-    DueDate: NullableSingleDateSchema,
+    DueDate: NullableDateSchema,
     
     // Map "IsUrgent" -> boolean
     IsUrgent: CheckboxSchema,
@@ -146,42 +146,58 @@ const tasks = v.parse(TaskListSchema, results);
 
 > 📚 **For complete API documentation, including all available schemas and types, please visit the [JSR Documentation](https://jsr.io/@nakanoaas/notion-valibot-schema/doc).**
 
-| Notion Property | Schema | Transformed Output (Type) |
+| Notion Property | Schema | Output Type |
 | :--- | :--- | :--- |
-| **Text** / Title | `TitleSchema` / `RichTextSchema` / `NullableTitleSchema` / `NullableRichTextSchema` | `string` / `string \| null` |
+| **Text** / Title | `TitleSchema` / `NullableTitleSchema` | `string` / `string \| null` |
+| **Rich Text** | `RichTextSchema` / `NullableRichTextSchema` | `string` / `string \| null` |
 | **Number** | `NumberSchema` / `NullableNumberSchema` | `number` / `number \| null` |
 | **Checkbox** | `CheckboxSchema` | `boolean` |
-| **Select** | `SelectSchema(schema)` | `Inferred<schema>` |
+| **Select** | `SelectSchema(schema)` / `NullableSelectSchema(schema)` | `Inferred<schema>` / `Inferred<schema> \| null` |
 | **Multi-Select** | `MultiSelectSchema(schema)` | `Inferred<schema>[]` |
-| **Status** | `StatusSchema(schema)` | `Inferred<schema>` |
-| **Date** (Single) | `SingleDateSchema` / `NullableSingleDateSchema` | `Date` / `Date \| null` |
-| **Date** (Range) | `RangeDateSchema` / `NullableRangeDateSchema` | `{ start: Date; end: Date; time_zone: string \| null }` / `{ start: Date; end: Date; time_zone: string \| null } \| null` |
-| **Date** (Full) | `FullDateSchema` / `NullableFullDateSchema` | `{ start: Date; end: Date \| null; time_zone: string \| null }` / `{ start: Date; end: Date \| null; time_zone: string \| null } \| null` |
-| **Relation** | `RelationSchema` | `string[]` (Page IDs) |
-| **Relation** (Single) | `SingleRelationSchema` | `string` (Page ID) |
-| **Rollup** (Simple) | `RollupSimpleSchema(schema)` | `Inferred<schema>` |
-| **Rollup** (Array) | `RollupArraySchema(schema)` | `Inferred<schema>[]` |
-| **Rollup** (Single) | `SingleRollupArraySchema(schema)` | `Inferred<schema>` |
-| **Rollup** (Single, Nullable) | `NullableSingleRollupArraySchema(schema)` | `Inferred<schema> \| null` |
+| **Status** | `StatusSchema(schema)` / `NullableStatusSchema(schema)` | `Inferred<schema>` / `Inferred<schema> \| null` |
+| **Date** | `DateSchema` / `NullableDateSchema` | `Date` / `Date \| null` |
+| **Date** (full object) | `FullDateSchema` / `NullableFullDateSchema` | `{ start: Date; end: Date \| null; time_zone: string \| null }` / same `\| null` |
+| **Date** (range, end required) | `DateRangeSchema` / `NullableDateRangeSchema` | `{ start: Date; end: Date; time_zone: string \| null }` / same `\| null` |
+| **Relation** | `RelationSchema` / `SingleRelationSchema` / `NullableSingleRelationSchema` | `string[]` / `string` / `string \| null` |
+| **Rollup** (array) | `RollupSchema(schema)` | `Inferred<schema>[]` |
+| **Rollup** (array, single) | `SingleRollupSchema(schema)` / `NullableSingleRollupSchema(schema)` | `Inferred<schema>` / `Inferred<schema> \| null` |
+| **Rollup** (scalar) | `RollupScalarSchema(schema)` | `Inferred<schema>` |
 | **Formula** | `FormulaSchema(schema)` | `Inferred<schema>` |
-| **URL** | `UrlSchema` | `string` |
-| **Email** | `EmailSchema` | `string` |
-| **Phone** | `PhoneNumberSchema` | `string` |
-| **Files** | `FileSchema` | `string[]` (URLs) |
-| **Files** (Single) | `SingleFileSchema` / `NullableSingleFileSchema` | `string` (URL) / `string \| null` |
+| **URL** | `UrlSchema` / `NullableUrlSchema` | `string` / `string \| null` |
+| **Email** | `EmailSchema` / `NullableEmailSchema` | `string` / `string \| null` |
+| **Phone** | `PhoneNumberSchema` / `NullablePhoneNumberSchema` | `string` / `string \| null` |
+| **Files** | `FilesSchema` / `SingleFileSchema` / `NullableSingleFileSchema` | `string[]` / `string` / `string \| null` |
 | **People** (building blocks) | `UserOrGroupIdSchema` / `UserOrGroupSchema` / `UserSchema` / `PersonSchema` / `BotSchema` | Building-block object types |
 | **People** (generic) | `PeopleSchema(schema)` / `SinglePeopleSchema(schema)` / `NullableSinglePeopleSchema(schema)` | `Inferred<schema>[]` / `Inferred<schema>` / `Inferred<schema> \| null` |
-| **People** (convenience) | `PeopleIdSchema` / `SinglePeopleIdSchema` / `NullableSinglePeopleIdSchema` | `string[]` / `string` / `string \| null` |
-| **Created/Edited By** (generic) | `CreatedBySchema(schema)` / `LastEditedBySchema(schema)` | `Inferred<schema>` |
-| **Created/Edited By** (convenience) | `CreatedByIdSchema` / `NullableCreatedByNameSchema` / `LastEditedByIdSchema` / `NullableLastEditedByNameSchema` | `string` / `string \| null` |
-| **Created/Edited Time**| `CreatedTimeSchema` / `LastEditedTimeSchema` | `Date` |
-| **Place** | `PlaceSchema` / `NullablePlaceSchema` | `{ lat: number; lon: number; name?: string \| null; address?: string \| null }` / `{ lat: number; lon: number; name?: string \| null; address?: string \| null } \| null` |
-| **Unique ID** | `UniqueIdNumberSchema` / `PrefixedUniqueIdStringSchema` / `NullableUniqueIdSchema` | `number` / `string` (e.g. `"PREFIX-123"`) / `{ prefix: string \| null; number: number \| null }` |
-| **Verification** | `VerificationSchema` / `NullableVerificationSchema` | `{ state: "unverified" \| "verified" \| "expired"; date: DateObject \| null; verified_by: { id: string; object: "user"; name: string \| null; avatar_url: string \| null } \| null }` / same \| `null` |
+| **People** (IDs only) | `PeopleIdSchema` / `SinglePeopleIdSchema` / `NullableSinglePeopleIdSchema` | `string[]` / `string` / `string \| null` |
+| **Created By** | `CreatedBySchema(schema)` / `CreatedByIdSchema` / `NullableCreatedByNameSchema` | `Inferred<schema>` / `string` / `string \| null` |
+| **Last Edited By** | `LastEditedBySchema(schema)` / `LastEditedByIdSchema` / `NullableLastEditedByNameSchema` | `Inferred<schema>` / `string` / `string \| null` |
+| **Created / Edited Time** | `CreatedTimeSchema` / `LastEditedTimeSchema` | `Date` |
+| **Place** | `PlaceSchema` / `NullablePlaceSchema` | `{ lat: number; lon: number; name?: string \| null; address?: string \| null }` / same `\| null` |
+| **Unique ID** | `UniqueIdSchema` / `PrefixedUniqueIdSchema` / `FullUniqueIdSchema` | `number` / `string` (e.g. `"PREFIX-123"`) / `{ prefix: string \| null; number: number \| null }` |
+| **Verification** | `VerificationSchema` / `NullableVerificationSchema` | `{ state: "unverified" \| "verified" \| "expired"; date: DateObject \| null; verified_by: UserObject \| null }` / same `\| null` |
 
 ### Advanced Schemas
 
+#### Date variants
+
+The Date property has three levels of detail depending on how much you need:
+
+```ts
+import {
+  DateSchema,          // start only → Date
+  NullableDateSchema,  // start only → Date | null
+
+  FullDateSchema,          // start + optional end → { start: Date; end: Date | null; time_zone }
+  NullableFullDateSchema,  // → same | null
+
+  DateRangeSchema,          // start + required end → { start: Date; end: Date; time_zone }
+  NullableDateRangeSchema,  // → same | null
+} from "@nakanoaas/notion-valibot-schema";
+```
+
 #### Formulas
+
 Formulas in Notion can return different types (string, number, boolean, date). Use `FormulaSchema` with the matching inner schema for each formula property.
 
 ```ts
@@ -190,56 +206,55 @@ import {
   BooleanFormulaSchema,
   FormulaSchema,
   NumberSchema,
-  SingleDateSchema,
+  DateSchema,
   StringFormulaSchema,
 } from "@nakanoaas/notion-valibot-schema";
 
 const PageSchema = v.object({
   id: v.string(),
   properties: v.object({
-    FormulaText: FormulaSchema(StringFormulaSchema),
-    FormulaNumber: FormulaSchema(NumberSchema),
+    FormulaText:    FormulaSchema(StringFormulaSchema),
+    FormulaNumber:  FormulaSchema(NumberSchema),
     FormulaBoolean: FormulaSchema(BooleanFormulaSchema),
-    FormulaDate: FormulaSchema(SingleDateSchema),
+    FormulaDate:    FormulaSchema(DateSchema),
   }),
 });
 
 const page = await notion.pages.retrieve({ page_id: "..." });
 const parsed = v.parse(PageSchema, page);
-// parsed.properties.FormulaText: string
-// parsed.properties.FormulaNumber: number
+// parsed.properties.FormulaText:    string
+// parsed.properties.FormulaNumber:  number
 // parsed.properties.FormulaBoolean: boolean
-// parsed.properties.FormulaDate: Date
+// parsed.properties.FormulaDate:    Date
 ```
 
 #### Rollups
-Rollups are powerful but complex. We provide helpers for common rollup types.
 
 ```ts
-import { 
-  RollupSimpleSchema,
-  RollupArraySchema,
-  SingleRollupArraySchema,
-  NullableSingleRollupArraySchema,
+import {
+  RollupSchema,              // array rollup → Inferred<schema>[]
+  SingleRollupSchema,        // array rollup, first item → Inferred<schema>
+  NullableSingleRollupSchema, // array rollup, first item or null → Inferred<schema> | null
+  RollupScalarSchema,        // scalar rollup (number / date) → Inferred<schema>
   NumberSchema,
-  SingleDateSchema,
+  DateSchema,
 } from "@nakanoaas/notion-valibot-schema";
 
 const MySchema = v.object({
   // Sum/Average rollup (returns number)
-  TotalCost: RollupSimpleSchema(NumberSchema),
-  
+  TotalCost: RollupScalarSchema(NumberSchema),
+
   // Date rollup (returns Date)
-  LatestMeeting: RollupSimpleSchema(SingleDateSchema),
-  
+  LatestMeeting: RollupScalarSchema(DateSchema),
+
   // Array rollup (e.g., pulling tags from related items)
-  AllTags: RollupArraySchema(v.string()),
-  
+  AllTags: RollupSchema(v.string()),
+
   // Single-element array rollup (returns the one item, not an array)
-  PrimaryTag: SingleRollupArraySchema(v.string()),
-  
+  PrimaryTag: SingleRollupSchema(v.string()),
+
   // Single-element or empty array rollup (returns item or null)
-  OptionalPrimaryTag: NullableSingleRollupArraySchema(v.string()),
+  OptionalPrimaryTag: NullableSingleRollupSchema(v.string()),
 });
 ```
 
@@ -259,7 +274,6 @@ import {
   PeopleIdSchema,
   PeopleSchema,
   PersonSchema,
-  UserOrGroupSchema,
   UserSchema,
 } from "@nakanoaas/notion-valibot-schema";
 
@@ -269,29 +283,27 @@ const PageSchema = v.object({
     // Full person details
     People: PeopleSchema(PersonSchema),
 
-    // IDs only (no generic needed)
+    // IDs only
     AssigneeIds: PeopleIdSchema,
 
-    // created_by ID extraction
+    // created_by ID
     CreatedById: CreatedByIdSchema,
 
-    // Custom user schema
+    // created_by full user object
     CreatedBy: CreatedBySchema(UserSchema),
   }),
 });
 ```
 
-### Migration Guide (Breaking Changes)
+#### Unique ID
 
-The following schemas changed from constants to generic factories:
-
-| Before | After |
-| :--- | :--- |
-| `PeopleSchema` | `PeopleSchema(UserOrGroupSchema)` or `PeopleSchema(PersonSchema)` |
-| `CreatedBySchema` | `CreatedBySchema(UserOrGroupSchema)` |
-| `LastEditedBySchema` | `LastEditedBySchema(UserOrGroupSchema)` |
-
-For ID-only extraction, use the convenience schemas instead: `PeopleIdSchema`, `CreatedByIdSchema`, `LastEditedByIdSchema`.
+```ts
+import {
+  UniqueIdSchema,          // → number  (e.g. 123)
+  PrefixedUniqueIdSchema,  // → string  (e.g. "TASK-123"; requires prefix to be non-null)
+  FullUniqueIdSchema,      // → { prefix: string | null; number: number | null }
+} from "@nakanoaas/notion-valibot-schema";
+```
 
 ## License
 
