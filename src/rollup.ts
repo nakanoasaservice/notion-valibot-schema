@@ -1,7 +1,7 @@
 import * as v from "valibot";
 
 /**
- * Schema factory to extract the `rollup` property with a simple (non-array) type from a Notion page property.
+ * Schema factory to extract the `rollup` property with a scalar (non-array) type from a Notion page property.
  *
  * This is a generic schema factory that accepts another schema as a parameter,
  * allowing you to combine it with the number and date schemas in this library
