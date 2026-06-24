@@ -104,9 +104,7 @@ describe("unique-id", () => {
 			});
 
 			it("should have correct output type", () => {
-				expectTypeOf<
-					v.InferOutput<typeof FullUniqueIdSchema>
-				>().toEqualTypeOf<{
+				expectTypeOf<v.InferOutput<typeof FullUniqueIdSchema>>().toEqualTypeOf<{
 					prefix: string | null;
 					number: number | null;
 				}>();

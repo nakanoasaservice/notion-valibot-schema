@@ -5,8 +5,8 @@ import { DateSchema } from "./date.ts";
 import { NumberSchema } from "./number.ts";
 import {
 	NullableSingleRollupSchema,
-	RollupSchema,
 	RollupScalarSchema,
+	RollupSchema,
 	SingleRollupSchema,
 } from "./rollup.ts";
 import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";

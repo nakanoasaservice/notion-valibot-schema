@@ -212,9 +212,7 @@ export function RollupSchema<S extends v.GenericSchema<object, unknown>>(
  * // parsed.properties.SingleRelation: { type: "relation"; relation: Array<{ id: string }> }
  * ```
  */
-export function SingleRollupSchema<
-	S extends v.GenericSchema<object, unknown>,
->(
+export function SingleRollupSchema<S extends v.GenericSchema<object, unknown>>(
 	schema: S,
 ): v.GenericSchema<
 	{

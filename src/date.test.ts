@@ -2,12 +2,12 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import {
-	FullDateSchema,
-	NullableFullDateSchema,
-	NullableDateRangeSchema,
-	NullableDateSchema,
 	DateRangeSchema,
 	DateSchema,
+	FullDateSchema,
+	NullableDateRangeSchema,
+	NullableDateSchema,
+	NullableFullDateSchema,
 } from "./date.ts";
 import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
@@ -62,9 +62,7 @@ describe("date", () => {
 			});
 
 			it("should have correct output type", () => {
-				expectTypeOf<
-					v.InferOutput<typeof DateSchema>
-				>().toEqualTypeOf<Date>();
+				expectTypeOf<v.InferOutput<typeof DateSchema>>().toEqualTypeOf<Date>();
 			});
 		});
 
@@ -84,8 +82,7 @@ describe("date", () => {
 
 			it("should reject null for non-nullable date schema", () => {
 				expect(
-					v.safeParse(DateSchema, { date: null } satisfies TargetType)
-						.success,
+					v.safeParse(DateSchema, { date: null } satisfies TargetType).success,
 				).toBe(false);
 			});
 		});
