@@ -1,7 +1,7 @@
 import * as v from "valibot";
 
 import { DateObjectSchema } from "./date";
-import { PersonSchema } from "./people";
+import { UserSchema } from "./people";
 
 const InnerVerificationSchema = v.variant("state", [
 	v.object({
@@ -12,7 +12,7 @@ const InnerVerificationSchema = v.variant("state", [
 	v.object({
 		state: v.union([v.literal("verified"), v.literal("expired")]),
 		date: v.nullable(DateObjectSchema),
-		verified_by: v.nullable(PersonSchema),
+		verified_by: v.nullable(UserSchema),
 	}),
 ]);
 
@@ -25,7 +25,7 @@ const InnerVerificationSchema = v.variant("state", [
  *   verification: {
  *     state: "unverified" | "verified" | "expired";
  *     date: DateObject | null;
- *     verified_by: Person | null;
+ *     verified_by: { id: string; object: "user"; name?: string | null; avatar_url?: string | null; ... } | null;
  *   }
  * }
  * ```
@@ -35,7 +35,7 @@ const InnerVerificationSchema = v.variant("state", [
  * {
  *   state: "unverified" | "verified" | "expired";
  *   date: DateObject | null;
- *   verified_by: Person | null;
+ *   verified_by: { id: string; object: "user"; name: string | null; avatar_url: string | null } | null;
  * }
  * ```
  *
@@ -53,7 +53,7 @@ const InnerVerificationSchema = v.variant("state", [
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.Verification: { state: "unverified" | "verified" | "expired"; date: DateObject | null; verified_by: Person | null }
+ * // parsed.properties.Verification: { state: "unverified" | "verified" | "expired"; date: DateObject | null; verified_by: { id: string; object: "user"; name: string | null; avatar_url: string | null } | null }
  * ```
  */
 export const VerificationSchema = v.pipe(
@@ -72,7 +72,7 @@ export const VerificationSchema = v.pipe(
  *   verification: {
  *     state: "unverified" | "verified" | "expired";
  *     date: DateObject | null;
- *     verified_by: Person | null;
+ *     verified_by: { id: string; object: "user"; name?: string | null; avatar_url?: string | null; ... } | null;
  *   } | null
  * }
  * ```
@@ -82,7 +82,7 @@ export const VerificationSchema = v.pipe(
  * {
  *   state: "unverified" | "verified" | "expired";
  *   date: DateObject | null;
- *   verified_by: Person | null;
+ *   verified_by: { id: string; object: "user"; name: string | null; avatar_url: string | null } | null;
  * } | null
  * ```
  *
@@ -100,7 +100,7 @@ export const VerificationSchema = v.pipe(
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.Verification: { state: "unverified" | "verified" | "expired"; date: DateObject | null; verified_by: Person | null } | null
+ * // parsed.properties.Verification: { state: "unverified" | "verified" | "expired"; date: DateObject | null; verified_by: { id: string; object: "user"; name: string | null; avatar_url: string | null } | null } | null
  * ```
  */
 export const NullableVerificationSchema = v.pipe(

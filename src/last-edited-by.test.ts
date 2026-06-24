@@ -6,41 +6,52 @@ import {
 	LastEditedBySchema,
 	NullableLastEditedByNameSchema,
 } from "./last-edited-by.ts";
+import { UserOrGroupSchema, UserSchema } from "./people.ts";
 import type { SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"last_edited_by">;
+
+const lastEditedByUser = {
+	object: "user" as const,
+	id: "user-123",
+	name: "Jane Doe",
+	avatar_url: null,
+	type: "person" as const,
+	person: {
+		email: "jane@example.com",
+	},
+};
 
 describe("last-edited-by", () => {
 	describe("LastEditedBySchema", () => {
 		describe("type checking", () => {
 			it("should accept last_edited_by property input type", () => {
-				expectTypeOf<TargetType>().toExtend<
-					v.InferInput<typeof LastEditedBySchema>
-				>();
+				const Schema = LastEditedBySchema(
+					v.object({
+						id: v.string(),
+						object: v.picklist(["user", "group"]),
+					}),
+				);
+
+				expectTypeOf<TargetType>().toExtend<v.InferInput<typeof Schema>>();
 			});
 
 			it("should have correct output type", () => {
-				expectTypeOf<v.InferOutput<typeof LastEditedBySchema>>().toEqualTypeOf<{
+				const Schema = LastEditedBySchema(UserSchema);
+
+				expectTypeOf<v.InferOutput<typeof Schema>>().toEqualTypeOf<{
 					id: string;
-					object: "user" | "bot" | "group";
+					object: "user";
 					name: string | null;
+					avatar_url: string | null;
 				}>();
 			});
 		});
 
 		describe("parsing", () => {
 			it("should parse last_edited_by property and extract person object", () => {
-				const result = v.parse(LastEditedBySchema, {
-					last_edited_by: {
-						object: "user",
-						id: "user-123",
-						name: "Jane Doe",
-						avatar_url: null,
-						type: "person",
-						person: {
-							email: "jane@example.com",
-						},
-					},
+				const result = v.parse(LastEditedBySchema(UserOrGroupSchema), {
+					last_edited_by: lastEditedByUser,
 				} satisfies TargetType);
 
 				expect(result).toEqual({
@@ -50,21 +61,16 @@ describe("last-edited-by", () => {
 				});
 			});
 
-			it("should parse last_edited_by property with null name and return null", () => {
-				const result = v.parse(LastEditedBySchema, {
-					last_edited_by: {
-						object: "user",
-						id: "user-123",
-						name: null,
-						avatar_url: null,
-						type: "person",
-						person: {
-							email: "jane@example.com",
-						},
-					},
+			it("should parse last_edited_by property with null name", () => {
+				const result = v.parse(LastEditedBySchema(UserOrGroupSchema), {
+					last_edited_by: { ...lastEditedByUser, name: null },
 				} satisfies TargetType);
 
-				expect(result).toEqual({ id: "user-123", object: "user", name: null });
+				expect(result).toEqual({
+					id: "user-123",
+					object: "user",
+					name: null,
+				});
 			});
 		});
 	});
@@ -72,7 +78,9 @@ describe("last-edited-by", () => {
 	describe("NullableLastEditedByNameSchema", () => {
 		describe("type checking", () => {
 			it("should accept last_edited_by property input type", () => {
-				// Note: Type checking for last_edited_by property
+				expectTypeOf<TargetType>().toExtend<
+					v.InferInput<typeof NullableLastEditedByNameSchema>
+				>();
 			});
 
 			it("should have correct output type", () => {
@@ -85,16 +93,7 @@ describe("last-edited-by", () => {
 		describe("parsing", () => {
 			it("should parse last_edited_by property and extract name value", () => {
 				const result = v.parse(NullableLastEditedByNameSchema, {
-					last_edited_by: {
-						object: "user",
-						id: "user-123",
-						name: "Jane Doe",
-						avatar_url: null,
-						type: "person",
-						person: {
-							email: "jane@example.com",
-						},
-					},
+					last_edited_by: lastEditedByUser,
 				} satisfies TargetType);
 
 				expect(result).toEqual("Jane Doe");
@@ -103,16 +102,7 @@ describe("last-edited-by", () => {
 
 			it("should parse last_edited_by property with null name and return null", () => {
 				const result = v.parse(NullableLastEditedByNameSchema, {
-					last_edited_by: {
-						object: "user",
-						id: "user-123",
-						name: null,
-						avatar_url: null,
-						type: "person",
-						person: {
-							email: "jane@example.com",
-						},
-					},
+					last_edited_by: { ...lastEditedByUser, name: null },
 				} satisfies TargetType);
 
 				expect(result).toBe(null);
@@ -138,16 +128,7 @@ describe("last-edited-by", () => {
 		describe("parsing", () => {
 			it("should parse last_edited_by property and extract id value", () => {
 				const result = v.parse(LastEditedByIdSchema, {
-					last_edited_by: {
-						object: "user",
-						id: "user-123",
-						name: "Jane Doe",
-						avatar_url: null,
-						type: "person",
-						person: {
-							email: "jane@example.com",
-						},
-					},
+					last_edited_by: lastEditedByUser,
 				} satisfies TargetType);
 
 				expect(result).toEqual("user-123");

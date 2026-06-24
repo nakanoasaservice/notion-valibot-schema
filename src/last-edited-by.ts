@@ -1,54 +1,62 @@
 import * as v from "valibot";
 
-import { PersonSchema } from "./people";
+import { UserOrGroupIdSchema, UserOrGroupSchema } from "./people";
 
 /**
- * Schema to extract the `last_edited_by` person object from a Notion page.
+ * Schema factory to extract the `last_edited_by` person object from a Notion page.
+ *
+ * This is a generic schema factory that accepts another schema as a parameter,
+ * allowing you to combine it with building-block schemas such as
+ * `UserOrGroupSchema`, `UserSchema`, or `PersonSchema`.
  *
  * **Input:**
  * ```
  * {
  *   last_edited_by: {
  *     id: string;
- *     object: "user" | "bot" | "group";
- *     name: string | null;
+ *     object: "user" | "group";
+ *     name?: string | null;
  *     ...
  *   }
  * }
  * ```
  *
- * **Output:**
- * ```
- * {
- *   id: string;
- *   object: "user" | "bot" | "group";
- *   name: string | null;
- * }
- * ```
+ * **Output:** The output type depends on the schema passed as a parameter.
+ *
+ * @param schema - A schema that validates the `last_edited_by` user or group object.
  *
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { LastEditedBySchema } from "@nakanoaas/notion-valibot-schema";
+ * import {
+ *   LastEditedBySchema,
+ *   UserOrGroupSchema,
+ * } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     LastEditedBy: LastEditedBySchema,
+ *     "Last Edited By": LastEditedBySchema(UserOrGroupSchema),
  *   }),
  * });
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.LastEditedBy: { id: string; object: "user" | "bot" | "group"; name: string | null }
+ * // parsed.properties["Last Edited By"]: { id: string; object: "user" | "group"; name: string | null }
  * ```
  */
-export const LastEditedBySchema = v.pipe(
-	v.object({
-		last_edited_by: PersonSchema,
-	}),
-	v.transform((v) => v.last_edited_by),
-);
+export function LastEditedBySchema<
+	S extends v.GenericSchema<{ id: string; object: "user" | "group" }, unknown>,
+>(
+	schema: S,
+): v.GenericSchema<{ last_edited_by: v.InferInput<S> }, v.InferOutput<S>> {
+	return v.pipe(
+		v.object({
+			last_edited_by: schema,
+		}),
+		v.transform((v) => v.last_edited_by),
+	) as v.GenericSchema<{ last_edited_by: v.InferInput<S> }, v.InferOutput<S>>;
+}
 
 /**
  * Schema to extract the `last_edited_by` person name from a Notion page.
@@ -58,8 +66,8 @@ export const LastEditedBySchema = v.pipe(
  * {
  *   last_edited_by: {
  *     id: string;
- *     object: "user" | "bot" | "group";
- *     name: string | null;
+ *     object: "user" | "group";
+ *     name?: string | null;
  *     ...
  *   }
  * }
@@ -75,18 +83,18 @@ export const LastEditedBySchema = v.pipe(
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     LastEditedByName: NullableLastEditedByNameSchema,
+ *     "Last Edited By": NullableLastEditedByNameSchema,
  *   }),
  * });
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.LastEditedByName: string | null
+ * // parsed.properties["Last Edited By"]: string | null
  * ```
  */
 export const NullableLastEditedByNameSchema = v.pipe(
 	v.object({
-		last_edited_by: PersonSchema,
+		last_edited_by: UserOrGroupSchema,
 	}),
 	v.transform((v) => v.last_edited_by.name),
 );
@@ -99,8 +107,6 @@ export const NullableLastEditedByNameSchema = v.pipe(
  * {
  *   last_edited_by: {
  *     id: string;
- *     object: "user" | "bot" | "group";
- *     name: string | null;
  *     ...
  *   }
  * }
@@ -116,18 +122,18 @@ export const NullableLastEditedByNameSchema = v.pipe(
  * const PageSchema = v.object({
  *   id: v.string(),
  *   properties: v.object({
- *     LastEditedById: LastEditedByIdSchema,
+ *     "Last Edited By": LastEditedByIdSchema,
  *   }),
  * });
  *
  * const page = await notion.pages.retrieve({ page_id: "..." });
  * const parsed = v.parse(PageSchema, page);
- * // parsed.properties.LastEditedById: string
+ * // parsed.properties["Last Edited By"]: string
  * ```
  */
 export const LastEditedByIdSchema = v.pipe(
 	v.object({
-		last_edited_by: PersonSchema,
+		last_edited_by: UserOrGroupIdSchema,
 	}),
 	v.transform((v) => v.last_edited_by.id),
 );
