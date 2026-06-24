@@ -40,7 +40,14 @@ jobs:
         run: pnpm dlx jsr publish --allow-slow-types
 
       - name: Publish to npm
-        run: pnpm publish
+        run: |
+          VERSION=$(jq -r .version package.json)
+          if [[ "$VERSION" == *-* ]]; then
+            TAG=$(echo "$VERSION" | sed 's/.*-\([^.]*\).*/\1/')
+            pnpm publish --tag "$TAG"
+          else
+            pnpm publish
+          fi
 
       - name: Create Release
         env:
