@@ -2,6 +2,7 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import type {
+	NonemptyPartialNotionPropertyValue,
 	NonNullableValues,
 	PartialNotionPropertyValue,
 	SelectNotionProperty,
@@ -44,7 +45,7 @@ describe("url", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"url">>().toExtend<
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"url">>().toExtend<
 						v.InferInput<typeof UrlSchema>
 					>();
 				});
@@ -54,7 +55,7 @@ describe("url", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(UrlSchema, {
 						url: "https://example.com",
-					} satisfies PartialNotionPropertyValue<"url">);
+					} satisfies NonemptyPartialNotionPropertyValue<"url">);
 
 					expect(result).toBe("https://example.com");
 				});

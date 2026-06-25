@@ -2,6 +2,7 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import type {
+	NonemptyPartialNotionPropertyValue,
 	NonNullableValues,
 	PartialNotionPropertyValue,
 	SelectNotionProperty,
@@ -116,9 +117,9 @@ describe("verification", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"verification">>().toExtend<
-						v.InferInput<typeof VerificationSchema>
-					>();
+					expectTypeOf<
+						NonemptyPartialNotionPropertyValue<"verification">
+					>().toExtend<v.InferInput<typeof VerificationSchema>>();
 				});
 			});
 
@@ -130,7 +131,7 @@ describe("verification", () => {
 							date: null,
 							verified_by: null,
 						},
-					} satisfies PartialNotionPropertyValue<"verification">);
+					} satisfies NonemptyPartialNotionPropertyValue<"verification">);
 
 					expect(result?.state).toBe("unverified");
 				});

@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullablePlaceSchema, PlaceSchema } from "./place.ts";
 import type {
+	NonemptyPartialNotionPropertyValue,
 	NonNullableValues,
 	PartialNotionPropertyValue,
 	SelectNotionProperty,
@@ -73,7 +74,7 @@ describe("place", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"place">>().toExtend<
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"place">>().toExtend<
 						v.InferInput<typeof PlaceSchema>
 					>();
 				});
@@ -83,7 +84,7 @@ describe("place", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(PlaceSchema, {
 						place: { lat: 35.6762, lon: 139.6503 },
-					} satisfies PartialNotionPropertyValue<"place">);
+					} satisfies NonemptyPartialNotionPropertyValue<"place">);
 
 					expect(result.lat).toBe(35.6762);
 					expect(result.lon).toBe(139.6503);

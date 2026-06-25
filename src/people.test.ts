@@ -15,6 +15,7 @@ import {
 } from "./people.ts";
 import type {
 	PartialPeoplePropertyValue,
+	PartialSinglePeoplePropertyValue,
 	SelectNotionProperty,
 } from "./test-utils.ts";
 
@@ -290,7 +291,7 @@ describe("people", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialPeoplePropertyValue>().toExtend<
+					expectTypeOf<PartialSinglePeoplePropertyValue>().toExtend<
 						v.InferInput<typeof Schema>
 					>();
 				});
@@ -300,7 +301,7 @@ describe("people", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(Schema, {
 						people: [partialUser],
-					} satisfies PartialPeoplePropertyValue);
+					} satisfies PartialSinglePeoplePropertyValue);
 
 					expect(result).toEqual({
 						id: "user-1",
@@ -440,7 +441,7 @@ describe("people", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialPeoplePropertyValue>().toExtend<
+					expectTypeOf<PartialSinglePeoplePropertyValue>().toExtend<
 						v.InferInput<typeof SinglePeopleIdSchema>
 					>();
 				});
@@ -450,7 +451,7 @@ describe("people", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(SinglePeopleIdSchema, {
 						people: [partialUser],
-					} satisfies PartialPeoplePropertyValue);
+					} satisfies PartialSinglePeoplePropertyValue);
 
 					expect(result).toBe("user-1");
 				});

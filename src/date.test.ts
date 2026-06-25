@@ -10,12 +10,26 @@ import {
 	NullableFullDateSchema,
 } from "./date.ts";
 import type {
+	NonemptyPartialNotionPropertyValue,
 	NonNullableValues,
 	PartialNotionPropertyValue,
 	SelectNotionProperty,
 } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"date">;
+
+type PartialNullableDateRangePropertyValue = {
+	date:
+		| (NonNullable<PartialNotionPropertyValue<"date">["date"]> & {
+				end: string;
+		  })
+		| null;
+};
+
+type PartialNonemptyDateRangePropertyValue =
+	NonemptyPartialNotionPropertyValue<"date"> & {
+		date: { end: string };
+	};
 
 describe("date", () => {
 	describe("NullableDateSchema", () => {
@@ -114,7 +128,7 @@ describe("date", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"date">>().toExtend<
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"date">>().toExtend<
 						v.InferInput<typeof DateSchema>
 					>();
 				});
@@ -128,7 +142,7 @@ describe("date", () => {
 							end: null,
 							time_zone: null,
 						},
-					} satisfies PartialNotionPropertyValue<"date">);
+					} satisfies NonemptyPartialNotionPropertyValue<"date">);
 
 					expect(result.toISOString()).toBe("2024-01-15T00:00:00.000Z");
 				});
@@ -194,7 +208,7 @@ describe("date", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"date">>().toExtend<
+					expectTypeOf<PartialNullableDateRangePropertyValue>().toExtend<
 						v.InferInput<typeof NullableDateRangeSchema>
 					>();
 				});
@@ -270,7 +284,7 @@ describe("date", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"date">>().toExtend<
+					expectTypeOf<PartialNonemptyDateRangePropertyValue>().toExtend<
 						v.InferInput<typeof DateRangeSchema>
 					>();
 				});
@@ -284,7 +298,7 @@ describe("date", () => {
 							end: "2024-01-20T00:00:00.000Z",
 							time_zone: null,
 						},
-					} satisfies PartialNotionPropertyValue<"date">);
+					} satisfies PartialNonemptyDateRangePropertyValue);
 
 					expect(result.start.toISOString()).toBe("2024-01-15T00:00:00.000Z");
 					expect(result.end.toISOString()).toBe("2024-01-20T00:00:00.000Z");
@@ -432,7 +446,7 @@ describe("date", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"date">>().toExtend<
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"date">>().toExtend<
 						v.InferInput<typeof FullDateSchema>
 					>();
 				});
@@ -446,7 +460,7 @@ describe("date", () => {
 							end: null,
 							time_zone: null,
 						},
-					} satisfies PartialNotionPropertyValue<"date">);
+					} satisfies NonemptyPartialNotionPropertyValue<"date">);
 
 					expect(result.start.toISOString()).toBe("2024-01-15T00:00:00.000Z");
 					expect(result.end).toBe(null);

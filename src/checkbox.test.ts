@@ -2,7 +2,10 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { CheckboxSchema } from "./checkbox.ts";
-import type { PartialNotionPropertyValue } from "./test-utils.ts";
+import type {
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"checkbox">;
 

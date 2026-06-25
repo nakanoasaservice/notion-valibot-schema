@@ -1,3 +1,4 @@
+import type { RollupFunction } from "@notionhq/client/build/src/api-endpoints";
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
@@ -12,7 +13,6 @@ import {
 import type {
 	IncompleteRollupPropertyValue,
 	NonNullableValues,
-	PartialNotionPropertyValue,
 	SelectNotionProperty,
 } from "./test-utils.ts";
 
@@ -29,6 +29,18 @@ type RollupArrayType = RollupTypeOf<
 type SimpleRollupType = RollupTypeOf<
 	NonNullableValues<Extract<TargetType["rollup"], { type: "number" | "date" }>>
 >;
+
+type PartialNumberRollupPropertyValue = RollupTypeOf<
+	NonNullableValues<Extract<TargetType["rollup"], { type: "number" }>>
+>;
+
+type PartialArrayRollupPropertyValue = {
+	rollup: {
+		function: RollupFunction;
+		type: "array";
+		array: Array<{ type: "number"; number: number }>;
+	};
+};
 
 describe("rollup", () => {
 	describe("RollupScalarSchema", () => {
@@ -100,7 +112,7 @@ describe("rollup", () => {
 				it("should accept partial Notion property value", () => {
 					const Schema = RollupScalarSchema(NumberSchema);
 
-					expectTypeOf<PartialNotionPropertyValue<"rollup">>().toExtend<
+					expectTypeOf<PartialNumberRollupPropertyValue>().toExtend<
 						v.InferInput<typeof Schema>
 					>();
 				});
@@ -122,7 +134,7 @@ describe("rollup", () => {
 							type: "number",
 							number: 42,
 						},
-					} satisfies PartialNotionPropertyValue<"rollup">);
+					} satisfies PartialNumberRollupPropertyValue);
 
 					expect(result).toBe(42);
 				});
@@ -247,7 +259,7 @@ describe("rollup", () => {
 				it("should accept partial Notion property value", () => {
 					const Schema = RollupSchema(NumberSchema);
 
-					expectTypeOf<PartialNotionPropertyValue<"rollup">>().toExtend<
+					expectTypeOf<PartialArrayRollupPropertyValue>().toExtend<
 						v.InferInput<typeof Schema>
 					>();
 				});
@@ -270,7 +282,7 @@ describe("rollup", () => {
 							type: "array",
 							array: [{ type: "number", number: 42 }],
 						},
-					} satisfies PartialNotionPropertyValue<"rollup">);
+					} satisfies PartialArrayRollupPropertyValue);
 
 					expect(result).toEqual([42]);
 				});
@@ -376,7 +388,7 @@ describe("rollup", () => {
 				it("should accept partial Notion property value", () => {
 					const Schema = SingleRollupSchema(NumberSchema);
 
-					expectTypeOf<PartialNotionPropertyValue<"rollup">>().toExtend<
+					expectTypeOf<PartialArrayRollupPropertyValue>().toExtend<
 						v.InferInput<typeof Schema>
 					>();
 				});
@@ -399,7 +411,7 @@ describe("rollup", () => {
 							type: "array",
 							array: [{ type: "number", number: 42 }],
 						},
-					} satisfies PartialNotionPropertyValue<"rollup">);
+					} satisfies PartialArrayRollupPropertyValue);
 
 					expect(result).toBe(42);
 				});
@@ -501,7 +513,7 @@ describe("rollup", () => {
 				it("should accept partial Notion property value", () => {
 					const Schema = NullableSingleRollupSchema(NumberSchema);
 
-					expectTypeOf<PartialNotionPropertyValue<"rollup">>().toExtend<
+					expectTypeOf<PartialArrayRollupPropertyValue>().toExtend<
 						v.InferInput<typeof Schema>
 					>();
 				});
@@ -526,7 +538,7 @@ describe("rollup", () => {
 								type: "array",
 								array: [],
 							},
-						} satisfies PartialNotionPropertyValue<"rollup">),
+						} satisfies PartialArrayRollupPropertyValue),
 					).toBe(null);
 				});
 

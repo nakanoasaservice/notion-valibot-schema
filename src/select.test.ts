@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullableSelectSchema, SelectSchema } from "./select.ts";
 import type {
+	NonemptyPartialNotionPropertyValue,
 	NonNullableValues,
 	PartialNotionPropertyValue,
 	SelectNotionProperty,
@@ -53,7 +54,7 @@ describe("select", () => {
 				it("should accept partial Notion property value", () => {
 					const Schema = SelectSchema(v.string());
 
-					expectTypeOf<PartialNotionPropertyValue<"select">>().toExtend<
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"select">>().toExtend<
 						v.InferInput<typeof Schema>
 					>();
 				});
@@ -65,8 +66,8 @@ describe("select", () => {
 
 					expect(
 						v.parse(Schema, {
-							select: { name: "Green" },
-						} satisfies PartialNotionPropertyValue<"select">),
+							select: { id: "123", color: "green", name: "Green" },
+						} satisfies NonemptyPartialNotionPropertyValue<"select">),
 					).toEqual("Green");
 				});
 			});

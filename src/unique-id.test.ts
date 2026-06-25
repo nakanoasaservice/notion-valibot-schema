@@ -14,6 +14,19 @@ import {
 
 type TargetType = SelectNotionProperty<"unique_id">;
 
+type PartialUniqueIdNumberPropertyValue = {
+	unique_id: {
+		number: number;
+	};
+};
+
+type PartialPrefixedUniqueIdPropertyValue = {
+	unique_id: {
+		prefix: string;
+		number: number;
+	};
+};
+
 describe("unique-id", () => {
 	describe("UniqueIdSchema", () => {
 		describe("type checking", () => {
@@ -58,7 +71,7 @@ describe("unique-id", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"unique_id">>().toExtend<
+					expectTypeOf<PartialUniqueIdNumberPropertyValue>().toExtend<
 						v.InferInput<typeof UniqueIdSchema>
 					>();
 				});
@@ -67,8 +80,10 @@ describe("unique-id", () => {
 			describe("parsing", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(UniqueIdSchema, {
-						unique_id: { number: 123 },
-					} satisfies PartialNotionPropertyValue<"unique_id">);
+						unique_id: { prefix: null, number: 123 },
+					} satisfies PartialUniqueIdNumberPropertyValue & {
+						unique_id: { prefix: null };
+					});
 
 					expect(result).toBe(123);
 				});
@@ -121,7 +136,7 @@ describe("unique-id", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"unique_id">>().toExtend<
+					expectTypeOf<PartialPrefixedUniqueIdPropertyValue>().toExtend<
 						v.InferInput<typeof PrefixedUniqueIdSchema>
 					>();
 				});
@@ -131,7 +146,7 @@ describe("unique-id", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(PrefixedUniqueIdSchema, {
 						unique_id: { prefix: "PREFIX", number: 123 },
-					} satisfies PartialNotionPropertyValue<"unique_id">);
+					} satisfies PartialPrefixedUniqueIdPropertyValue);
 
 					expect(result).toBe("PREFIX-123");
 				});

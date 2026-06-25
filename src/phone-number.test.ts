@@ -6,6 +6,7 @@ import {
 	PhoneNumberSchema,
 } from "./phone-number.ts";
 import type {
+	NonemptyPartialNotionPropertyValue,
 	NonNullableValues,
 	PartialNotionPropertyValue,
 	SelectNotionProperty,
@@ -51,9 +52,9 @@ describe("phone-number", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"phone_number">>().toExtend<
-						v.InferInput<typeof PhoneNumberSchema>
-					>();
+					expectTypeOf<
+						NonemptyPartialNotionPropertyValue<"phone_number">
+					>().toExtend<v.InferInput<typeof PhoneNumberSchema>>();
 				});
 			});
 
@@ -61,7 +62,7 @@ describe("phone-number", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(PhoneNumberSchema, {
 						phone_number: "+81-90-1234-5678",
-					} satisfies PartialNotionPropertyValue<"phone_number">);
+					} satisfies NonemptyPartialNotionPropertyValue<"phone_number">);
 
 					expect(result).toBe("+81-90-1234-5678");
 				});

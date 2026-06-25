@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullableStatusSchema, StatusSchema } from "./status.ts";
 import type {
+	NonemptyPartialNotionPropertyValue,
 	NonNullableValues,
 	PartialNotionPropertyValue,
 	SelectNotionProperty,
@@ -59,7 +60,7 @@ describe("status", () => {
 				it("should accept partial Notion property value", () => {
 					const Schema = StatusSchema(v.string());
 
-					expectTypeOf<PartialNotionPropertyValue<"status">>().toExtend<
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"status">>().toExtend<
 						v.InferInput<typeof Schema>
 					>();
 				});
@@ -73,8 +74,8 @@ describe("status", () => {
 
 					expect(
 						v.parse(Schema, {
-							status: { name: "Done" },
-						} satisfies PartialNotionPropertyValue<"status">),
+							status: { id: "123", name: "Done", color: "green" },
+						} satisfies NonemptyPartialNotionPropertyValue<"status">),
 					).toEqual("Done");
 				});
 			});

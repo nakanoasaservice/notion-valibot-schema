@@ -13,6 +13,16 @@ import type {
 
 type TargetType = SelectNotionProperty<"files">;
 
+type PartialSingleFilePropertyValue = {
+	files: [
+		{
+			type: "external";
+			name: string;
+			external: { url: string };
+		},
+	];
+};
+
 describe("files", () => {
 	describe("FilesSchema", () => {
 		describe("type checking", () => {
@@ -159,7 +169,7 @@ describe("files", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"files">>().toExtend<
+					expectTypeOf<PartialSingleFilePropertyValue>().toExtend<
 						v.InferInput<typeof SingleFileSchema>
 					>();
 				});
@@ -171,10 +181,11 @@ describe("files", () => {
 						files: [
 							{
 								type: "external",
+								name: "file.pdf",
 								external: { url: "https://example.com/file.pdf" },
 							},
 						],
-					} satisfies PartialNotionPropertyValue<"files">);
+					} satisfies PartialSingleFilePropertyValue);
 
 					expect(result).toBe("https://example.com/file.pdf");
 				});

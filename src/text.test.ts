@@ -2,6 +2,7 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import type {
+	NonemptyPartialNotionPropertyValue,
 	PartialNotionPropertyValue,
 	SelectNotionProperty,
 } from "./test-utils.ts";
@@ -94,7 +95,7 @@ describe("text", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"title">>().toExtend<
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"title">>().toExtend<
 						v.InferInput<typeof TitleSchema>
 					>();
 				});
@@ -103,8 +104,26 @@ describe("text", () => {
 			describe("parsing", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(TitleSchema, {
-						title: [{ type: "text", plain_text: "My Title" }],
-					} satisfies PartialNotionPropertyValue<"title">);
+						title: [
+							{
+								type: "text",
+								text: {
+									content: "My Title",
+									link: null,
+								},
+								annotations: {
+									bold: false,
+									italic: false,
+									strikethrough: false,
+									underline: false,
+									code: false,
+									color: "default",
+								},
+								plain_text: "My Title",
+								href: null,
+							},
+						],
+					} satisfies NonemptyPartialNotionPropertyValue<"title">);
 
 					expect(result).toBe("My Title");
 				});
@@ -214,17 +233,35 @@ describe("text", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"rich_text">>().toExtend<
-						v.InferInput<typeof RichTextSchema>
-					>();
+					expectTypeOf<
+						NonemptyPartialNotionPropertyValue<"rich_text">
+					>().toExtend<v.InferInput<typeof RichTextSchema>>();
 				});
 			});
 
 			describe("parsing", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(RichTextSchema, {
-						rich_text: [{ type: "text", plain_text: "Rich Text" }],
-					} satisfies PartialNotionPropertyValue<"rich_text">);
+						rich_text: [
+							{
+								type: "text",
+								text: {
+									content: "Rich Text",
+									link: null,
+								},
+								annotations: {
+									bold: false,
+									italic: false,
+									strikethrough: false,
+									underline: false,
+									code: false,
+									color: "default",
+								},
+								plain_text: "Rich Text",
+								href: null,
+							},
+						],
+					} satisfies NonemptyPartialNotionPropertyValue<"rich_text">);
 
 					expect(result).toBe("Rich Text");
 				});

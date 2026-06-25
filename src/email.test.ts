@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { EmailSchema, NullableEmailSchema } from "./email.ts";
 import type {
+	NonemptyPartialNotionPropertyValue,
 	NonNullableValues,
 	PartialNotionPropertyValue,
 	SelectNotionProperty,
@@ -47,7 +48,7 @@ describe("email", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"email">>().toExtend<
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"email">>().toExtend<
 						v.InferInput<typeof EmailSchema>
 					>();
 				});
@@ -57,7 +58,7 @@ describe("email", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(EmailSchema, {
 						email: "test@example.com",
-					} satisfies PartialNotionPropertyValue<"email">);
+					} satisfies NonemptyPartialNotionPropertyValue<"email">);
 
 					expect(result).toBe("test@example.com");
 				});

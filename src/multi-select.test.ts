@@ -85,7 +85,10 @@ describe("multi-select", () => {
 
 					expect(
 						v.parse(Schema, {
-							multi_select: [{ name: "Green" }, { name: "Red" }],
+							multi_select: [
+								{ id: "123", color: "green", name: "Green" },
+								{ id: "456", color: "red", name: "Red" },
+							],
 						} satisfies PartialNotionPropertyValue<"multi_select">),
 					).toEqual(["Green", "Red"]);
 				});

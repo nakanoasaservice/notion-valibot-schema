@@ -8,6 +8,7 @@ import {
 } from "./relation.ts";
 import type {
 	PartialRelationPropertyValue,
+	PartialSingleRelationPropertyValue,
 	SelectNotionProperty,
 } from "./test-utils.ts";
 
@@ -128,7 +129,7 @@ describe("relation", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialRelationPropertyValue>().toExtend<
+					expectTypeOf<PartialSingleRelationPropertyValue>().toExtend<
 						v.InferInput<typeof SingleRelationSchema>
 					>();
 				});
@@ -139,7 +140,7 @@ describe("relation", () => {
 					const result = v.parse(SingleRelationSchema, {
 						relation: [{ id: "page-1" }],
 						has_more: true,
-					} satisfies PartialRelationPropertyValue);
+					} satisfies PartialSingleRelationPropertyValue);
 
 					expect(result).toBe("page-1");
 				});

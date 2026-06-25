@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullableNumberSchema, NumberSchema } from "./number.ts";
 import type {
+	NonemptyPartialNotionPropertyValue,
 	NonNullableValues,
 	PartialNotionPropertyValue,
 	SelectNotionProperty,
@@ -47,7 +48,7 @@ describe("number", () => {
 		describe("partial response", () => {
 			describe("type checking", () => {
 				it("should accept partial Notion property value", () => {
-					expectTypeOf<PartialNotionPropertyValue<"number">>().toExtend<
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"number">>().toExtend<
 						v.InferInput<typeof NumberSchema>
 					>();
 				});
@@ -57,7 +58,7 @@ describe("number", () => {
 				it("should parse partial Notion property value", () => {
 					const result = v.parse(NumberSchema, {
 						number: 42,
-					} satisfies PartialNotionPropertyValue<"number">);
+					} satisfies NonemptyPartialNotionPropertyValue<"number">);
 
 					expect(result).toBe(42);
 				});
