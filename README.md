@@ -54,6 +54,7 @@ No more checking for `property.type === 'date'`, handling `null`, or digging thr
 - 🔒 **Type-Safe**: Full TypeScript support with inferred types.
 - ✅ **Well Tested**: Backed by a comprehensive test suite covering edge cases.
 - 🛠 **Comprehensive**: Supports complex properties like Rollups, Formulas, and Relations.
+- 📋 **Partial-aware**: Each schema documents whether it accepts partial `pages.retrieve` / `databases.query` responses via `@notionPartial` JSDoc tags.
 
 ## Installation
 
@@ -142,40 +143,109 @@ const { results } = await notion.dataSources.query({ data_source_id: "..." });
 const tasks = v.parse(TaskListSchema, results);
 ```
 
+### Partial API Responses
+
+When you fetch pages with [`pages.retrieve`](https://developers.notion.com/reference/retrieve-a-page) or list them with [`databases.query`](https://developers.notion.com/reference/query-a-data-source), Notion may return **partial** property values. This happens when a property has many references (relations, people, rollups, inline mentions, and so on). The API returns at most **25** page/person references per property; beyond that, lists can be truncated (`relation.has_more: true`) or entries may be incomplete.
+
+Each exported schema includes JSDoc tags so you can tell at a glance whether it works with these partial shapes:
+
+| Tag | Meaning |
+| :--- | :--- |
+| `@notionPartial supported` | Typical partial responses from `pages.retrieve` / `databases.query` parse successfully |
+| `@notionPartial not-supported` | Partial responses are missing required fields and `v.parse` will fail |
+| `@notionPartialNote` | Optional caveat (truncated lists, required inner schema, recommended alternative) |
+
+**Examples of `supported` schemas** (scalar properties, ID extraction, and schemas that only read fields present in partial responses):
+
+- `CheckboxSchema`, `NumberSchema`, `TitleSchema`, `SelectSchema`, `RelationSchema`, `PeopleIdSchema`, `RollupScalarSchema`, …
+
+**`supported`, but data may still be incomplete** — parsing succeeds, but you may not get every referenced item. Use [`pages.properties.retrieve`](https://developers.notion.com/reference/retrieve-a-page-property) when you need the full list or accurate rollup:
+
+- `RelationSchema`, `PeopleIdSchema`, `FilesSchema`, `RollupSchema`, `TitleSchema` / `RichTextSchema` (inline mentions)
+
+**`not-supported` — choose a different schema for partial responses:**
+
+| Schema | Why | Use instead |
+| :--- | :--- | :--- |
+| `PersonSchema`, `BotSchema` | Require full user objects (`type: "person"`, `person`, …) | `UserOrGroupSchema`, `UserSchema`, or `PeopleIdSchema` |
+| `PeopleSchema(PersonSchema)` / `CreatedBySchema(PersonSchema)` | Inner schema requires full person | `PeopleSchema(UserOrGroupSchema)`, `CreatedByIdSchema`, … |
+| Rollup schemas + `type: "incomplete"` / `"unsupported"` | Calculation not finished or unsupported | Wait and retry, or use `pages.properties.retrieve` |
+
+Factory schemas (`PeopleSchema`, `RollupSchema`, `CreatedBySchema`, …) document partial support on the factory itself and on `@param schema` — passing `PersonSchema` or `BotSchema` as the inner schema is **not supported** for partial responses.
+
+```ts
+import * as v from "valibot";
+import {
+  PeopleIdSchema,
+  PeopleSchema,
+  PersonSchema,
+  RelationSchema,
+  UserOrGroupSchema,
+} from "@nakanoaas/notion-valibot-schema";
+
+const PageSchema = v.object({
+  id: v.string(),
+  properties: v.object({
+    // ✅ IDs only — works with partial people responses
+    AssigneeIds: PeopleIdSchema,
+
+    // ✅ Minimal user objects ({ id, object }) — works with partial responses
+    Assignees: PeopleSchema(UserOrGroupSchema),
+
+    // ❌ Full person details — fails when API returns partial user objects
+    // Owners: PeopleSchema(PersonSchema),
+
+    // ✅ Relation IDs — works; list may be truncated when has_more is true
+    RelatedTasks: RelationSchema,
+  }),
+});
+
+const page = await notion.pages.retrieve({ page_id: "..." });
+const parsed = v.parse(PageSchema, page);
+```
+
+See each schema's JSDoc on [JSR](https://jsr.io/@nakanoaas/notion-valibot-schema/doc) for its `@notionPartial` status and notes.
+
 ## Schema Reference
 
-> 📚 **For complete API documentation, including all available schemas and types, please visit the [JSR Documentation](https://jsr.io/@nakanoaas/notion-valibot-schema/doc).**
+> 📚 **For complete API documentation, including all available schemas, `@notionPartial` tags, and types, please visit the [JSR Documentation](https://jsr.io/@nakanoaas/notion-valibot-schema/doc).**
 
-| Notion Property | Schema | Output Type |
-| :--- | :--- | :--- |
-| **Text** / Title | `TitleSchema` / `NullableTitleSchema` | `string` / `string \| null` |
-| **Rich Text** | `RichTextSchema` / `NullableRichTextSchema` | `string` / `string \| null` |
-| **Number** | `NumberSchema` / `NullableNumberSchema` | `number` / `number \| null` |
-| **Checkbox** | `CheckboxSchema` | `boolean` |
-| **Select** | `SelectSchema(schema)` / `NullableSelectSchema(schema)` | `Inferred<schema>` / `Inferred<schema> \| null` |
-| **Multi-Select** | `MultiSelectSchema(schema)` | `Inferred<schema>[]` |
-| **Status** | `StatusSchema(schema)` / `NullableStatusSchema(schema)` | `Inferred<schema>` / `Inferred<schema> \| null` |
-| **Date** | `DateSchema` / `NullableDateSchema` | `Date` / `Date \| null` |
-| **Date** (full object) | `FullDateSchema` / `NullableFullDateSchema` | `{ start: Date; end: Date \| null; time_zone: string \| null }` / same `\| null` |
-| **Date** (range, end required) | `DateRangeSchema` / `NullableDateRangeSchema` | `{ start: Date; end: Date; time_zone: string \| null }` / same `\| null` |
-| **Relation** | `RelationSchema` / `SingleRelationSchema` / `NullableSingleRelationSchema` | `string[]` / `string` / `string \| null` |
-| **Rollup** (array) | `RollupSchema(schema)` | `Inferred<schema>[]` |
-| **Rollup** (array, single) | `SingleRollupSchema(schema)` / `NullableSingleRollupSchema(schema)` | `Inferred<schema>` / `Inferred<schema> \| null` |
-| **Rollup** (scalar) | `RollupScalarSchema(schema)` | `Inferred<schema>` |
-| **Formula** | `FormulaSchema(schema)` | `Inferred<schema>` |
-| **URL** | `UrlSchema` / `NullableUrlSchema` | `string` / `string \| null` |
-| **Email** | `EmailSchema` / `NullableEmailSchema` | `string` / `string \| null` |
-| **Phone** | `PhoneNumberSchema` / `NullablePhoneNumberSchema` | `string` / `string \| null` |
-| **Files** | `FilesSchema` / `SingleFileSchema` / `NullableSingleFileSchema` | `string[]` / `string` / `string \| null` |
-| **People** (building blocks) | `UserOrGroupIdSchema` / `UserOrGroupSchema` / `UserSchema` / `PersonSchema` / `BotSchema` | Building-block object types |
-| **People** (generic) | `PeopleSchema(schema)` / `SinglePeopleSchema(schema)` / `NullableSinglePeopleSchema(schema)` | `Inferred<schema>[]` / `Inferred<schema>` / `Inferred<schema> \| null` |
-| **People** (IDs only) | `PeopleIdSchema` / `SinglePeopleIdSchema` / `NullableSinglePeopleIdSchema` | `string[]` / `string` / `string \| null` |
-| **Created By** | `CreatedBySchema(schema)` / `CreatedByIdSchema` / `NullableCreatedByNameSchema` | `Inferred<schema>` / `string` / `string \| null` |
-| **Last Edited By** | `LastEditedBySchema(schema)` / `LastEditedByIdSchema` / `NullableLastEditedByNameSchema` | `Inferred<schema>` / `string` / `string \| null` |
-| **Created / Edited Time** | `CreatedTimeSchema` / `LastEditedTimeSchema` | `Date` |
-| **Place** | `PlaceSchema` / `NullablePlaceSchema` | `{ lat: number; lon: number; name?: string \| null; address?: string \| null }` / same `\| null` |
-| **Unique ID** | `UniqueIdSchema` / `PrefixedUniqueIdSchema` / `FullUniqueIdSchema` | `number` / `string` (e.g. `"PREFIX-123"`) / `{ prefix: string \| null; number: number \| null }` |
-| **Verification** | `VerificationSchema` / `NullableVerificationSchema` | `{ state: "unverified" \| "verified" \| "expired"; date: DateObject \| null; verified_by: UserObject \| null }` / same `\| null` |
+| Notion Property | Schema | Output Type | Partial |
+| :--- | :--- | :--- | :--- |
+| **Text** / Title | `TitleSchema` / `NullableTitleSchema` | `string` / `string \| null` | supported¹ |
+| **Rich Text** | `RichTextSchema` / `NullableRichTextSchema` | `string` / `string \| null` | supported¹ |
+| **Number** | `NumberSchema` / `NullableNumberSchema` | `number` / `number \| null` | supported |
+| **Checkbox** | `CheckboxSchema` | `boolean` | supported |
+| **Select** | `SelectSchema(schema)` / `NullableSelectSchema(schema)` | `Inferred<schema>` / `Inferred<schema> \| null` | supported |
+| **Multi-Select** | `MultiSelectSchema(schema)` | `Inferred<schema>[]` | supported |
+| **Status** | `StatusSchema(schema)` / `NullableStatusSchema(schema)` | `Inferred<schema>` / `Inferred<schema> \| null` | supported |
+| **Date** | `DateSchema` / `NullableDateSchema` | `Date` / `Date \| null` | supported |
+| **Date** (full object) | `FullDateSchema` / `NullableFullDateSchema` | `{ start: Date; end: Date \| null; time_zone: string \| null }` / same `\| null` | supported |
+| **Date** (range, end required) | `DateRangeSchema` / `NullableDateRangeSchema` | `{ start: Date; end: Date; time_zone: string \| null }` / same `\| null` | supported |
+| **Relation** | `RelationSchema` / `SingleRelationSchema` / `NullableSingleRelationSchema` | `string[]` / `string` / `string \| null` | supported¹ |
+| **Rollup** (array) | `RollupSchema(schema)` | `Inferred<schema>[]` | supported¹² |
+| **Rollup** (array, single) | `SingleRollupSchema(schema)` / `NullableSingleRollupSchema(schema)` | `Inferred<schema>` / `Inferred<schema> \| null` | supported¹² |
+| **Rollup** (scalar) | `RollupScalarSchema(schema)` | `Inferred<schema>` | supported² |
+| **Formula** | `FormulaSchema(schema)` | `Inferred<schema>` | supported¹ |
+| **URL** | `UrlSchema` / `NullableUrlSchema` | `string` / `string \| null` | supported |
+| **Email** | `EmailSchema` / `NullableEmailSchema` | `string` / `string \| null` | supported |
+| **Phone** | `PhoneNumberSchema` / `NullablePhoneNumberSchema` | `string` / `string \| null` | supported |
+| **Files** | `FilesSchema` / `SingleFileSchema` / `NullableSingleFileSchema` | `string[]` / `string` / `string \| null` | supported¹ |
+| **People** (building blocks) | `UserOrGroupIdSchema` / `UserOrGroupSchema` / `UserSchema` / `PersonSchema` / `BotSchema` | Building-block object types | supported / supported / supported / **not-supported** / **not-supported** |
+| **People** (generic) | `PeopleSchema(schema)` / `SinglePeopleSchema(schema)` / `NullableSinglePeopleSchema(schema)` | `Inferred<schema>[]` / `Inferred<schema>` / `Inferred<schema> \| null` | depends on inner schema³ |
+| **People** (IDs only) | `PeopleIdSchema` / `SinglePeopleIdSchema` / `NullableSinglePeopleIdSchema` | `string[]` / `string` / `string \| null` | supported¹ |
+| **Created By** | `CreatedBySchema(schema)` / `CreatedByIdSchema` / `NullableCreatedByNameSchema` | `Inferred<schema>` / `string` / `string \| null` | depends on inner schema³ / supported / supported |
+| **Last Edited By** | `LastEditedBySchema(schema)` / `LastEditedByIdSchema` / `NullableLastEditedByNameSchema` | `Inferred<schema>` / `string` / `string \| null` | depends on inner schema³ / supported / supported |
+| **Created / Edited Time** | `CreatedTimeSchema` / `LastEditedTimeSchema` | `Date` | supported |
+| **Place** | `PlaceSchema` / `NullablePlaceSchema` | `{ lat: number; lon: number; name?: string \| null; address?: string \| null }` / same `\| null` | supported |
+| **Unique ID** | `UniqueIdSchema` / `PrefixedUniqueIdSchema` / `FullUniqueIdSchema` | `number` / `string` (e.g. `"PREFIX-123"`) / `{ prefix: string \| null; number: number \| null }` | supported |
+| **Verification** | `VerificationSchema` / `NullableVerificationSchema` | `{ state: "unverified" \| "verified" \| "expired"; date: DateObject \| null; verified_by: UserObject \| null }` / same `\| null` | supported |
+
+¹ Parsing succeeds, but lists or inline mentions may be **truncated** beyond 25 references. Use `pages.properties.retrieve` for complete data.
+
+² Does not accept rollup `type: "incomplete"` or `type: "unsupported"`.
+
+³ Use `UserOrGroupSchema` or `UserSchema` for partial responses. `PersonSchema` / `BotSchema` inner schemas are **not supported**.
 
 ### Advanced Schemas
 

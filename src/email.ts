@@ -12,6 +12,8 @@ import * as v from "valibot";
  *
  * **Output:** `string`
  *
+ * @notionPartial supported
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -47,6 +49,8 @@ export const EmailSchema = v.pipe(
  * ```
  *
  * **Output:** `string | null`
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts

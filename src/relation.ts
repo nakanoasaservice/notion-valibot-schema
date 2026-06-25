@@ -54,6 +54,9 @@ const InnerRelationSchema = v.object({ id: v.string() });
  *
  * **Output:** `string[]`
  *
+ * @notionPartial supported
+ * @notionPartialNote Relation lists may be truncated when `has_more` is true. Use `pages.properties.retrieve` for complete data.
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -92,6 +95,9 @@ export const RelationSchema = v.pipe(
  *
  * **Output:** `string`
  *
+ * @notionPartial supported
+ * @notionPartialNote Relation lists may be truncated when `has_more` is true. Use `pages.properties.retrieve` for complete data.
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -129,6 +135,9 @@ export const SingleRelationSchema = v.pipe(
  * ```
  *
  * **Output:** `string | null`
+ *
+ * @notionPartial supported
+ * @notionPartialNote Relation lists may be truncated when `has_more` is true. Use `pages.properties.retrieve` for complete data.
  *
  * @example
  * ```ts

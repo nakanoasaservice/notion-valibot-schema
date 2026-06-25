@@ -2,7 +2,10 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { CheckboxSchema } from "./checkbox.ts";
-import type { SelectNotionProperty } from "./test-utils.ts";
+import type {
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"checkbox">;
 
@@ -39,6 +42,26 @@ describe("checkbox", () => {
 
 				expect(result).toEqual(false);
 				expect(typeof result).toEqual("boolean");
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"checkbox">>().toExtend<
+						v.InferInput<typeof CheckboxSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(CheckboxSchema, {
+						checkbox: true,
+					} satisfies PartialNotionPropertyValue<"checkbox">);
+
+					expect(result).toBe(true);
+				});
 			});
 		});
 	});

@@ -2,7 +2,12 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullableNumberSchema, NumberSchema } from "./number.ts";
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonemptyPartialNotionPropertyValue,
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"number">;
 
@@ -39,6 +44,26 @@ describe("number", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"number">>().toExtend<
+						v.InferInput<typeof NumberSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(NumberSchema, {
+						number: 42,
+					} satisfies NonemptyPartialNotionPropertyValue<"number">);
+
+					expect(result).toBe(42);
+				});
+			});
+		});
 	});
 
 	describe("NullableNumberSchema", () => {
@@ -70,6 +95,26 @@ describe("number", () => {
 				expect(
 					v.parse(NullableNumberSchema, { number: null } satisfies TargetType),
 				).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"number">>().toExtend<
+						v.InferInput<typeof NullableNumberSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableNumberSchema, {
+							number: null,
+						} satisfies PartialNotionPropertyValue<"number">),
+					).toBe(null);
+				});
 			});
 		});
 	});

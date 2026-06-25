@@ -17,6 +17,9 @@ import * as v from "valibot";
  * **Output:** The output type depends on the schema passed as a parameter.
  * For example, if `NumberSchema` is passed, the output will be `number`.
  *
+ * @notionPartial supported
+ * @notionPartialNote Rollup values may be truncated beyond 25 references. Does not accept `type: "incomplete"` or `type: "unsupported"` rollups.
+ *
  * @param schema - A schema that validates the rollup value.
  *                  Must accept an object with a `number` or `date` field.
  *
@@ -92,6 +95,9 @@ export function RollupScalarSchema<
  *
  * **Output:** The output type depends on the schema passed as a parameter.
  * For example, if a schema for number properties is passed, the output will be `Array<number>`.
+ *
+ * @notionPartial supported
+ * @notionPartialNote Rollup arrays may be truncated beyond 25 references. Use `pages.properties.retrieve` for complete data. Does not accept `type: "incomplete"` or `type: "unsupported"` rollups.
  *
  * @param schema - A schema that validates each element in the rollup array.
  *                  Must accept an object with a `type` field.
@@ -169,6 +175,9 @@ export function RollupSchema<S extends v.GenericSchema<object, unknown>>(
  *
  * **Output:** The output type of the schema passed as a parameter (single element, not array).
  * For example, if a schema for number properties is passed, the output will be `number`.
+ *
+ * @notionPartial supported
+ * @notionPartialNote Rollup arrays may be truncated beyond 25 references. Does not accept `type: "incomplete"` or `type: "unsupported"` rollups.
  *
  * @param schema - A schema that validates the single element in the rollup array.
  *                  Must accept an object with a `type` field.
@@ -252,6 +261,9 @@ export function SingleRollupSchema<S extends v.GenericSchema<object, unknown>>(
  *
  * **Output:** The output type of the schema passed as a parameter, or `null`.
  * For example, if a schema for number properties is passed, the output will be `number | null`.
+ *
+ * @notionPartial supported
+ * @notionPartialNote Rollup arrays may be truncated beyond 25 references. Does not accept `type: "incomplete"` or `type: "unsupported"` rollups.
  *
  * @param schema - A schema that validates each element in the rollup array.
  *                  Must accept an object with a `type` field.

@@ -2,7 +2,10 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { CreatedTimeSchema } from "./created-time.ts";
-import type { SelectNotionProperty } from "./test-utils.ts";
+import type {
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"created_time">;
 
@@ -30,6 +33,26 @@ describe("created-time", () => {
 
 				expect(result instanceof Date).toBe(true);
 				expect(result.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"created_time">>().toExtend<
+						v.InferInput<typeof CreatedTimeSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(CreatedTimeSchema, {
+						created_time: "2024-01-15T00:00:00.000Z",
+					} satisfies PartialNotionPropertyValue<"created_time">);
+
+					expect(result.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+				});
 			});
 		});
 	});

@@ -15,9 +15,15 @@ import {
 	StringFormulaSchema,
 } from "./formula.ts";
 import { NullableNumberSchema, NumberSchema } from "./number.ts";
-import type { SelectNotionProperty } from "./test-utils.ts";
+import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"formula">;
+
+type PartialStringFormulaPropertyValue = {
+	formula: NonNullableValues<
+		Extract<TargetType["formula"], { type: "string" }>
+	>;
+};
 
 describe("formula", () => {
 	describe("FormulaSchema", () => {
@@ -132,6 +138,33 @@ describe("formula", () => {
 
 				expect(result).toEqual(true);
 				expect(typeof result).toEqual("boolean");
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = FormulaSchema(StringFormulaSchema);
+
+					expectTypeOf<PartialStringFormulaPropertyValue>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const Schema = FormulaSchema(StringFormulaSchema);
+
+					const result = v.parse(Schema, {
+						formula: {
+							type: "string",
+							string: "Hello World",
+						},
+					} satisfies PartialStringFormulaPropertyValue);
+
+					expect(result).toBe("Hello World");
+				});
 			});
 		});
 	});
