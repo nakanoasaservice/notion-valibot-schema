@@ -2,7 +2,11 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { MultiSelectSchema } from "./multi-select.ts";
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"multi_select">;
 
@@ -59,6 +63,32 @@ describe("multi-select", () => {
 						],
 					} satisfies TargetType).success,
 				).toBe(false);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = MultiSelectSchema(v.string());
+
+					expectTypeOf<PartialNotionPropertyValue<"multi_select">>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const Schema = MultiSelectSchema(
+						v.picklist(["Green", "Red", "Blue"]),
+					);
+
+					expect(
+						v.parse(Schema, {
+							multi_select: [{ name: "Green" }, { name: "Red" }],
+						} satisfies PartialNotionPropertyValue<"multi_select">),
+					).toEqual(["Green", "Red"]);
+				});
 			});
 		});
 	});

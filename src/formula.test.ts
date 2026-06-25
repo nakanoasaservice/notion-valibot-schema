@@ -15,7 +15,10 @@ import {
 	StringFormulaSchema,
 } from "./formula.ts";
 import { NullableNumberSchema, NumberSchema } from "./number.ts";
-import type { SelectNotionProperty } from "./test-utils.ts";
+import type {
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"formula">;
 
@@ -132,6 +135,33 @@ describe("formula", () => {
 
 				expect(result).toEqual(true);
 				expect(typeof result).toEqual("boolean");
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = FormulaSchema(StringFormulaSchema);
+
+					expectTypeOf<PartialNotionPropertyValue<"formula">>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const Schema = FormulaSchema(StringFormulaSchema);
+
+					const result = v.parse(Schema, {
+						formula: {
+							type: "string",
+							string: "Hello World",
+						},
+					} satisfies PartialNotionPropertyValue<"formula">);
+
+					expect(result).toBe("Hello World");
+				});
 			});
 		});
 	});

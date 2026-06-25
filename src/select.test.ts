@@ -2,7 +2,11 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullableSelectSchema, SelectSchema } from "./select.ts";
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"select">;
 
@@ -41,6 +45,30 @@ describe("select", () => {
 				expect(
 					v.safeParse(Schema, { select: null } satisfies TargetType).success,
 				).toBe(false);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = SelectSchema(v.string());
+
+					expectTypeOf<PartialNotionPropertyValue<"select">>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const Schema = SelectSchema(v.picklist(["Green", "Red", "Blue"]));
+
+					expect(
+						v.parse(Schema, {
+							select: { name: "Green" },
+						} satisfies PartialNotionPropertyValue<"select">),
+					).toEqual("Green");
+				});
 			});
 		});
 	});
@@ -82,6 +110,32 @@ describe("select", () => {
 				expect(v.parse(Schema, { select: null } satisfies TargetType)).toBe(
 					null,
 				);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = NullableSelectSchema(v.string());
+
+					expectTypeOf<PartialNotionPropertyValue<"select">>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const Schema = NullableSelectSchema(
+						v.picklist(["Green", "Red", "Blue"]),
+					);
+
+					expect(
+						v.parse(Schema, {
+							select: null,
+						} satisfies PartialNotionPropertyValue<"select">),
+					).toBe(null);
+				});
 			});
 		});
 	});

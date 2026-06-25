@@ -1,7 +1,10 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { SelectNotionProperty } from "./test-utils.ts";
+import type {
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 import {
 	NullableRichTextSchema,
 	NullableTitleSchema,
@@ -85,6 +88,26 @@ describe("text", () => {
 						],
 					} satisfies TargetType).success,
 				).toBe(false);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"title">>().toExtend<
+						v.InferInput<typeof TitleSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(TitleSchema, {
+						title: [{ type: "text", plain_text: "My Title" }],
+					} satisfies PartialNotionPropertyValue<"title">);
+
+					expect(result).toBe("My Title");
+				});
 			});
 		});
 	});
@@ -187,6 +210,26 @@ describe("text", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"rich_text">>().toExtend<
+						v.InferInput<typeof RichTextSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(RichTextSchema, {
+						rich_text: [{ type: "text", plain_text: "Rich Text" }],
+					} satisfies PartialNotionPropertyValue<"rich_text">);
+
+					expect(result).toBe("Rich Text");
+				});
+			});
+		});
 	});
 
 	describe("NullableTitleSchema", () => {
@@ -241,6 +284,26 @@ describe("text", () => {
 				} satisfies TargetType);
 
 				expect(result).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"title">>().toExtend<
+						v.InferInput<typeof NullableTitleSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableTitleSchema, {
+							title: [],
+						} satisfies PartialNotionPropertyValue<"title">),
+					).toBe(null);
+				});
 			});
 		});
 	});
@@ -314,6 +377,26 @@ describe("text", () => {
 				} satisfies TargetType);
 
 				expect(result).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"rich_text">>().toExtend<
+						v.InferInput<typeof NullableRichTextSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableRichTextSchema, {
+							rich_text: [],
+						} satisfies PartialNotionPropertyValue<"rich_text">),
+					).toBe(null);
+				});
 			});
 		});
 	});

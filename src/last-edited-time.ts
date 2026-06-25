@@ -12,6 +12,8 @@ import * as v from "valibot";
  *
  * **Output:** `Date`
  *
+ * @notionPartial supported
+ *
  * @example
  * ```ts
  * import * as v from "valibot";

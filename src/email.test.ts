@@ -2,7 +2,11 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { EmailSchema, NullableEmailSchema } from "./email.ts";
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"email">;
 
@@ -39,6 +43,26 @@ describe("email", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"email">>().toExtend<
+						v.InferInput<typeof EmailSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(EmailSchema, {
+						email: "test@example.com",
+					} satisfies PartialNotionPropertyValue<"email">);
+
+					expect(result).toBe("test@example.com");
+				});
+			});
+		});
 	});
 
 	describe("NullableEmailSchema", () => {
@@ -70,6 +94,26 @@ describe("email", () => {
 				expect(
 					v.parse(NullableEmailSchema, { email: null } satisfies TargetType),
 				).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"email">>().toExtend<
+						v.InferInput<typeof NullableEmailSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableEmailSchema, {
+							email: null,
+						} satisfies PartialNotionPropertyValue<"email">),
+					).toBe(null);
+				});
 			});
 		});
 	});

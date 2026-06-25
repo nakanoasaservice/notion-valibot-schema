@@ -6,10 +6,18 @@ import {
 	CreatedBySchema,
 	NullableCreatedByNameSchema,
 } from "./created-by.ts";
-import { UserOrGroupSchema, UserSchema } from "./people.ts";
-import type { SelectNotionProperty } from "./test-utils.ts";
+import { PersonSchema, UserOrGroupSchema, UserSchema } from "./people.ts";
+import type {
+	PartialCreatedByPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"created_by">;
+
+const partialCreatedBy = {
+	object: "user" as const,
+	id: "user-123",
+};
 
 describe("created-by", () => {
 	describe("CreatedByIdSchema", () => {
@@ -44,6 +52,26 @@ describe("created-by", () => {
 
 				expect(result).toEqual("user-123");
 				expect(typeof result).toEqual("string");
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialCreatedByPropertyValue>().toExtend<
+						v.InferInput<typeof CreatedByIdSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(CreatedByIdSchema, {
+						created_by: partialCreatedBy,
+					} satisfies PartialCreatedByPropertyValue);
+
+					expect(result).toBe("user-123");
+				});
 			});
 		});
 	});
@@ -97,6 +125,26 @@ describe("created-by", () => {
 				} satisfies TargetType);
 
 				expect(result).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialCreatedByPropertyValue>().toExtend<
+						v.InferInput<typeof NullableCreatedByNameSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableCreatedByNameSchema, {
+							created_by: partialCreatedBy,
+						} satisfies PartialCreatedByPropertyValue),
+					).toBe(null);
+				});
 			});
 		});
 	});
@@ -163,6 +211,56 @@ describe("created-by", () => {
 				} satisfies TargetType);
 
 				expect(result).toEqual({ id: "user-123", object: "user", name: null });
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = CreatedBySchema(UserOrGroupSchema);
+
+					expectTypeOf<PartialCreatedByPropertyValue>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(CreatedBySchema(UserOrGroupSchema), {
+						created_by: partialCreatedBy,
+					} satisfies PartialCreatedByPropertyValue);
+
+					expect(result).toEqual({
+						id: "user-123",
+						object: "user",
+						name: null,
+					});
+				});
+			});
+		});
+	});
+
+	describe("CreatedBySchema with PersonSchema", () => {
+		const Schema = CreatedBySchema(PersonSchema);
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should not accept partial Notion property value", () => {
+					expectTypeOf<PartialCreatedByPropertyValue>().not.toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should reject partial Notion property value", () => {
+					expect(
+						v.safeParse(Schema, {
+							created_by: partialCreatedBy,
+						} satisfies PartialCreatedByPropertyValue).success,
+					).toBe(false);
+				});
 			});
 		});
 	});

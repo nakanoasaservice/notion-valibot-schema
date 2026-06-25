@@ -20,6 +20,8 @@ import * as v from "valibot";
  * **Output:** The output type depends on the schema passed as a parameter.
  * For example, if `v.string()` is passed, the output will be `string[]`.
  *
+ * @notionPartial supported
+ *
  * @param schema - A schema that validates the multi-select option name.
  *                  Must accept a string value.
  *

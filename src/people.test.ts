@@ -13,7 +13,10 @@ import {
 	UserOrGroupSchema,
 	UserSchema,
 } from "./people.ts";
-import type { SelectNotionProperty } from "./test-utils.ts";
+import type {
+	PartialPeoplePropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"people">;
 
@@ -37,6 +40,16 @@ const personUser2 = {
 	person: {
 		email: "jane@example.com",
 	},
+};
+
+const partialUser = {
+	object: "user" as const,
+	id: "user-1",
+};
+
+const partialBot = {
+	object: "bot" as const,
+	id: "bot-1",
 };
 
 describe("people", () => {
@@ -74,6 +87,22 @@ describe("people", () => {
 			expect(result.type).toBe("person");
 			expect(result.person.email).toBe("john@example.com");
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should not accept partial user object", () => {
+					expectTypeOf<
+						PartialPeoplePropertyValue["people"][number]
+					>().not.toExtend<v.InferInput<typeof PersonSchema>>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should reject partial user object", () => {
+					expect(v.safeParse(PersonSchema, partialUser).success).toBe(false);
+				});
+			});
+		});
 	});
 
 	describe("UserSchema", () => {
@@ -108,6 +137,22 @@ describe("people", () => {
 			expect(result.id).toBe("bot-1");
 			expect(result.object).toBe("bot");
 			expect(result.type).toBe("bot");
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should not accept partial bot object", () => {
+					expectTypeOf<typeof partialBot>().not.toExtend<
+						v.InferInput<typeof BotSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should reject partial bot object", () => {
+					expect(v.safeParse(BotSchema, partialBot).success).toBe(false);
+				});
+			});
 		});
 	});
 
@@ -161,6 +206,28 @@ describe("people", () => {
 				expect(result).toEqual([]);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialPeoplePropertyValue>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(Schema, {
+						people: [partialUser],
+					} satisfies PartialPeoplePropertyValue);
+
+					expect(result).toEqual([
+						{ id: "user-1", object: "user", name: null },
+					]);
+				});
+			});
+		});
 	});
 
 	describe("PeopleSchema with PersonSchema", () => {
@@ -173,6 +240,26 @@ describe("people", () => {
 
 			expect(result[0]?.type).toBe("person");
 			expect(result[0]?.person.email).toBe("john@example.com");
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should not accept partial Notion property value", () => {
+					expectTypeOf<PartialPeoplePropertyValue>().not.toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should reject partial Notion property value", () => {
+					expect(
+						v.safeParse(Schema, {
+							people: [partialUser],
+						} satisfies PartialPeoplePropertyValue).success,
+					).toBe(false);
+				});
+			});
 		});
 	});
 
@@ -197,6 +284,30 @@ describe("people", () => {
 
 				expect(result.id).toBe("user-1");
 				expect(result.name).toBe("John Doe");
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialPeoplePropertyValue>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(Schema, {
+						people: [partialUser],
+					} satisfies PartialPeoplePropertyValue);
+
+					expect(result).toEqual({
+						id: "user-1",
+						object: "user",
+						name: null,
+					});
+				});
 			});
 		});
 	});
@@ -229,6 +340,26 @@ describe("people", () => {
 				} satisfies TargetType);
 
 				expect(result).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialPeoplePropertyValue>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(Schema, {
+							people: [],
+						} satisfies PartialPeoplePropertyValue),
+					).toBe(null);
+				});
 			});
 		});
 	});
@@ -265,6 +396,26 @@ describe("people", () => {
 				expect(result).toEqual([]);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialPeoplePropertyValue>().toExtend<
+						v.InferInput<typeof PeopleIdSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(PeopleIdSchema, {
+						people: [partialUser, { object: "user", id: "user-2" }],
+					} satisfies PartialPeoplePropertyValue);
+
+					expect(result).toEqual(["user-1", "user-2"]);
+				});
+			});
+		});
 	});
 
 	describe("SinglePeopleIdSchema", () => {
@@ -283,6 +434,26 @@ describe("people", () => {
 				} satisfies TargetType);
 
 				expect(result).toBe("user-1");
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialPeoplePropertyValue>().toExtend<
+						v.InferInput<typeof SinglePeopleIdSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(SinglePeopleIdSchema, {
+						people: [partialUser],
+					} satisfies PartialPeoplePropertyValue);
+
+					expect(result).toBe("user-1");
+				});
 			});
 		});
 	});
@@ -311,6 +482,26 @@ describe("people", () => {
 				} satisfies TargetType);
 
 				expect(result).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialPeoplePropertyValue>().toExtend<
+						v.InferInput<typeof NullableSinglePeopleIdSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableSinglePeopleIdSchema, {
+							people: [],
+						} satisfies PartialPeoplePropertyValue),
+					).toBe(null);
+				});
 			});
 		});
 	});

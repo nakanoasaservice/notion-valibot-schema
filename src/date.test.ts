@@ -9,7 +9,11 @@ import {
 	NullableDateSchema,
 	NullableFullDateSchema,
 } from "./date.ts";
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"date">;
 
@@ -51,6 +55,26 @@ describe("date", () => {
 				).toBe(null);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"date">>().toExtend<
+						v.InferInput<typeof NullableDateSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableDateSchema, {
+							date: null,
+						} satisfies PartialNotionPropertyValue<"date">),
+					).toBe(null);
+				});
+			});
+		});
 	});
 
 	describe("DateSchema", () => {
@@ -84,6 +108,30 @@ describe("date", () => {
 				expect(
 					v.safeParse(DateSchema, { date: null } satisfies TargetType).success,
 				).toBe(false);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"date">>().toExtend<
+						v.InferInput<typeof DateSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(DateSchema, {
+						date: {
+							start: "2024-01-15T00:00:00.000Z",
+							end: null,
+							time_zone: null,
+						},
+					} satisfies PartialNotionPropertyValue<"date">);
+
+					expect(result.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+				});
 			});
 		});
 	});
@@ -142,6 +190,26 @@ describe("date", () => {
 				).toBe(null);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"date">>().toExtend<
+						v.InferInput<typeof NullableDateRangeSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableDateRangeSchema, {
+							date: null,
+						} satisfies PartialNotionPropertyValue<"date">),
+					).toBe(null);
+				});
+			});
+		});
 	});
 
 	describe("DateRangeSchema", () => {
@@ -196,6 +264,31 @@ describe("date", () => {
 						date: null,
 					} satisfies TargetType).success,
 				).toBe(false);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"date">>().toExtend<
+						v.InferInput<typeof DateRangeSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(DateRangeSchema, {
+						date: {
+							start: "2024-01-15T00:00:00.000Z",
+							end: "2024-01-20T00:00:00.000Z",
+							time_zone: null,
+						},
+					} satisfies PartialNotionPropertyValue<"date">);
+
+					expect(result.start.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+					expect(result.end.toISOString()).toBe("2024-01-20T00:00:00.000Z");
+				});
 			});
 		});
 	});
@@ -257,6 +350,26 @@ describe("date", () => {
 				).toBe(null);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"date">>().toExtend<
+						v.InferInput<typeof NullableFullDateSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableFullDateSchema, {
+							date: null,
+						} satisfies PartialNotionPropertyValue<"date">),
+					).toBe(null);
+				});
+			});
+		});
 	});
 
 	describe("FullDateSchema", () => {
@@ -313,6 +426,31 @@ describe("date", () => {
 					v.safeParse(FullDateSchema, { date: null } satisfies TargetType)
 						.success,
 				).toBe(false);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"date">>().toExtend<
+						v.InferInput<typeof FullDateSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(FullDateSchema, {
+						date: {
+							start: "2024-01-15T00:00:00.000Z",
+							end: null,
+							time_zone: null,
+						},
+					} satisfies PartialNotionPropertyValue<"date">);
+
+					expect(result.start.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+					expect(result.end).toBe(null);
+				});
 			});
 		});
 	});

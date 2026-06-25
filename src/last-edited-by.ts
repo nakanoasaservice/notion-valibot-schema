@@ -23,7 +23,11 @@ import { UserOrGroupIdSchema, UserOrGroupSchema } from "./people";
  *
  * **Output:** The output type depends on the schema passed as a parameter.
  *
+ * @notionPartial supported
+ * @notionPartialNote Supported with `UserOrGroupSchema` or `UserSchema`. Not supported with `PersonSchema` (requires full person object).
+ *
  * @param schema - A schema that validates the `last_edited_by` user or group object.
+ *                  Use `UserOrGroupSchema` or `UserSchema` for partial responses; `PersonSchema` requires a full person object.
  *
  * @example
  * ```ts
@@ -75,6 +79,8 @@ export function LastEditedBySchema<
  *
  * **Output:** `string | null`
  *
+ * @notionPartial supported
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -113,6 +119,8 @@ export const NullableLastEditedByNameSchema = v.pipe(
  * ```
  *
  * **Output:** `string`
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts

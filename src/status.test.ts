@@ -2,7 +2,11 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullableStatusSchema, StatusSchema } from "./status.ts";
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"status">;
 
@@ -49,6 +53,32 @@ describe("status", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = StatusSchema(v.string());
+
+					expectTypeOf<PartialNotionPropertyValue<"status">>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const Schema = StatusSchema(
+						v.picklist(["Done", "In Progress", "Todo"]),
+					);
+
+					expect(
+						v.parse(Schema, {
+							status: { name: "Done" },
+						} satisfies PartialNotionPropertyValue<"status">),
+					).toEqual("Done");
+				});
+			});
+		});
 	});
 
 	describe("NullableStatusSchema", () => {
@@ -92,6 +122,32 @@ describe("status", () => {
 				expect(v.parse(Schema, { status: null } satisfies TargetType)).toBe(
 					null,
 				);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = NullableStatusSchema(v.string());
+
+					expectTypeOf<PartialNotionPropertyValue<"status">>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const Schema = NullableStatusSchema(
+						v.picklist(["Done", "In Progress", "Todo"]),
+					);
+
+					expect(
+						v.parse(Schema, {
+							status: null,
+						} satisfies PartialNotionPropertyValue<"status">),
+					).toBe(null);
+				});
 			});
 		});
 	});

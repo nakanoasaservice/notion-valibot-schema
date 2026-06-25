@@ -5,7 +5,11 @@ import {
 	NullablePhoneNumberSchema,
 	PhoneNumberSchema,
 } from "./phone-number.ts";
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"phone_number">;
 
@@ -43,6 +47,26 @@ describe("phone-number", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"phone_number">>().toExtend<
+						v.InferInput<typeof PhoneNumberSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(PhoneNumberSchema, {
+						phone_number: "+81-90-1234-5678",
+					} satisfies PartialNotionPropertyValue<"phone_number">);
+
+					expect(result).toBe("+81-90-1234-5678");
+				});
+			});
+		});
 	});
 
 	describe("NullablePhoneNumberSchema", () => {
@@ -76,6 +100,26 @@ describe("phone-number", () => {
 						phone_number: null,
 					} satisfies TargetType),
 				).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"phone_number">>().toExtend<
+						v.InferInput<typeof NullablePhoneNumberSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullablePhoneNumberSchema, {
+							phone_number: null,
+						} satisfies PartialNotionPropertyValue<"phone_number">),
+					).toBe(null);
+				});
 			});
 		});
 	});

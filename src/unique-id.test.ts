@@ -1,7 +1,11 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 import {
 	FullUniqueIdSchema,
 	PrefixedUniqueIdSchema,
@@ -50,6 +54,26 @@ describe("unique-id", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"unique_id">>().toExtend<
+						v.InferInput<typeof UniqueIdSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(UniqueIdSchema, {
+						unique_id: { number: 123 },
+					} satisfies PartialNotionPropertyValue<"unique_id">);
+
+					expect(result).toBe(123);
+				});
+			});
+		});
 	});
 
 	describe("PrefixedUniqueIdSchema", () => {
@@ -91,6 +115,26 @@ describe("unique-id", () => {
 						},
 					} satisfies TargetType).success,
 				).toBe(false);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"unique_id">>().toExtend<
+						v.InferInput<typeof PrefixedUniqueIdSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(PrefixedUniqueIdSchema, {
+						unique_id: { prefix: "PREFIX", number: 123 },
+					} satisfies PartialNotionPropertyValue<"unique_id">);
+
+					expect(result).toBe("PREFIX-123");
+				});
 			});
 		});
 	});
@@ -160,6 +204,27 @@ describe("unique-id", () => {
 
 				expect(result.prefix).toBe(null);
 				expect(result.number).toBe(456);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"unique_id">>().toExtend<
+						v.InferInput<typeof FullUniqueIdSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(FullUniqueIdSchema, {
+						unique_id: { prefix: null, number: 123 },
+					} satisfies PartialNotionPropertyValue<"unique_id">);
+
+					expect(result.number).toBe(123);
+					expect(result.prefix).toBe(null);
+				});
 			});
 		});
 	});

@@ -12,6 +12,8 @@ import * as v from "valibot";
  *
  * **Output:** `number`
  *
+ * @notionPartial supported
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -47,6 +49,8 @@ export const NumberSchema = v.pipe(
  * ```
  *
  * **Output:** `number | null`
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts

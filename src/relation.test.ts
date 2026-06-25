@@ -6,7 +6,10 @@ import {
 	RelationSchema,
 	SingleRelationSchema,
 } from "./relation.ts";
-import type { SelectNotionProperty } from "./test-utils.ts";
+import type {
+	PartialRelationPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"relation">;
 
@@ -55,6 +58,27 @@ describe("relation", () => {
 				expect(result.length).toBe(0);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialRelationPropertyValue>().toExtend<
+						v.InferInput<typeof RelationSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(RelationSchema, {
+						relation: [{ id: "page-1" }],
+						has_more: true,
+					} satisfies PartialRelationPropertyValue);
+
+					expect(result).toEqual(["page-1"]);
+				});
+			});
+		});
 	});
 
 	describe("SingleRelationSchema", () => {
@@ -100,6 +124,27 @@ describe("relation", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialRelationPropertyValue>().toExtend<
+						v.InferInput<typeof SingleRelationSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(SingleRelationSchema, {
+						relation: [{ id: "page-1" }],
+						has_more: true,
+					} satisfies PartialRelationPropertyValue);
+
+					expect(result).toBe("page-1");
+				});
+			});
+		});
 	});
 
 	describe("NullableSingleRelationSchema", () => {
@@ -137,6 +182,27 @@ describe("relation", () => {
 				} satisfies TargetType);
 
 				expect(result).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialRelationPropertyValue>().toExtend<
+						v.InferInput<typeof NullableSingleRelationSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableSingleRelationSchema, {
+							relation: [],
+							has_more: true,
+						} satisfies PartialRelationPropertyValue),
+					).toBe(null);
+				});
 			});
 		});
 	});

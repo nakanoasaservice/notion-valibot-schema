@@ -6,7 +6,10 @@ import {
 	NullableSingleFileSchema,
 	SingleFileSchema,
 } from "./files.ts";
-import type { SelectNotionProperty } from "./test-utils.ts";
+import type {
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"files">;
 
@@ -59,6 +62,26 @@ describe("files", () => {
 
 				expect(result).toEqual([]);
 				expect(result.length).toBe(0);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"files">>().toExtend<
+						v.InferInput<typeof FilesSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(FilesSchema, {
+						files: [],
+					} satisfies PartialNotionPropertyValue<"files">);
+
+					expect(result).toEqual([]);
+				});
 			});
 		});
 	});
@@ -132,6 +155,31 @@ describe("files", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"files">>().toExtend<
+						v.InferInput<typeof SingleFileSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(SingleFileSchema, {
+						files: [
+							{
+								type: "external",
+								external: { url: "https://example.com/file.pdf" },
+							},
+						],
+					} satisfies PartialNotionPropertyValue<"files">);
+
+					expect(result).toBe("https://example.com/file.pdf");
+				});
+			});
+		});
 	});
 
 	describe("NullableSingleFileSchema", () => {
@@ -174,6 +222,26 @@ describe("files", () => {
 				} satisfies TargetType);
 
 				expect(result).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"files">>().toExtend<
+						v.InferInput<typeof NullableSingleFileSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableSingleFileSchema, {
+							files: [],
+						} satisfies PartialNotionPropertyValue<"files">),
+					).toBe(null);
+				});
 			});
 		});
 	});
