@@ -56,9 +56,9 @@ No more checking for `property.type === 'date'`, handling `null`, or digging thr
 - 🛠 **Comprehensive**: Supports complex properties like Rollups, Formulas, and Relations.
 - 📋 **Partial-aware**: Each schema documents whether it accepts partial `pages.retrieve` / `databases.query` responses via `@notionPartial` JSDoc tags.
 
-## Claude Code Skill
+## AI Agent Skill
 
-If you use [Claude Code](https://claude.ai/claude-code), install the skill so Claude automatically uses this library when writing Notion data-fetching code:
+Install the skill so your AI agent automatically uses this library when writing Notion data-fetching code:
 
 ```bash
 npx skills add nakanoaas/notion-valibot-schema
