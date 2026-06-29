@@ -55,6 +55,7 @@ No more checking for `property.type === 'date'`, handling `null`, or digging thr
 - ✅ **Well Tested**: Backed by a comprehensive test suite covering edge cases.
 - 🛠 **Comprehensive**: Supports complex properties like Rollups, Formulas, and Relations.
 - 📋 **Partial-aware**: Each schema documents whether it accepts partial `pages.retrieve` / `databases.query` responses via `@notionPartial` JSDoc tags.
+- 🤖 **AI Agent Skill**: Install via `npx skills add nakanoaas/notion-valibot-schema` so your AI agent uses this library automatically.
 
 ## AI Agent Skill
 
