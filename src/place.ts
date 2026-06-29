@@ -76,6 +76,8 @@ const PlaceObjectSchema = v.object({
  * }
  * ```
  *
+ * @notionPartial supported
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -124,6 +126,8 @@ export const PlaceSchema = v.pipe(
  *   address?: string | null;
  * } | null
  * ```
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts

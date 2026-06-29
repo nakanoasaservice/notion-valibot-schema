@@ -1,3 +1,4 @@
+import type { RollupFunction } from "@notionhq/client/build/src/api-endpoints";
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
@@ -9,7 +10,11 @@ import {
 	RollupSchema,
 	SingleRollupSchema,
 } from "./rollup.ts";
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	IncompleteRollupPropertyValue,
+	NonNullableValues,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"rollup">;
 
@@ -24,6 +29,18 @@ type RollupArrayType = RollupTypeOf<
 type SimpleRollupType = RollupTypeOf<
 	NonNullableValues<Extract<TargetType["rollup"], { type: "number" | "date" }>>
 >;
+
+type PartialNumberRollupPropertyValue = RollupTypeOf<
+	NonNullableValues<Extract<TargetType["rollup"], { type: "number" }>>
+>;
+
+type PartialArrayRollupPropertyValue = {
+	rollup: {
+		function: RollupFunction;
+		type: "array";
+		array: Array<{ type: "number"; number: number }>;
+	};
+};
 
 describe("rollup", () => {
 	describe("RollupScalarSchema", () => {
@@ -87,6 +104,52 @@ describe("rollup", () => {
 
 				expect(result instanceof Date).toBe(true);
 				expect(result.toISOString()).toBe("2024-01-15T00:00:00.000Z");
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = RollupScalarSchema(NumberSchema);
+
+					expectTypeOf<PartialNumberRollupPropertyValue>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+
+				it("should not accept incomplete rollup property value", () => {
+					const Schema = RollupScalarSchema(NumberSchema);
+
+					expectTypeOf<IncompleteRollupPropertyValue>().not.toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(RollupScalarSchema(NumberSchema), {
+						rollup: {
+							function: "sum",
+							type: "number",
+							number: 42,
+						},
+					} satisfies PartialNumberRollupPropertyValue);
+
+					expect(result).toBe(42);
+				});
+
+				it("should reject incomplete rollup property value", () => {
+					expect(
+						v.safeParse(RollupScalarSchema(NumberSchema), {
+							rollup: {
+								function: "sum",
+								type: "incomplete",
+								incomplete: {},
+							},
+						} satisfies IncompleteRollupPropertyValue).success,
+					).toBe(false);
+				});
 			});
 		});
 	});
@@ -190,6 +253,55 @@ describe("rollup", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = RollupSchema(NumberSchema);
+
+					expectTypeOf<PartialArrayRollupPropertyValue>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+
+				it("should not accept incomplete rollup property value", () => {
+					const Schema = RollupSchema(NumberSchema);
+
+					expectTypeOf<IncompleteRollupPropertyValue>().not.toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const Schema = RollupSchema(NumberSchema);
+					const result = v.parse(Schema, {
+						rollup: {
+							function: "sum",
+							type: "array",
+							array: [{ type: "number", number: 42 }],
+						},
+					} satisfies PartialArrayRollupPropertyValue);
+
+					expect(result).toEqual([42]);
+				});
+
+				it("should reject incomplete rollup property value", () => {
+					const Schema = RollupSchema(NumberSchema);
+
+					expect(
+						v.safeParse(Schema, {
+							rollup: {
+								function: "sum",
+								type: "incomplete",
+								incomplete: {},
+							},
+						} satisfies IncompleteRollupPropertyValue).success,
+					).toBe(false);
+				});
+			});
+		});
 	});
 
 	describe("SingleRollupSchema", () => {
@@ -270,6 +382,55 @@ describe("rollup", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = SingleRollupSchema(NumberSchema);
+
+					expectTypeOf<PartialArrayRollupPropertyValue>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+
+				it("should not accept incomplete rollup property value", () => {
+					const Schema = SingleRollupSchema(NumberSchema);
+
+					expectTypeOf<IncompleteRollupPropertyValue>().not.toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const Schema = SingleRollupSchema(NumberSchema);
+					const result = v.parse(Schema, {
+						rollup: {
+							function: "sum",
+							type: "array",
+							array: [{ type: "number", number: 42 }],
+						},
+					} satisfies PartialArrayRollupPropertyValue);
+
+					expect(result).toBe(42);
+				});
+
+				it("should reject incomplete rollup property value", () => {
+					const Schema = SingleRollupSchema(NumberSchema);
+
+					expect(
+						v.safeParse(Schema, {
+							rollup: {
+								function: "sum",
+								type: "incomplete",
+								incomplete: {},
+							},
+						} satisfies IncompleteRollupPropertyValue).success,
+					).toBe(false);
+				});
+			});
+		});
 	});
 
 	describe("NullableSingleRollupSchema", () => {
@@ -344,6 +505,56 @@ describe("rollup", () => {
 						},
 					} satisfies RollupArrayType).success,
 				).toBe(false);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = NullableSingleRollupSchema(NumberSchema);
+
+					expectTypeOf<PartialArrayRollupPropertyValue>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+
+				it("should not accept incomplete rollup property value", () => {
+					const Schema = NullableSingleRollupSchema(NumberSchema);
+
+					expectTypeOf<IncompleteRollupPropertyValue>().not.toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const Schema = NullableSingleRollupSchema(NumberSchema);
+
+					expect(
+						v.parse(Schema, {
+							rollup: {
+								function: "sum",
+								type: "array",
+								array: [],
+							},
+						} satisfies PartialArrayRollupPropertyValue),
+					).toBe(null);
+				});
+
+				it("should reject incomplete rollup property value", () => {
+					const Schema = NullableSingleRollupSchema(NumberSchema);
+
+					expect(
+						v.safeParse(Schema, {
+							rollup: {
+								function: "sum",
+								type: "incomplete",
+								incomplete: {},
+							},
+						} satisfies IncompleteRollupPropertyValue).success,
+					).toBe(false);
+				});
 			});
 		});
 	});

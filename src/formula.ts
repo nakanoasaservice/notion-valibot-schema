@@ -27,6 +27,9 @@ import * as v from "valibot";
  * **Output:** The output type depends on the schema passed as a parameter.
  * For example, if `StringFormulaSchema` is passed, the output will be `string`.
  *
+ * @notionPartial supported
+ * @notionPartialNote Formula inline page/person mentions may be truncated beyond 25 references.
+ *
  * @param schema - A schema that validates the formula result object.
  *                  Use the pre-built `*FormulaSchema` helpers for string and boolean,
  *                  `NumberSchema` / `NullableNumberSchema` for number,
@@ -94,6 +97,8 @@ export function FormulaSchema<
  * **Input:** `{ string: string }`
  * **Output:** `string`
  *
+ * @notionPartial supported
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -126,6 +131,8 @@ export const StringFormulaSchema = v.pipe(
  *
  * **Input:** `{ string: string | null }`
  * **Output:** `string | null`
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts
@@ -160,6 +167,8 @@ export const NullableStringFormulaSchema = v.pipe(
  * **Input:** `{ boolean: boolean }`
  * **Output:** `boolean`
  *
+ * @notionPartial supported
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -192,6 +201,8 @@ export const BooleanFormulaSchema = v.pipe(
  *
  * **Input:** `{ boolean: boolean | null }`
  * **Output:** `boolean | null`
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts

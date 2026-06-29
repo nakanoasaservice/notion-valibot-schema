@@ -2,7 +2,12 @@ import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NullablePlaceSchema, PlaceSchema } from "./place.ts";
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonemptyPartialNotionPropertyValue,
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"place">;
 
@@ -65,6 +70,27 @@ describe("place", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"place">>().toExtend<
+						v.InferInput<typeof PlaceSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(PlaceSchema, {
+						place: { lat: 35.6762, lon: 139.6503 },
+					} satisfies NonemptyPartialNotionPropertyValue<"place">);
+
+					expect(result.lat).toBe(35.6762);
+					expect(result.lon).toBe(139.6503);
+				});
+			});
+		});
 	});
 
 	describe("NullablePlaceSchema", () => {
@@ -108,6 +134,26 @@ describe("place", () => {
 				expect(
 					v.parse(NullablePlaceSchema, { place: null } satisfies TargetType),
 				).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"place">>().toExtend<
+						v.InferInput<typeof NullablePlaceSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullablePlaceSchema, {
+							place: null,
+						} satisfies PartialNotionPropertyValue<"place">),
+					).toBe(null);
+				});
 			});
 		});
 	});

@@ -6,8 +6,11 @@ import {
 	LastEditedBySchema,
 	NullableLastEditedByNameSchema,
 } from "./last-edited-by.ts";
-import { UserOrGroupSchema, UserSchema } from "./people.ts";
-import type { SelectNotionProperty } from "./test-utils.ts";
+import { PersonSchema, UserOrGroupSchema, UserSchema } from "./people.ts";
+import type {
+	PartialLastEditedByPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 
 type TargetType = SelectNotionProperty<"last_edited_by">;
 
@@ -20,6 +23,11 @@ const lastEditedByUser = {
 	person: {
 		email: "jane@example.com",
 	},
+};
+
+const partialLastEditedBy = {
+	object: "user" as const,
+	id: "user-123",
 };
 
 describe("last-edited-by", () => {
@@ -73,6 +81,56 @@ describe("last-edited-by", () => {
 				});
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					const Schema = LastEditedBySchema(UserOrGroupSchema);
+
+					expectTypeOf<PartialLastEditedByPropertyValue>().toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(LastEditedBySchema(UserOrGroupSchema), {
+						last_edited_by: partialLastEditedBy,
+					} satisfies PartialLastEditedByPropertyValue);
+
+					expect(result).toEqual({
+						id: "user-123",
+						object: "user",
+						name: null,
+					});
+				});
+			});
+		});
+	});
+
+	describe("LastEditedBySchema with PersonSchema", () => {
+		const Schema = LastEditedBySchema(PersonSchema);
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should not accept partial Notion property value", () => {
+					expectTypeOf<PartialLastEditedByPropertyValue>().not.toExtend<
+						v.InferInput<typeof Schema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should reject partial Notion property value", () => {
+					expect(
+						v.safeParse(Schema, {
+							last_edited_by: partialLastEditedBy,
+						} satisfies PartialLastEditedByPropertyValue).success,
+					).toBe(false);
+				});
+			});
+		});
 	});
 
 	describe("NullableLastEditedByNameSchema", () => {
@@ -108,6 +166,26 @@ describe("last-edited-by", () => {
 				expect(result).toBe(null);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialLastEditedByPropertyValue>().toExtend<
+						v.InferInput<typeof NullableLastEditedByNameSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableLastEditedByNameSchema, {
+							last_edited_by: partialLastEditedBy,
+						} satisfies PartialLastEditedByPropertyValue),
+					).toBe(null);
+				});
+			});
+		});
 	});
 
 	describe("LastEditedByIdSchema", () => {
@@ -133,6 +211,26 @@ describe("last-edited-by", () => {
 
 				expect(result).toEqual("user-123");
 				expect(typeof result).toEqual("string");
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialLastEditedByPropertyValue>().toExtend<
+						v.InferInput<typeof LastEditedByIdSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(LastEditedByIdSchema, {
+						last_edited_by: partialLastEditedBy,
+					} satisfies PartialLastEditedByPropertyValue);
+
+					expect(result).toBe("user-123");
+				});
 			});
 		});
 	});

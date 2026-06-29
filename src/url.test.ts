@@ -1,7 +1,12 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonemptyPartialNotionPropertyValue,
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 import { NullableUrlSchema, UrlSchema } from "./url.ts";
 
 type TargetType = SelectNotionProperty<"url">;
@@ -36,6 +41,26 @@ describe("url", () => {
 				).toBe(false);
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<NonemptyPartialNotionPropertyValue<"url">>().toExtend<
+						v.InferInput<typeof UrlSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(UrlSchema, {
+						url: "https://example.com",
+					} satisfies NonemptyPartialNotionPropertyValue<"url">);
+
+					expect(result).toBe("https://example.com");
+				});
+			});
+		});
 	});
 
 	describe("NullableUrlSchema", () => {
@@ -67,6 +92,26 @@ describe("url", () => {
 				expect(
 					v.parse(NullableUrlSchema, { url: null } satisfies TargetType),
 				).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"url">>().toExtend<
+						v.InferInput<typeof NullableUrlSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableUrlSchema, {
+							url: null,
+						} satisfies PartialNotionPropertyValue<"url">),
+					).toBe(null);
+				});
 			});
 		});
 	});

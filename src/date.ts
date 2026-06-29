@@ -93,6 +93,8 @@ const DateRangeObjectSchema = v.object({
  *
  * **Output:** `Date | null`
  *
+ * @notionPartial supported
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -132,6 +134,8 @@ export const NullableDateSchema = v.pipe(
  * ```
  *
  * **Output:** `Date`
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts
@@ -180,6 +184,8 @@ export const DateSchema = v.pipe(
  *   time_zone: string | null;
  * } | null
  * ```
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts
@@ -237,6 +243,8 @@ export const NullableDateRangeSchema = v.pipe(
  * }
  * ```
  *
+ * @notionPartial supported
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -288,6 +296,8 @@ export const DateRangeSchema = v.pipe(
  *   time_zone: string | null;
  * } | null
  * ```
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts
@@ -344,6 +354,8 @@ export const NullableFullDateSchema = v.pipe(
  *   time_zone: string | null;
  * }
  * ```
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts

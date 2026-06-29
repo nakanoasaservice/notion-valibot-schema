@@ -55,6 +55,8 @@ const InnerVerificationSchema = v.variant("state", [
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.Verification: { state: "unverified" | "verified" | "expired"; date: DateObject | null; verified_by: { id: string; object: "user"; name: string | null; avatar_url: string | null } | null }
  * ```
+ *
+ * @notionPartial supported
  */
 export const VerificationSchema = v.pipe(
 	v.object({
@@ -102,6 +104,8 @@ export const VerificationSchema = v.pipe(
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.Verification: { state: "unverified" | "verified" | "expired"; date: DateObject | null; verified_by: { id: string; object: "user"; name: string | null; avatar_url: string | null } | null } | null
  * ```
+ *
+ * @notionPartial supported
  */
 export const NullableVerificationSchema = v.pipe(
 	v.object({

@@ -60,6 +60,9 @@ const RichTextItemArraySchema = v.array(
  *
  * This schema validates that the resulting string is non-empty. Empty arrays or arrays with only empty `plain_text` values will be rejected.
  *
+ * @notionPartial supported
+ * @notionPartialNote Inline page/person mentions in title may be truncated beyond 25 references.
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -101,6 +104,9 @@ export const TitleSchema = v.pipe(
  *
  * If the `title` array is empty or all `plain_text` values are empty strings, this schema returns `null`. Otherwise, it joins all `plain_text` values into a single string.
  *
+ * @notionPartial supported
+ * @notionPartialNote Inline page/person mentions in title may be truncated beyond 25 references.
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -140,6 +146,9 @@ export const NullableTitleSchema = v.pipe(
  * **Output:** `string` (non-empty)
  *
  * This schema validates that the resulting string is non-empty. Empty arrays or arrays with only empty `plain_text` values will be rejected.
+ *
+ * @notionPartial supported
+ * @notionPartialNote Inline page/person mentions in rich text may be truncated beyond 25 references.
  *
  * @example
  * ```ts
@@ -181,6 +190,9 @@ export const RichTextSchema = v.pipe(
  * **Output:** `string | null`
  *
  * If the `rich_text` array is empty or all `plain_text` values are empty strings, this schema returns `null`. Otherwise, it joins all `plain_text` values into a single string.
+ *
+ * @notionPartial supported
+ * @notionPartialNote Inline page/person mentions in rich text may be truncated beyond 25 references.
  *
  * @example
  * ```ts

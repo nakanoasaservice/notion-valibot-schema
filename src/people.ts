@@ -20,6 +20,8 @@ import * as v from "valibot";
  *   id: string;
  * }
  * ```
+ *
+ * @notionPartial supported
  */
 export const UserOrGroupIdSchema = v.object({
 	id: v.string(),
@@ -67,6 +69,8 @@ export const UserOrGroupIdSchema = v.object({
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.Assignees: Array<{ id: string; object: "user" | "group"; name: string | null }>
  * ```
+ *
+ * @notionPartial supported
  */
 export const UserOrGroupSchema = v.object({
 	id: v.string(),
@@ -97,6 +101,8 @@ export const UserOrGroupSchema = v.object({
  *   avatar_url: string | null;
  * }
  * ```
+ *
+ * @notionPartial supported
  */
 export const UserSchema = v.object({
 	id: v.string(),
@@ -157,6 +163,9 @@ export const UserSchema = v.object({
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.People: Array<{ id: string; object: "user"; name: string | null; ... }>
  * ```
+ *
+ * @notionPartial not-supported
+ * @notionPartialNote Requires full person object (`type: "person"`). Use `UserOrGroupSchema` or `PeopleIdSchema` for partial responses.
  */
 export const PersonSchema = v.object({
 	id: v.string(),
@@ -197,6 +206,9 @@ export const PersonSchema = v.object({
  *   bot: unknown;
  * }
  * ```
+ *
+ * @notionPartial not-supported
+ * @notionPartialNote Requires full bot object (`object: "bot"`, `type: "bot"`). Use `UserOrGroupSchema` or `PeopleIdSchema` for partial responses.
  */
 export const BotSchema = v.object({
 	id: v.string(),
@@ -244,6 +256,9 @@ export const BotSchema = v.object({
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.People: [string]
  * ```
+ *
+ * @notionPartial supported
+ * @notionPartialNote People lists may be truncated beyond 25 entries. Use `pages.properties.retrieve` for complete data.
  */
 export const PeopleIdSchema = v.pipe(
 	v.object({
@@ -282,6 +297,9 @@ export const PeopleIdSchema = v.pipe(
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.Owner: string
  * ```
+ *
+ * @notionPartial supported
+ * @notionPartialNote People lists may be truncated beyond 25 entries. Use `pages.properties.retrieve` for complete data.
  */
 export const SinglePeopleIdSchema = v.pipe(
 	v.object({
@@ -320,6 +338,9 @@ export const SinglePeopleIdSchema = v.pipe(
  * const parsed = v.parse(PageSchema, page);
  * // parsed.properties.Owner: string | null
  * ```
+ *
+ * @notionPartial supported
+ * @notionPartialNote People lists may be truncated beyond 25 entries. Use `pages.properties.retrieve` for complete data.
  */
 export const NullableSinglePeopleIdSchema = v.pipe(
 	v.object({
@@ -340,7 +361,11 @@ export const NullableSinglePeopleIdSchema = v.pipe(
  *
  * **Output:** `InferredOutput<schema>[]`
  *
+ * @notionPartial supported
+ * @notionPartialNote Supported with `UserOrGroupSchema` or `UserSchema`. Not supported with `PersonSchema` or `BotSchema`. People lists may be truncated beyond 25 entries.
+ *
  * @param schema - A schema that validates each person object in the `people` array.
+ *                  Use `UserOrGroupSchema` or `UserSchema` for partial responses.
  *
  * @example
  * ```ts
@@ -384,7 +409,11 @@ export function PeopleSchema<S extends v.GenericSchema<object, unknown>>(
  *
  * **Output:** `InferredOutput<schema>`
  *
+ * @notionPartial supported
+ * @notionPartialNote Supported with `UserOrGroupSchema` or `UserSchema`. Not supported with `PersonSchema` or `BotSchema`.
+ *
  * @param schema - A schema that validates the person object in the `people` array.
+ *                  Use `UserOrGroupSchema` or `UserSchema` for partial responses.
  *
  * @example
  * ```ts
@@ -428,7 +457,11 @@ export function SinglePeopleSchema<S extends v.GenericSchema<object, unknown>>(
  *
  * **Output:** `InferredOutput<schema> | null`
  *
+ * @notionPartial supported
+ * @notionPartialNote Supported with `UserOrGroupSchema` or `UserSchema`. Not supported with `PersonSchema` or `BotSchema`.
+ *
  * @param schema - A schema that validates each person object in the `people` array.
+ *                  Use `UserOrGroupSchema` or `UserSchema` for partial responses.
  *
  * @example
  * ```ts

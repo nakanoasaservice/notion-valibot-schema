@@ -14,6 +14,8 @@ import * as v from "valibot";
  *
  * **Output:** `number`
  *
+ * @notionPartial supported
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -54,6 +56,8 @@ export const UniqueIdSchema = v.pipe(
  * ```
  *
  * **Output:** `string` (e.g. `"PREFIX-123"`)
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts
@@ -102,6 +106,8 @@ export const PrefixedUniqueIdSchema = v.pipe(
  *   number: number | null;
  * }
  * ```
+ *
+ * @notionPartial supported
  *
  * @example
  * ```ts

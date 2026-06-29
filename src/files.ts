@@ -57,6 +57,9 @@ const InnerFileSchema = v.variant("type", [
  *
  * **Output:** `string[]`
  *
+ * @notionPartial supported
+ * @notionPartialNote File lists may be truncated beyond 25 entries. Use `pages.properties.retrieve` for complete data.
+ *
  * @example
  * ```ts
  * import * as v from "valibot";
@@ -104,6 +107,9 @@ export const FilesSchema = v.pipe(
  * ```
  *
  * **Output:** `string`
+ *
+ * @notionPartial supported
+ * @notionPartialNote File lists may be truncated beyond 25 entries.
  *
  * @example
  * ```ts
@@ -153,6 +159,9 @@ export const SingleFileSchema = v.pipe(
  * ```
  *
  * **Output:** `string | null`
+ *
+ * @notionPartial supported
+ * @notionPartialNote File lists may be truncated beyond 25 entries.
  *
  * @example
  * ```ts

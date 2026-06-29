@@ -1,7 +1,12 @@
 import * as v from "valibot";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import type { NonNullableValues, SelectNotionProperty } from "./test-utils.ts";
+import type {
+	NonemptyPartialNotionPropertyValue,
+	NonNullableValues,
+	PartialNotionPropertyValue,
+	SelectNotionProperty,
+} from "./test-utils.ts";
 import {
 	NullableVerificationSchema,
 	VerificationSchema,
@@ -108,6 +113,30 @@ describe("verification", () => {
 				expect(result?.state).toEqual("expired");
 			});
 		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<
+						NonemptyPartialNotionPropertyValue<"verification">
+					>().toExtend<v.InferInput<typeof VerificationSchema>>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					const result = v.parse(VerificationSchema, {
+						verification: {
+							state: "unverified",
+							date: null,
+							verified_by: null,
+						},
+					} satisfies NonemptyPartialNotionPropertyValue<"verification">);
+
+					expect(result?.state).toBe("unverified");
+				});
+			});
+		});
 	});
 
 	describe("NullableVerificationSchema", () => {
@@ -176,6 +205,26 @@ describe("verification", () => {
 						verification: null,
 					} satisfies TargetType),
 				).toBe(null);
+			});
+		});
+
+		describe("partial response", () => {
+			describe("type checking", () => {
+				it("should accept partial Notion property value", () => {
+					expectTypeOf<PartialNotionPropertyValue<"verification">>().toExtend<
+						v.InferInput<typeof NullableVerificationSchema>
+					>();
+				});
+			});
+
+			describe("parsing", () => {
+				it("should parse partial Notion property value", () => {
+					expect(
+						v.parse(NullableVerificationSchema, {
+							verification: null,
+						} satisfies PartialNotionPropertyValue<"verification">),
+					).toBe(null);
+				});
 			});
 		});
 	});
