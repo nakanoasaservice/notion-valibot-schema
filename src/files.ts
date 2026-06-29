@@ -63,7 +63,7 @@ const InnerFileSchema = v.variant("type", [
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { FilesSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { FilesSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -114,7 +114,7 @@ export const FilesSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { SingleFileSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { SingleFileSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -166,7 +166,7 @@ export const SingleFileSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableSingleFileSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableSingleFileSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),

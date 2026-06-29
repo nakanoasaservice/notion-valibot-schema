@@ -28,7 +28,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { StatusSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { StatusSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -45,7 +45,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { StatusSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { StatusSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * // Custom schema for enum values
  * const StatusOptionSchema = v.picklist(["not-started", "in-progress", "completed"]);
@@ -102,7 +102,7 @@ export function StatusSchema<S extends v.GenericSchema<string>>(schema: S) {
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableStatusSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableStatusSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -119,7 +119,7 @@ export function StatusSchema<S extends v.GenericSchema<string>>(schema: S) {
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableStatusSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableStatusSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * // Custom schema for enum values
  * const StatusOptionSchema = v.picklist(["not-started", "in-progress", "completed"]);

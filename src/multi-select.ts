@@ -28,7 +28,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { MultiSelectSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { MultiSelectSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -45,7 +45,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { MultiSelectSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { MultiSelectSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * // Custom schema for enum values
  * const TagSchema = v.picklist(["urgent", "important", "normal"]);

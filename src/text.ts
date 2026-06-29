@@ -20,7 +20,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RichTextItemArraySchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RichTextItemArraySchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -66,7 +66,7 @@ const RichTextItemArraySchema = v.array(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { TitleSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { TitleSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -110,7 +110,7 @@ export const TitleSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableTitleSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableTitleSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -153,7 +153,7 @@ export const NullableTitleSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RichTextSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RichTextSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -197,7 +197,7 @@ export const RichTextSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableRichTextSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableRichTextSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),

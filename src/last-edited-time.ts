@@ -17,7 +17,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { LastEditedTimeSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { LastEditedTimeSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),

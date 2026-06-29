@@ -26,7 +26,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RollupScalarSchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RollupScalarSchema, NumberSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -43,7 +43,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RollupScalarSchema, DateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RollupScalarSchema, DateSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -105,7 +105,7 @@ export function RollupScalarSchema<
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RollupSchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RollupSchema, NumberSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -122,7 +122,7 @@ export function RollupScalarSchema<
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RollupSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RollupSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * // Custom schema for relation rollup
  * const RelationItemSchema = v.object({
@@ -185,7 +185,7 @@ export function RollupSchema<S extends v.GenericSchema<object, unknown>>(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { SingleRollupSchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { SingleRollupSchema, NumberSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -202,7 +202,7 @@ export function RollupSchema<S extends v.GenericSchema<object, unknown>>(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { SingleRollupSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { SingleRollupSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const RelationItemSchema = v.object({
  *   type: v.literal("relation"),
@@ -271,7 +271,7 @@ export function SingleRollupSchema<S extends v.GenericSchema<object, unknown>>(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableSingleRollupSchema, NumberSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableSingleRollupSchema, NumberSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -288,7 +288,7 @@ export function SingleRollupSchema<S extends v.GenericSchema<object, unknown>>(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableSingleRollupSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableSingleRollupSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const RelationItemSchema = v.object({
  *   type: v.literal("relation"),

@@ -17,7 +17,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { EmailSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { EmailSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -55,7 +55,7 @@ export const EmailSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableEmailSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableEmailSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),

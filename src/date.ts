@@ -24,7 +24,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { DateObjectSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { DateObjectSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -98,7 +98,7 @@ const DateRangeObjectSchema = v.object({
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableDateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableDateSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -140,7 +140,7 @@ export const NullableDateSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { DateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { DateSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -190,7 +190,7 @@ export const DateSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableDateRangeSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableDateRangeSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -248,7 +248,7 @@ export const NullableDateRangeSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { DateRangeSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { DateRangeSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -302,7 +302,7 @@ export const DateRangeSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableFullDateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableFullDateSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -360,7 +360,7 @@ export const NullableFullDateSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { FullDateSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { FullDateSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
