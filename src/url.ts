@@ -15,7 +15,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableUrlSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableUrlSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -51,7 +51,7 @@ export const NullableUrlSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { UrlSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { UrlSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),

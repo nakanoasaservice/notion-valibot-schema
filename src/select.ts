@@ -26,7 +26,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { SelectSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { SelectSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -43,7 +43,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { SelectSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { SelectSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * // Custom schema for enum values
  * const StatusSchema = v.picklist(["todo", "in-progress", "done"]);
@@ -98,7 +98,7 @@ export function SelectSchema<S extends v.GenericSchema<string>>(schema: S) {
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableSelectSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableSelectSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -115,7 +115,7 @@ export function SelectSchema<S extends v.GenericSchema<string>>(schema: S) {
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableSelectSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableSelectSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * // Custom schema for enum values
  * const StatusSchema = v.picklist(["todo", "in-progress", "done"]);

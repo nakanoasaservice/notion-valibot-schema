@@ -20,7 +20,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { InnerRelationSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { InnerRelationSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -57,7 +57,7 @@ const InnerRelationSchema = v.object({ id: v.string() });
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { RelationSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { RelationSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -95,7 +95,7 @@ export const RelationSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { SingleRelationSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { SingleRelationSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -133,7 +133,7 @@ export const SingleRelationSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullableSingleRelationSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullableSingleRelationSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),

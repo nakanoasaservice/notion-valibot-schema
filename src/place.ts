@@ -26,7 +26,7 @@ import * as v from "valibot";
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { PlaceObjectSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { PlaceObjectSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -79,7 +79,7 @@ const PlaceObjectSchema = v.object({
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { PlaceSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { PlaceSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
@@ -128,7 +128,7 @@ export const PlaceSchema = v.pipe(
  * @example
  * ```ts
  * import * as v from "valibot";
- * import { NullablePlaceSchema } from "@nakanoaas/notion-valibot-utils";
+ * import { NullablePlaceSchema } from "@nakanoaas/notion-valibot-schema";
  *
  * const PageSchema = v.object({
  *   id: v.string(),
