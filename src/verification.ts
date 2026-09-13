@@ -10,7 +10,7 @@ const InnerVerificationSchema = v.variant("state", [
 		verified_by: v.null_(),
 	}),
 	v.object({
-		state: v.union([v.literal("verified"), v.literal("expired")]),
+		state: v.picklist(["verified", "expired"]),
 		date: v.nullable(DateObjectSchema),
 		verified_by: v.nullable(UserSchema),
 	}),
