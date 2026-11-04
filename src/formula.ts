@@ -83,7 +83,7 @@ export function FormulaSchema<
 		v.object({
 			formula: schema,
 		}),
-		// biome-ignore lint/style/noNonNullAssertion: valibot inference is not working correctly
+		// oxlint-disable-next-line typescript/no-non-null-assertion -- valibot inference is not working correctly
 		v.transform((v) => v.formula!),
 	);
 }

@@ -17,3 +17,4 @@ lerna-debug.log*
 
 # JSR
 jsr.jsonc
+.vitest/

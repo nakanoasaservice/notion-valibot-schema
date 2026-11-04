@@ -73,7 +73,7 @@ export function MultiSelectSchema<S extends v.GenericSchema<string>>(
 				}),
 			),
 		}),
-		// biome-ignore lint/style/noNonNullAssertion: valibot inference is not working correctly
+		// oxlint-disable-next-line typescript/no-non-null-assertion -- valibot inference is not working correctly
 		v.transform((v) => v.multi_select.map((v) => v.name!)),
 	);
 }

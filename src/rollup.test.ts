@@ -1,6 +1,6 @@
 import type { RollupFunction } from "@notionhq/client/build/src/api-endpoints";
 import * as v from "valibot";
-import { describe, expect, expectTypeOf, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vite-plus/test";
 
 import { DateSchema } from "./date.ts";
 import { NumberSchema } from "./number.ts";

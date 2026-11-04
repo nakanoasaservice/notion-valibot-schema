@@ -1,28 +1,27 @@
 {
 	"name": "@nakanoaas/notion-valibot-schema",
-	"version": "1.0.0-rc.2",
+	"version": "1.0.0-rc.3",
 	"description": "Turn Notion's nested API responses into clean, typed JavaScript values.",
-	"author": "Nakano as a Service",
-	"license": "MIT",
-	"type": "module",
-	"sideEffects": false,
-	"publishConfig": {
-		"access": "public",
-		"provenance": true
-	},
+	"keywords": [
+		"notion",
+		"schema",
+		"valibot"
+	],
 	"homepage": "https://github.com/nakanoasaservice/notion-valibot-schema",
+	"bugs": {
+		"url": "https://github.com/nakanoasaservice/notion-valibot-schema/issues"
+	},
+	"license": "MIT",
+	"author": "Nakano as a Service",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/nakanoasaservice/notion-valibot-schema.git"
 	},
-	"bugs": {
-		"url": "https://github.com/nakanoasaservice/notion-valibot-schema/issues"
-	},
-	"keywords": [
-		"notion",
-		"valibot",
-		"schema"
+	"files": [
+		"dist"
 	],
+	"type": "module",
+	"sideEffects": false,
 	"main": "./dist/index.cjs",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.cts",
@@ -33,25 +32,25 @@
 		},
 		"./package.json": "./package.json"
 	},
-	"files": [
-		"dist"
-	],
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
+	},
 	"scripts": {
-		"build": "tsdown",
-		"check:fix": "biome check --write",
-		"check": "biome check",
-		"test": "vitest --typecheck"
+		"build": "vp pack",
+		"check:fix": "vp check --fix",
+		"check": "vp check",
+		"test": "vp test --typecheck",
+		"prepare": "vp config"
+	},
+	"devDependencies": {
+		"@notionhq/client": "^5.6.0",
+		"@types/node": "^25.9.2",
+		"typescript": "^6.0.3",
+		"vite-plus": "catalog:"
 	},
 	"peerDependencies": {
 		"valibot": "^1.2.0"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.3.7",
-		"@notionhq/client": "^5.6.0",
-		"@types/node": "^25.9.2",
-		"tsdown": "^0.23.0",
-		"typescript": "^6.0.3",
-		"vitest": "^4.0.16"
 	},
 	"packageManager": "pnpm@10.23.0"
 }
