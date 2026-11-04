@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { describe, expect, expectTypeOf, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vite-plus/test";
 
 import { EmailSchema, NullableEmailSchema } from "./email.ts";
 import type {
