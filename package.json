@@ -47,6 +47,7 @@
 		"@notionhq/client": "^5.6.0",
 		"@types/node": "^25.9.2",
 		"typescript": "^6.0.3",
+		"valibot": "1.2.0",
 		"vite-plus": "catalog:"
 	},
 	"peerDependencies": {
