@@ -144,7 +144,10 @@ export function RollupScalarSchema<
  */
 export function RollupSchema<S extends v.GenericSchema<object, unknown>>(
 	schema: S,
-) {
+): v.GenericSchema<
+	{ rollup: { type: "array"; array: v.InferInput<S>[] } },
+	v.InferOutput<S>[]
+> {
 	return v.pipe(
 		v.object({
 			rollup: v.object({
@@ -153,7 +156,10 @@ export function RollupSchema<S extends v.GenericSchema<object, unknown>>(
 			}),
 		}),
 		v.transform((v) => v.rollup.array),
-	);
+	) as v.GenericSchema<
+		{ rollup: { type: "array"; array: v.InferInput<S>[] } },
+		v.InferOutput<S>[]
+	>;
 }
 
 /**

@@ -31,7 +31,7 @@ import * as v from "valibot";
  * // parsed.properties.Number: number
  * ```
  */
-export const NumberSchema = v.pipe(
+export const NumberSchema: v.GenericSchema<{ number: number }, number> = v.pipe(
 	v.object({
 		number: v.number(),
 	}),
@@ -69,7 +69,10 @@ export const NumberSchema = v.pipe(
  * // parsed.properties.Number: number | null
  * ```
  */
-export const NullableNumberSchema = v.pipe(
+export const NullableNumberSchema: v.GenericSchema<
+	{ number: number | null },
+	number | null
+> = v.pipe(
 	v.object({
 		number: v.nullable(v.number()),
 	}),

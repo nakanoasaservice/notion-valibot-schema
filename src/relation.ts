@@ -38,7 +38,9 @@ import * as v from "valibot";
  *
  * @internal
  */
-const InnerRelationSchema = v.object({ id: v.string() });
+const InnerRelationSchema: v.GenericSchema<{ id: string }> = v.object({
+	id: v.string(),
+});
 
 /**
  * Schema to extract the `relation` property from a Notion page property and transform it to an array of page IDs.
@@ -74,7 +76,10 @@ const InnerRelationSchema = v.object({ id: v.string() });
  * // parsed.properties.RelatedPages: string[]
  * ```
  */
-export const RelationSchema = v.pipe(
+export const RelationSchema: v.GenericSchema<
+	{ relation: { id: string }[] },
+	string[]
+> = v.pipe(
 	v.object({
 		relation: v.array(InnerRelationSchema),
 	}),
@@ -115,7 +120,10 @@ export const RelationSchema = v.pipe(
  * // parsed.properties.ParentPage: string
  * ```
  */
-export const SingleRelationSchema = v.pipe(
+export const SingleRelationSchema: v.GenericSchema<
+	{ relation: [{ id: string }] },
+	string
+> = v.pipe(
 	v.object({
 		relation: v.tuple([InnerRelationSchema]),
 	}),
@@ -156,7 +164,10 @@ export const SingleRelationSchema = v.pipe(
  * // parsed.properties.ParentPage: string | null
  * ```
  */
-export const NullableSingleRelationSchema = v.pipe(
+export const NullableSingleRelationSchema: v.GenericSchema<
+	{ relation: { id: string }[] },
+	string | null
+> = v.pipe(
 	v.object({
 		relation: v.array(InnerRelationSchema),
 	}),

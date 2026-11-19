@@ -38,11 +38,12 @@ import * as v from "valibot";
  *
  * @internal
  */
-const RichTextItemArraySchema = v.array(
-	v.object({
-		plain_text: v.string(),
-	}),
-);
+const RichTextItemArraySchema: v.GenericSchema<{ plain_text: string }[]> =
+	v.array(
+		v.object({
+			plain_text: v.string(),
+		}),
+	);
 
 /**
  * Schema to extract the `title` property from a Notion page property and transform it to a string.
@@ -80,7 +81,10 @@ const RichTextItemArraySchema = v.array(
  * // parsed.properties.Title: string
  * ```
  */
-export const TitleSchema = v.pipe(
+export const TitleSchema: v.GenericSchema<
+	{ title: { plain_text: string }[] },
+	string
+> = v.pipe(
 	v.object({
 		title: RichTextItemArraySchema,
 	}),
@@ -124,7 +128,10 @@ export const TitleSchema = v.pipe(
  * // parsed.properties.Title: string | null
  * ```
  */
-export const NullableTitleSchema = v.pipe(
+export const NullableTitleSchema: v.GenericSchema<
+	{ title: { plain_text: string }[] },
+	string | null
+> = v.pipe(
 	v.object({
 		title: RichTextItemArraySchema,
 	}),
@@ -167,7 +174,10 @@ export const NullableTitleSchema = v.pipe(
  * // parsed.properties.Description: string
  * ```
  */
-export const RichTextSchema = v.pipe(
+export const RichTextSchema: v.GenericSchema<
+	{ rich_text: { plain_text: string }[] },
+	string
+> = v.pipe(
 	v.object({
 		rich_text: RichTextItemArraySchema,
 	}),
@@ -211,7 +221,10 @@ export const RichTextSchema = v.pipe(
  * // parsed.properties.Description: string | null
  * ```
  */
-export const NullableRichTextSchema = v.pipe(
+export const NullableRichTextSchema: v.GenericSchema<
+	{ rich_text: { plain_text: string }[] },
+	string | null
+> = v.pipe(
 	v.object({
 		rich_text: RichTextItemArraySchema,
 	}),

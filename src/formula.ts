@@ -78,14 +78,14 @@ export function FormulaSchema<
 		| { string: string | null },
 		unknown
 	>,
->(schema: S) {
+>(schema: S): v.GenericSchema<{ formula: v.InferInput<S> }, v.InferOutput<S>> {
 	return v.pipe(
 		v.object({
 			formula: schema,
 		}),
 		// oxlint-disable-next-line typescript/no-non-null-assertion -- valibot inference is not working correctly
 		v.transform((v) => v.formula!),
-	);
+	) as v.GenericSchema<{ formula: v.InferInput<S> }, v.InferOutput<S>>;
 }
 
 /**
@@ -116,12 +116,13 @@ export function FormulaSchema<
  * // parsed.properties.MyFormula: string
  * ```
  */
-export const StringFormulaSchema = v.pipe(
-	v.object({
-		string: v.string(),
-	}),
-	v.transform((v) => v.string),
-);
+export const StringFormulaSchema: v.GenericSchema<{ string: string }, string> =
+	v.pipe(
+		v.object({
+			string: v.string(),
+		}),
+		v.transform((v) => v.string),
+	);
 
 /**
  * Pre-built inner schema for a nullable string formula result.
@@ -151,7 +152,10 @@ export const StringFormulaSchema = v.pipe(
  * // parsed.properties.MyFormula: string | null
  * ```
  */
-export const NullableStringFormulaSchema = v.pipe(
+export const NullableStringFormulaSchema: v.GenericSchema<
+	{ string: string | null },
+	string | null
+> = v.pipe(
 	v.object({
 		string: v.nullable(v.string()),
 	}),
@@ -186,7 +190,10 @@ export const NullableStringFormulaSchema = v.pipe(
  * // parsed.properties.MyFormula: boolean
  * ```
  */
-export const BooleanFormulaSchema = v.pipe(
+export const BooleanFormulaSchema: v.GenericSchema<
+	{ boolean: boolean },
+	boolean
+> = v.pipe(
 	v.object({
 		boolean: v.boolean(),
 	}),
@@ -221,7 +228,10 @@ export const BooleanFormulaSchema = v.pipe(
  * // parsed.properties.MyFormula: boolean | null
  * ```
  */
-export const NullableBooleanFormulaSchema = v.pipe(
+export const NullableBooleanFormulaSchema: v.GenericSchema<
+	{ boolean: boolean | null },
+	boolean | null
+> = v.pipe(
 	v.object({
 		boolean: v.nullable(v.boolean()),
 	}),

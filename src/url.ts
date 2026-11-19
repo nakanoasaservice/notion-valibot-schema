@@ -31,7 +31,10 @@ import * as v from "valibot";
  * // parsed.properties.Website: string | null
  * ```
  */
-export const NullableUrlSchema = v.pipe(
+export const NullableUrlSchema: v.GenericSchema<
+	{ url: string | null },
+	string | null
+> = v.pipe(
 	v.object({
 		url: v.nullable(v.string()),
 	}),
@@ -69,7 +72,7 @@ export const NullableUrlSchema = v.pipe(
  * // parsed.properties.Website: string
  * ```
  */
-export const UrlSchema = v.pipe(
+export const UrlSchema: v.GenericSchema<{ url: string }, string> = v.pipe(
 	v.object({
 		url: v.string(),
 	}),
