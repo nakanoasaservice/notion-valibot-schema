@@ -19,6 +19,8 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+      # Keep tests running against the lowest supported peer version.
+      - dependency-name: "valibot"
 
   - package-ecosystem: "github-actions"
     directory: "/"

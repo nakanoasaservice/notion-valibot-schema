@@ -26,6 +26,12 @@ jobs:
           node-version: "24"
           cache: true
 
+      - name: Run Check
+        run: vp check
+
+      - name: Run Tests
+        run: vp run test
+
       - name: Build
         run: vp pack
 
@@ -51,5 +57,9 @@ jobs:
             echo "Tag v$VERSION already exists. Skipping release creation."
           else
             echo "Creating release for v$VERSION"
-            gh release create "v$VERSION" --generate-notes
+            if [[ "$VERSION" == *-* ]]; then
+              gh release create "v$VERSION" --generate-notes --prerelease
+            else
+              gh release create "v$VERSION" --generate-notes
+            fi
           fi

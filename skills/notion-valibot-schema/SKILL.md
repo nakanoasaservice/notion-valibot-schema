@@ -32,7 +32,7 @@ Use this table. For factory schemas marked with `(schema)`, see the factory guid
 
 | Notion `type`    | Schema                                              | Output type                        |
 |------------------|-----------------------------------------------------|------------------------------------|
-| `title`          | `TitleSchema`                                       | `string`                           |
+| `title`          | `TitleSchema` / `NullableTitleSchema`               | `string` / `string \| null`        |
 | `rich_text`      | `RichTextSchema` / `NullableRichTextSchema`         | `string` / `string \| null`        |
 | `number`         | `NumberSchema` / `NullableNumberSchema`             | `number` / `number \| null`        |
 | `checkbox`       | `CheckboxSchema`                                    | `boolean` (never null)             |
@@ -48,18 +48,25 @@ Use this table. For factory schemas marked with `(schema)`, see the factory guid
 | `rollup` (1)     | `SingleRollupSchema(schema)` / `NullableSingleRollupSchema(schema)` | `T` / `T \| null` |
 | `rollup` (scalar)| `RollupScalarSchema(schema)`                        | `T`                                |
 | `formula`        | `FormulaSchema(schema)`                             | inferred from inner schema         |
+| `place`          | `PlaceSchema` / `NullablePlaceSchema`               | `{ lat, lon, name?, address? }` / same `\| null` |
 | `url`            | `UrlSchema` / `NullableUrlSchema`                   | `string` / `string \| null`        |
 | `email`          | `EmailSchema` / `NullableEmailSchema`               | `string` / `string \| null`        |
 | `phone_number`   | `PhoneNumberSchema` / `NullablePhoneNumberSchema`   | `string` / `string \| null`        |
 | `files`          | `FilesSchema`                                       | `string[]` (URLs)                  |
 | `files` (1)      | `SingleFileSchema` / `NullableSingleFileSchema`     | `string` / `string \| null`        |
 | `people`         | `PeopleIdSchema`                                    | `string[]` (user IDs, partial-safe)|
+| `people` (1)     | `SinglePeopleIdSchema` / `NullableSinglePeopleIdSchema` | `string` / `string \| null`    |
 | `people` (full)  | `PeopleSchema(UserOrGroupSchema)`                   | user objects (partial-safe)        |
+| `people` (full, 1)| `SinglePeopleSchema(schema)` / `NullableSinglePeopleSchema(schema)` | `T` / `T \| null`  |
 | `created_by`     | `CreatedByIdSchema`                                 | `string` (user ID, partial-safe)   |
+| `created_by` (name) | `NullableCreatedByNameSchema`                    | `string \| null`                   |
+| `created_by` (object) | `CreatedBySchema(schema)`                      | `T`                                |
 | `last_edited_by` | `LastEditedByIdSchema`                              | `string` (user ID, partial-safe)   |
+| `last_edited_by` (name) | `NullableLastEditedByNameSchema`             | `string \| null`                   |
+| `last_edited_by` (object) | `LastEditedBySchema(schema)`               | `T`                                |
 | `created_time`   | `CreatedTimeSchema`                                 | `Date`                             |
 | `last_edited_time`| `LastEditedTimeSchema`                             | `Date`                             |
-| `unique_id`      | `UniqueIdSchema` / `PrefixedUniqueIdSchema`         | `number` / `"PREFIX-123"`          |
+| `unique_id`      | `UniqueIdSchema` / `PrefixedUniqueIdSchema` / `FullUniqueIdSchema` | `number` / `"PREFIX-123"` / `{ prefix, number }` |
 | `verification`   | `VerificationSchema` / `NullableVerificationSchema` | `{ state, date, verified_by } \| null` |
 
 **Nullable decision rule:**
@@ -89,6 +96,7 @@ FormulaNumber:  FormulaSchema(NumberSchema),
 FormulaBoolean: FormulaSchema(BooleanFormulaSchema),
 FormulaDate:    FormulaSchema(DateSchema),
 ```
+If the formula can return an empty value, use `NullableStringFormulaSchema`, `NullableNumberSchema`, `NullableBooleanFormulaSchema` or `NullableDateSchema` as the inner schema.
 
 **People / CreatedBy / LastEditedBy** — for partial API safety, prefer ID-only schemas:
 ```ts
@@ -96,7 +104,9 @@ Assignees: PeopleIdSchema,          // string[] — always partial-safe
 Author: CreatedByIdSchema,          // string   — always partial-safe
 // Full objects only when you need name/email and call pages.properties.retrieve:
 Assignees: PeopleSchema(UserOrGroupSchema),
+Editor: LastEditedBySchema(UserSchema),
 ```
+Building blocks for the inner schema: `UserOrGroupIdSchema`, `UserOrGroupSchema`, `UserSchema` (partial-safe), `PersonSchema`, `BotSchema` (full objects only).
 > ⚠️ `PersonSchema` / `BotSchema` as inner schemas are **not** partial-safe — they fail when `dataSources.query` returns truncated user objects.
 
 **Rollup** — pass a schema matching what each rolled-up item evaluates to:
