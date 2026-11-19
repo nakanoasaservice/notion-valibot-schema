@@ -62,7 +62,9 @@ import * as v from "valibot";
  * // parsed.properties.Status: "not-started" | "in-progress" | "completed"
  * ```
  */
-export function StatusSchema<S extends v.GenericSchema<string>>(schema: S) {
+export function StatusSchema<S extends v.GenericSchema<string>>(
+	schema: S,
+): v.GenericSchema<{ status: { name: v.InferInput<S> } }, v.InferOutput<S>> {
 	return v.pipe(
 		v.object({
 			status: v.object({
@@ -71,7 +73,7 @@ export function StatusSchema<S extends v.GenericSchema<string>>(schema: S) {
 		}),
 		// oxlint-disable-next-line typescript/no-non-null-assertion -- valibot inference is not working correctly
 		v.transform((v) => v.status.name!),
-	);
+	) as v.GenericSchema<{ status: { name: v.InferInput<S> } }, v.InferOutput<S>>;
 }
 
 /**
@@ -138,7 +140,10 @@ export function StatusSchema<S extends v.GenericSchema<string>>(schema: S) {
  */
 export function NullableStatusSchema<S extends v.GenericSchema<string>>(
 	schema: S,
-) {
+): v.GenericSchema<
+	{ status: { name: v.InferInput<S> } | null },
+	v.InferOutput<S> | null
+> {
 	return v.pipe(
 		v.object({
 			status: v.nullable(
@@ -148,5 +153,8 @@ export function NullableStatusSchema<S extends v.GenericSchema<string>>(
 			),
 		}),
 		v.transform((v) => v.status?.name ?? null),
-	);
+	) as v.GenericSchema<
+		{ status: { name: v.InferInput<S> } | null },
+		v.InferOutput<S> | null
+	>;
 }

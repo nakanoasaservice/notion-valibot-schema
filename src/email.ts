@@ -31,7 +31,7 @@ import * as v from "valibot";
  * // parsed.properties.Email: string
  * ```
  */
-export const EmailSchema = v.pipe(
+export const EmailSchema: v.GenericSchema<{ email: string }, string> = v.pipe(
 	v.object({
 		email: v.string(),
 	}),
@@ -69,7 +69,10 @@ export const EmailSchema = v.pipe(
  * // parsed.properties.Email: string | null
  * ```
  */
-export const NullableEmailSchema = v.pipe(
+export const NullableEmailSchema: v.GenericSchema<
+	{ email: string | null },
+	string | null
+> = v.pipe(
 	v.object({
 		email: v.nullable(v.string()),
 	}),

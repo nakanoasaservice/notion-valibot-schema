@@ -98,7 +98,10 @@ export function LastEditedBySchema<
  * // parsed.properties["Last Edited By"]: string | null
  * ```
  */
-export const NullableLastEditedByNameSchema = v.pipe(
+export const NullableLastEditedByNameSchema: v.GenericSchema<
+	{ last_edited_by: v.InferInput<typeof UserOrGroupSchema> },
+	string | null
+> = v.pipe(
 	v.object({
 		last_edited_by: UserOrGroupSchema,
 	}),
@@ -139,7 +142,10 @@ export const NullableLastEditedByNameSchema = v.pipe(
  * // parsed.properties["Last Edited By"]: string
  * ```
  */
-export const LastEditedByIdSchema = v.pipe(
+export const LastEditedByIdSchema: v.GenericSchema<
+	{ last_edited_by: { id: string } },
+	string
+> = v.pipe(
 	v.object({
 		last_edited_by: UserOrGroupIdSchema,
 	}),

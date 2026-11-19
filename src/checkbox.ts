@@ -31,9 +31,10 @@ import * as v from "valibot";
  * // parsed.properties.Checkbox: boolean
  * ```
  */
-export const CheckboxSchema = v.pipe(
-	v.object({
-		checkbox: v.boolean(),
-	}),
-	v.transform((v) => v.checkbox),
-);
+export const CheckboxSchema: v.GenericSchema<{ checkbox: boolean }, boolean> =
+	v.pipe(
+		v.object({
+			checkbox: v.boolean(),
+		}),
+		v.transform((v) => v.checkbox),
+	);

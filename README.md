@@ -54,7 +54,7 @@ No more checking for `property.type === 'date'`, handling `null`, or digging thr
 - 🔒 **Type-Safe**: Full TypeScript support with inferred types.
 - ✅ **Well Tested**: Backed by a comprehensive test suite covering edge cases.
 - 🛠 **Comprehensive**: Supports complex properties like Rollups, Formulas, and Relations.
-- 📋 **Partial-aware**: Each schema documents whether it accepts partial `pages.retrieve` / `databases.query` responses via `@notionPartial` JSDoc tags.
+- 📋 **Partial-aware**: Each schema documents whether it accepts partial `pages.retrieve` / `dataSources.query` responses via `@notionPartial` JSDoc tags.
 - 🤖 **AI Agent Skill**: Install via `npx skills add nakanoasaservice/notion-valibot-schema` so your AI agent uses this library automatically.
 
 ## AI Agent Skill
@@ -154,13 +154,13 @@ const tasks = v.parse(TaskListSchema, results);
 
 ### Partial API Responses
 
-When you fetch pages with [`pages.retrieve`](https://developers.notion.com/reference/retrieve-a-page) or list them with [`databases.query`](https://developers.notion.com/reference/query-a-data-source), Notion may return **partial** property values. This happens when a property has many references (relations, people, rollups, inline mentions, and so on). The API returns at most **25** page/person references per property; beyond that, lists can be truncated (`relation.has_more: true`) or entries may be incomplete.
+When you fetch pages with [`pages.retrieve`](https://developers.notion.com/reference/retrieve-a-page) or list them with [`dataSources.query`](https://developers.notion.com/reference/query-a-data-source), Notion may return **partial** property values. This happens when a property has many references (relations, people, rollups, inline mentions, and so on). The API returns at most **25** page/person references per property; beyond that, lists can be truncated (`relation.has_more: true`) or entries may be incomplete.
 
 Each exported schema includes JSDoc tags so you can tell at a glance whether it works with these partial shapes:
 
 | Tag | Meaning |
 | :--- | :--- |
-| `@notionPartial supported` | Typical partial responses from `pages.retrieve` / `databases.query` parse successfully |
+| `@notionPartial supported` | Typical partial responses from `pages.retrieve` / `dataSources.query` parse successfully |
 | `@notionPartial not-supported` | Partial responses are missing required fields and `v.parse` will fail |
 | `@notionPartialNote` | Optional caveat (truncated lists, required inner schema, recommended alternative) |
 
@@ -307,6 +307,15 @@ const parsed = v.parse(PageSchema, page);
 // parsed.properties.FormulaDate:    Date
 ```
 
+When a formula can evaluate to an empty value, use the nullable inner schemas instead:
+
+| Formula result | Non-null | Nullable |
+| :--- | :--- | :--- |
+| `string` | `StringFormulaSchema` | `NullableStringFormulaSchema` |
+| `number` | `NumberSchema` | `NullableNumberSchema` |
+| `boolean` | `BooleanFormulaSchema` | `NullableBooleanFormulaSchema` |
+| `date` | `DateSchema` | `NullableDateSchema` |
+
 #### Rollups
 
 ```ts
@@ -383,6 +392,16 @@ import {
   FullUniqueIdSchema,      // → { prefix: string | null; number: number | null }
 } from "@nakanoaas/notion-valibot-schema";
 ```
+
+## Compatibility
+
+- **Notion API**: version `2025-09-03` or later (data sources). Works with the responses returned by [`@notionhq/client`](https://github.com/makenotion/notion-sdk-js) v5.
+- **Valibot**: `^1.2.0` (peer dependency).
+- **Runtimes**: ESM and CommonJS builds on npm; TypeScript source on JSR for Deno.
+
+## Versioning
+
+This project follows [Semantic Versioning](https://semver.org/). Removing or renaming an exported schema, or changing a schema's output type, is a breaking change and ships only in a new major version. Release notes for each version are on [GitHub Releases](https://github.com/nakanoasaservice/notion-valibot-schema/releases).
 
 ## License
 

@@ -26,6 +26,8 @@ updates:
       - dependency-name: "vite"
       - dependency-name: "vite-plus"
       - dependency-name: "@voidzero-dev/vite-plus-core"
+      # Keep tests running against the lowest supported peer version.
+      - dependency-name: "valibot"
     # Major updates are not grouped, so each major lands as its own PR.
     groups:
       production-minor-patch:

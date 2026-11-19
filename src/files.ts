@@ -20,7 +20,10 @@ import * as v from "valibot";
  *
  * @internal
  */
-const InnerFileSchema = v.variant("type", [
+const InnerFileSchema: v.GenericSchema<
+	| { type: "file"; file: { url: string } }
+	| { type: "external"; external: { url: string } }
+> = v.variant("type", [
 	v.object({
 		type: v.literal("file"),
 		file: v.object({
@@ -77,7 +80,15 @@ const InnerFileSchema = v.variant("type", [
  * // parsed.properties.Files: string[]
  * ```
  */
-export const FilesSchema = v.pipe(
+export const FilesSchema: v.GenericSchema<
+	{
+		files: (
+			| { type: "file"; file: { url: string } }
+			| { type: "external"; external: { url: string } }
+		)[];
+	},
+	string[]
+> = v.pipe(
 	v.object({
 		files: v.array(InnerFileSchema),
 	}),
@@ -128,7 +139,15 @@ export const FilesSchema = v.pipe(
  * // parsed.properties.Attachment: string
  * ```
  */
-export const SingleFileSchema = v.pipe(
+export const SingleFileSchema: v.GenericSchema<
+	{
+		files: [
+			| { type: "file"; file: { url: string } }
+			| { type: "external"; external: { url: string } },
+		];
+	},
+	string
+> = v.pipe(
 	v.object({
 		files: v.tuple([InnerFileSchema]),
 	}),
@@ -180,7 +199,15 @@ export const SingleFileSchema = v.pipe(
  * // parsed.properties.Attachment: string | null
  * ```
  */
-export const NullableSingleFileSchema = v.pipe(
+export const NullableSingleFileSchema: v.GenericSchema<
+	{
+		files: (
+			| { type: "file"; file: { url: string } }
+			| { type: "external"; external: { url: string } }
+		)[];
+	},
+	string | null
+> = v.pipe(
 	v.object({
 		files: v.array(InnerFileSchema),
 	}),

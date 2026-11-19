@@ -29,7 +29,10 @@ import * as v from "valibot";
  * // parsed.last_edited_time: Date
  * ```
  */
-export const LastEditedTimeSchema = v.pipe(
+export const LastEditedTimeSchema: v.GenericSchema<
+	{ last_edited_time: string },
+	Date
+> = v.pipe(
 	v.object({
 		last_edited_time: v.string(),
 	}),

@@ -42,7 +42,14 @@ import * as v from "valibot";
  *
  * @internal
  */
-export const DateObjectSchema = v.object({
+export const DateObjectSchema: v.ObjectSchema<
+	{
+		readonly start: v.StringSchema<undefined>;
+		readonly end: v.NullableSchema<v.StringSchema<undefined>, undefined>;
+		readonly time_zone: v.NullableSchema<v.StringSchema<undefined>, undefined>;
+	},
+	undefined
+> = v.object({
 	start: v.string(),
 	end: v.nullable(v.string()),
 	time_zone: v.nullable(v.string()),
@@ -71,7 +78,11 @@ export const DateObjectSchema = v.object({
  *
  * @internal
  */
-const DateRangeObjectSchema = v.object({
+const DateRangeObjectSchema: v.GenericSchema<{
+	start: string;
+	end: string;
+	time_zone: string | null;
+}> = v.object({
 	start: v.string(),
 	end: v.string(),
 	time_zone: v.nullable(v.string()),
@@ -112,7 +123,16 @@ const DateRangeObjectSchema = v.object({
  * // parsed.properties.Date: Date | null
  * ```
  */
-export const NullableDateSchema = v.pipe(
+export const NullableDateSchema: v.GenericSchema<
+	{
+		date: {
+			start: string;
+			end: string | null;
+			time_zone: string | null;
+		} | null;
+	},
+	Date | null
+> = v.pipe(
 	v.object({
 		date: v.nullable(DateObjectSchema),
 	}),
@@ -154,7 +174,10 @@ export const NullableDateSchema = v.pipe(
  * // parsed.properties.Date: Date
  * ```
  */
-export const DateSchema = v.pipe(
+export const DateSchema: v.GenericSchema<
+	{ date: { start: string; end: string | null; time_zone: string | null } },
+	Date
+> = v.pipe(
 	v.object({
 		date: DateObjectSchema,
 	}),
@@ -204,7 +227,10 @@ export const DateSchema = v.pipe(
  * // parsed.properties.DateRange: { start: Date; end: Date; time_zone: string | null } | null
  * ```
  */
-export const NullableDateRangeSchema = v.pipe(
+export const NullableDateRangeSchema: v.GenericSchema<
+	{ date: { start: string; end: string; time_zone: string | null } | null },
+	{ start: Date; end: Date; time_zone: string | null } | null
+> = v.pipe(
 	v.object({
 		date: v.nullable(DateRangeObjectSchema),
 	}),
@@ -262,7 +288,10 @@ export const NullableDateRangeSchema = v.pipe(
  * // parsed.properties.DateRange: { start: Date; end: Date; time_zone: string | null }
  * ```
  */
-export const DateRangeSchema = v.pipe(
+export const DateRangeSchema: v.GenericSchema<
+	{ date: { start: string; end: string; time_zone: string | null } },
+	{ start: Date; end: Date; time_zone: string | null }
+> = v.pipe(
 	v.object({
 		date: DateRangeObjectSchema,
 	}),
@@ -316,7 +345,16 @@ export const DateRangeSchema = v.pipe(
  * // parsed.properties.DateRange: { start: Date; end: Date | null; time_zone: string | null } | null
  * ```
  */
-export const NullableFullDateSchema = v.pipe(
+export const NullableFullDateSchema: v.GenericSchema<
+	{
+		date: {
+			start: string;
+			end: string | null;
+			time_zone: string | null;
+		} | null;
+	},
+	{ start: Date; end: Date | null; time_zone: string | null } | null
+> = v.pipe(
 	v.object({
 		date: v.nullable(DateObjectSchema),
 	}),
@@ -374,7 +412,10 @@ export const NullableFullDateSchema = v.pipe(
  * // parsed.properties.DateRange: { start: Date; end: Date | null; time_zone: string | null }
  * ```
  */
-export const FullDateSchema = v.pipe(
+export const FullDateSchema: v.GenericSchema<
+	{ date: { start: string; end: string | null; time_zone: string | null } },
+	{ start: Date; end: Date | null; time_zone: string | null }
+> = v.pipe(
 	v.object({
 		date: DateObjectSchema,
 	}),

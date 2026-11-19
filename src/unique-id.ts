@@ -33,7 +33,10 @@ import * as v from "valibot";
  * // parsed.properties.ID: number
  * ```
  */
-export const UniqueIdSchema = v.pipe(
+export const UniqueIdSchema: v.GenericSchema<
+	{ unique_id: { number: number } },
+	number
+> = v.pipe(
 	v.object({
 		unique_id: v.object({
 			number: v.number(),
@@ -76,7 +79,10 @@ export const UniqueIdSchema = v.pipe(
  * // parsed.properties.ID: string (e.g. "PREFIX-123")
  * ```
  */
-export const PrefixedUniqueIdSchema = v.pipe(
+export const PrefixedUniqueIdSchema: v.GenericSchema<
+	{ unique_id: { prefix: string; number: number } },
+	string
+> = v.pipe(
 	v.object({
 		unique_id: v.object({
 			prefix: v.string(),
@@ -126,7 +132,10 @@ export const PrefixedUniqueIdSchema = v.pipe(
  * // parsed.properties.ID: { prefix: string | null; number: number | null }
  * ```
  */
-export const FullUniqueIdSchema = v.pipe(
+export const FullUniqueIdSchema: v.GenericSchema<
+	{ unique_id: { prefix: string | null; number: number | null } },
+	{ prefix: string | null; number: number | null }
+> = v.pipe(
 	v.object({
 		unique_id: v.object({
 			prefix: v.nullable(v.string()),

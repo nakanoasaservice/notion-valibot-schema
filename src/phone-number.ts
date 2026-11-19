@@ -31,7 +31,10 @@ import * as v from "valibot";
  * // parsed.properties.Phone: string
  * ```
  */
-export const PhoneNumberSchema = v.pipe(
+export const PhoneNumberSchema: v.GenericSchema<
+	{ phone_number: string },
+	string
+> = v.pipe(
 	v.object({
 		phone_number: v.string(),
 	}),
@@ -69,7 +72,10 @@ export const PhoneNumberSchema = v.pipe(
  * // parsed.properties.Phone: string | null
  * ```
  */
-export const NullablePhoneNumberSchema = v.pipe(
+export const NullablePhoneNumberSchema: v.GenericSchema<
+	{ phone_number: string | null },
+	string | null
+> = v.pipe(
 	v.object({
 		phone_number: v.nullable(v.string()),
 	}),
