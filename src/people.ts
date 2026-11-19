@@ -23,7 +23,10 @@ import * as v from "valibot";
  *
  * @notionPartial supported
  */
-export const UserOrGroupIdSchema = v.object({
+export const UserOrGroupIdSchema: v.ObjectSchema<
+	{ readonly id: v.StringSchema<undefined> },
+	undefined
+> = v.object({
 	id: v.string(),
 });
 
@@ -72,7 +75,14 @@ export const UserOrGroupIdSchema = v.object({
  *
  * @notionPartial supported
  */
-export const UserOrGroupSchema = v.object({
+export const UserOrGroupSchema: v.ObjectSchema<
+	{
+		readonly id: v.StringSchema<undefined>;
+		readonly object: v.PicklistSchema<["user", "group"], undefined>;
+		readonly name: v.NullishSchema<v.StringSchema<undefined>, null>;
+	},
+	undefined
+> = v.object({
 	id: v.string(),
 	object: v.picklist(["user", "group"]),
 	name: v.nullish(v.string(), null),
@@ -104,7 +114,15 @@ export const UserOrGroupSchema = v.object({
  *
  * @notionPartial supported
  */
-export const UserSchema = v.object({
+export const UserSchema: v.ObjectSchema<
+	{
+		readonly id: v.StringSchema<undefined>;
+		readonly object: v.LiteralSchema<"user", undefined>;
+		readonly name: v.NullishSchema<v.StringSchema<undefined>, null>;
+		readonly avatar_url: v.NullishSchema<v.StringSchema<undefined>, null>;
+	},
+	undefined
+> = v.object({
 	id: v.string(),
 	object: v.literal("user"),
 	name: v.nullish(v.string(), null),
@@ -167,7 +185,22 @@ export const UserSchema = v.object({
  * @notionPartial not-supported
  * @notionPartialNote Requires full person object (`type: "person"`). Use `UserOrGroupSchema` or `PeopleIdSchema` for partial responses.
  */
-export const PersonSchema = v.object({
+export const PersonSchema: v.ObjectSchema<
+	{
+		readonly id: v.StringSchema<undefined>;
+		readonly object: v.LiteralSchema<"user", undefined>;
+		readonly name: v.NullishSchema<v.StringSchema<undefined>, null>;
+		readonly avatar_url: v.NullishSchema<v.StringSchema<undefined>, null>;
+		readonly type: v.LiteralSchema<"person", undefined>;
+		readonly person: v.ObjectSchema<
+			{
+				readonly email: v.OptionalSchema<v.StringSchema<undefined>, undefined>;
+			},
+			undefined
+		>;
+	},
+	undefined
+> = v.object({
 	id: v.string(),
 	object: v.literal("user"),
 	name: v.nullish(v.string(), null),
@@ -210,7 +243,17 @@ export const PersonSchema = v.object({
  * @notionPartial not-supported
  * @notionPartialNote Requires full bot object (`object: "bot"`, `type: "bot"`). Use `UserOrGroupSchema` or `PeopleIdSchema` for partial responses.
  */
-export const BotSchema = v.object({
+export const BotSchema: v.ObjectSchema<
+	{
+		readonly id: v.StringSchema<undefined>;
+		readonly object: v.LiteralSchema<"bot", undefined>;
+		readonly name: v.NullishSchema<v.StringSchema<undefined>, null>;
+		readonly avatar_url: v.NullishSchema<v.StringSchema<undefined>, null>;
+		readonly type: v.LiteralSchema<"bot", undefined>;
+		readonly bot: v.AnySchema;
+	},
+	undefined
+> = v.object({
 	id: v.string(),
 	object: v.literal("bot"),
 	name: v.nullish(v.string(), null),
@@ -260,7 +303,10 @@ export const BotSchema = v.object({
  * @notionPartial supported
  * @notionPartialNote People lists may be truncated beyond 25 entries. Use `pages.properties.retrieve` for complete data.
  */
-export const PeopleIdSchema = v.pipe(
+export const PeopleIdSchema: v.GenericSchema<
+	{ people: { id: string }[] },
+	string[]
+> = v.pipe(
 	v.object({
 		people: v.array(UserOrGroupIdSchema),
 	}),
@@ -301,7 +347,10 @@ export const PeopleIdSchema = v.pipe(
  * @notionPartial supported
  * @notionPartialNote People lists may be truncated beyond 25 entries. Use `pages.properties.retrieve` for complete data.
  */
-export const SinglePeopleIdSchema = v.pipe(
+export const SinglePeopleIdSchema: v.GenericSchema<
+	{ people: [{ id: string }] },
+	string
+> = v.pipe(
 	v.object({
 		people: v.tuple([UserOrGroupIdSchema]),
 	}),
@@ -342,7 +391,10 @@ export const SinglePeopleIdSchema = v.pipe(
  * @notionPartial supported
  * @notionPartialNote People lists may be truncated beyond 25 entries. Use `pages.properties.retrieve` for complete data.
  */
-export const NullableSinglePeopleIdSchema = v.pipe(
+export const NullableSinglePeopleIdSchema: v.GenericSchema<
+	{ people: { id: string }[] },
+	string | null
+> = v.pipe(
 	v.object({
 		people: v.array(UserOrGroupIdSchema),
 	}),

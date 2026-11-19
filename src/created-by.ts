@@ -38,7 +38,10 @@ import { UserOrGroupIdSchema, UserOrGroupSchema } from "./people";
  * // parsed.properties["Created By"]: string
  * ```
  */
-export const CreatedByIdSchema = v.pipe(
+export const CreatedByIdSchema: v.GenericSchema<
+	{ created_by: { id: string } },
+	string
+> = v.pipe(
 	v.object({
 		created_by: UserOrGroupIdSchema,
 	}),
@@ -81,7 +84,10 @@ export const CreatedByIdSchema = v.pipe(
  * // parsed.properties["Created By"]: string | null
  * ```
  */
-export const NullableCreatedByNameSchema = v.pipe(
+export const NullableCreatedByNameSchema: v.GenericSchema<
+	{ created_by: v.InferInput<typeof UserOrGroupSchema> },
+	string | null
+> = v.pipe(
 	v.object({
 		created_by: UserOrGroupSchema,
 	}),

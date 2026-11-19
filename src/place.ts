@@ -44,7 +44,12 @@ import * as v from "valibot";
  *
  * @internal
  */
-const PlaceObjectSchema = v.object({
+const PlaceObjectSchema: v.GenericSchema<{
+	lat: number;
+	lon: number;
+	name?: string | null | undefined;
+	address?: string | null | undefined;
+}> = v.object({
 	lat: v.number(),
 	lon: v.number(),
 	name: v.nullish(v.string()),
@@ -95,7 +100,22 @@ const PlaceObjectSchema = v.object({
  * // parsed.properties.Location: { lat: number; lon: number; name?: string | null; address?: string | null }
  * ```
  */
-export const PlaceSchema = v.pipe(
+export const PlaceSchema: v.GenericSchema<
+	{
+		place: {
+			lat: number;
+			lon: number;
+			name?: string | null | undefined;
+			address?: string | null | undefined;
+		};
+	},
+	{
+		lat: number;
+		lon: number;
+		name?: string | null | undefined;
+		address?: string | null | undefined;
+	}
+> = v.pipe(
 	v.object({
 		place: PlaceObjectSchema,
 	}),
@@ -146,7 +166,22 @@ export const PlaceSchema = v.pipe(
  * // parsed.properties.Location: { lat: number; lon: number; name?: string | null; address?: string | null } | null
  * ```
  */
-export const NullablePlaceSchema = v.pipe(
+export const NullablePlaceSchema: v.GenericSchema<
+	{
+		place: {
+			lat: number;
+			lon: number;
+			name?: string | null | undefined;
+			address?: string | null | undefined;
+		} | null;
+	},
+	{
+		lat: number;
+		lon: number;
+		name?: string | null | undefined;
+		address?: string | null | undefined;
+	} | null
+> = v.pipe(
 	v.object({
 		place: v.nullable(PlaceObjectSchema),
 	}),

@@ -62,7 +62,9 @@ import * as v from "valibot";
  * // parsed.properties.Status: "todo" | "in-progress" | "done"
  * ```
  */
-export function SelectSchema<S extends v.GenericSchema<string>>(schema: S) {
+export function SelectSchema<S extends v.GenericSchema<string>>(
+	schema: S,
+): v.GenericSchema<{ select: { name: v.InferInput<S> } }, v.InferOutput<S>> {
 	return v.pipe(
 		v.object({
 			select: v.object({
@@ -71,7 +73,7 @@ export function SelectSchema<S extends v.GenericSchema<string>>(schema: S) {
 		}),
 		// oxlint-disable-next-line typescript/no-non-null-assertion -- valibot inference is not working correctly
 		v.transform((v) => v.select.name!),
-	);
+	) as v.GenericSchema<{ select: { name: v.InferInput<S> } }, v.InferOutput<S>>;
 }
 
 /**
@@ -138,7 +140,10 @@ export function SelectSchema<S extends v.GenericSchema<string>>(schema: S) {
  */
 export function NullableSelectSchema<S extends v.GenericSchema<string>>(
 	schema: S,
-) {
+): v.GenericSchema<
+	{ select: { name: v.InferInput<S> } | null },
+	v.InferOutput<S> | null
+> {
 	return v.pipe(
 		v.object({
 			select: v.nullable(
@@ -148,5 +153,8 @@ export function NullableSelectSchema<S extends v.GenericSchema<string>>(
 			),
 		}),
 		v.transform((v) => v.select?.name ?? null),
-	);
+	) as v.GenericSchema<
+		{ select: { name: v.InferInput<S> } | null },
+		v.InferOutput<S> | null
+	>;
 }

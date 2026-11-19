@@ -29,7 +29,10 @@ import * as v from "valibot";
  * // parsed.created_time: Date
  * ```
  */
-export const CreatedTimeSchema = v.pipe(
+export const CreatedTimeSchema: v.GenericSchema<
+	{ created_time: string },
+	Date
+> = v.pipe(
 	v.object({
 		created_time: v.string(),
 	}),

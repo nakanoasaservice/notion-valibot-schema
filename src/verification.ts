@@ -3,7 +3,20 @@ import * as v from "valibot";
 import { DateObjectSchema } from "./date";
 import { UserSchema } from "./people";
 
-const InnerVerificationSchema = v.variant("state", [
+const InnerVerificationSchema: v.GenericSchema<
+	| { state: "unverified"; date: null; verified_by: null }
+	| {
+			state: "verified" | "expired";
+			date: v.InferInput<typeof DateObjectSchema> | null;
+			verified_by: v.InferInput<typeof UserSchema> | null;
+	  },
+	| { state: "unverified"; date: null; verified_by: null }
+	| {
+			state: "verified" | "expired";
+			date: v.InferOutput<typeof DateObjectSchema> | null;
+			verified_by: v.InferOutput<typeof UserSchema> | null;
+	  }
+> = v.variant("state", [
 	v.object({
 		state: v.literal("unverified"),
 		date: v.null_(),
@@ -58,7 +71,23 @@ const InnerVerificationSchema = v.variant("state", [
  *
  * @notionPartial supported
  */
-export const VerificationSchema = v.pipe(
+export const VerificationSchema: v.GenericSchema<
+	{
+		verification:
+			| { state: "unverified"; date: null; verified_by: null }
+			| {
+					state: "verified" | "expired";
+					date: v.InferInput<typeof DateObjectSchema> | null;
+					verified_by: v.InferInput<typeof UserSchema> | null;
+			  };
+	},
+	| { state: "unverified"; date: null; verified_by: null }
+	| {
+			state: "verified" | "expired";
+			date: v.InferOutput<typeof DateObjectSchema> | null;
+			verified_by: v.InferOutput<typeof UserSchema> | null;
+	  }
+> = v.pipe(
 	v.object({
 		verification: InnerVerificationSchema,
 	}),
@@ -107,7 +136,29 @@ export const VerificationSchema = v.pipe(
  *
  * @notionPartial supported
  */
-export const NullableVerificationSchema = v.pipe(
+export const NullableVerificationSchema: v.GenericSchema<
+	{
+		verification:
+			| (
+					| { state: "unverified"; date: null; verified_by: null }
+					| {
+							state: "verified" | "expired";
+							date: v.InferInput<typeof DateObjectSchema> | null;
+							verified_by: v.InferInput<typeof UserSchema> | null;
+					  }
+			  )
+			| null;
+	},
+	| (
+			| { state: "unverified"; date: null; verified_by: null }
+			| {
+					state: "verified" | "expired";
+					date: v.InferOutput<typeof DateObjectSchema> | null;
+					verified_by: v.InferOutput<typeof UserSchema> | null;
+			  }
+	  )
+	| null
+> = v.pipe(
 	v.object({
 		verification: v.nullable(InnerVerificationSchema),
 	}),

@@ -64,7 +64,10 @@ import * as v from "valibot";
  */
 export function MultiSelectSchema<S extends v.GenericSchema<string>>(
 	schema: S,
-) {
+): v.GenericSchema<
+	{ multi_select: { name: v.InferInput<S> }[] },
+	v.InferOutput<S>[]
+> {
 	return v.pipe(
 		v.object({
 			multi_select: v.array(
@@ -75,5 +78,8 @@ export function MultiSelectSchema<S extends v.GenericSchema<string>>(
 		}),
 		// oxlint-disable-next-line typescript/no-non-null-assertion -- valibot inference is not working correctly
 		v.transform((v) => v.multi_select.map((v) => v.name!)),
-	);
+	) as v.GenericSchema<
+		{ multi_select: { name: v.InferInput<S> }[] },
+		v.InferOutput<S>[]
+	>;
 }

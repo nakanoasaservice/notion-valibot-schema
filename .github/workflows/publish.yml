@@ -36,7 +36,7 @@ jobs:
         run: vp pack
 
       - name: Publish to JSR
-        run: pnpm dlx jsr publish --allow-slow-types
+        run: pnpm dlx jsr publish
 
       - name: Publish to npm
         run: |
