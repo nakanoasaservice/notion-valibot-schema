@@ -5,6 +5,8 @@ catalog:
   vite-plus: 1.5.0
 overrides:
   vite@*: "catalog:"
+  # Keep esbuild (optional peer of vite-plus-core) off versions with GHSA dev-server file read (<0.28.1).
+  esbuild: ^0.28.1
 peerDependencyRules:
   allowAny:
     - vite
