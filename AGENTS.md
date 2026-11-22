@@ -32,6 +32,8 @@ release. Add a tool name to select part of the graph. For example, run
 
 ## Toolchain
 
+- Development Node.js is pinned only in `package.json#devEngines.runtime`. `mise.toml` provides bootstrap majors; use the global Vite+ CLI with environment management enabled for exact runtime selection. Compatibility CI may override the development pin.
+
 - Node 24 and pnpm (version from `packageManager` in `package.json`; see `mise.toml`). The Vite+ CLI `vp` is installed by `vite-plus`.
 - Verify with `pnpm install --frozen-lockfile`, `vp check`, `vp run test`, `vp pack`. CI runs the same (`.github/workflows/check.yml`, required check `Check`) and fails if the build leaves uncommitted changes.
 
