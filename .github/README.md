@@ -18,5 +18,6 @@ lockfile by hand. `gh actions-lock --verify-local` is an optional offline covera
 check; `--verify` also checks the locked references against GitHub.
 
 The Actions lockfile workflow runs `gh actions-lock --verify` on pull requests
-and pushes to `main`. Existing Dependabot GitHub Actions updates also refresh
-the corresponding entries for onboarded workflows.
+and pushes to `main` that change `.github/workflows/**` (including `actions.lock`)
+or an `action.yml` / `action.yaml` manifest. Existing Dependabot GitHub Actions
+updates also refresh the corresponding entries for onboarded workflows.
