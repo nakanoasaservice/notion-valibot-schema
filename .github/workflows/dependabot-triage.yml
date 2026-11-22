@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: meta
-        uses: dependabot/fetch-metadata@v3
+        uses: dependabot/fetch-metadata@v3.1.0
 
       # Safe = every updated dependency is a patch/minor update on a >=1.0 version.
       # Majors and 0.x minors (breaking under SemVer) are left without auto-merge;
