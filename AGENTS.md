@@ -32,13 +32,15 @@ release. Add a tool name to select part of the graph. For example, run
 
 ## Toolchain
 
+- Development Node.js is pinned only in `package.json#devEngines.runtime`. `mise.toml` provides bootstrap majors; use the global Vite+ CLI with environment management enabled for exact runtime selection. Compatibility CI may override the development pin.
+
 - Node 24 and pnpm (version from `packageManager` in `package.json`; see `mise.toml`). The Vite+ CLI `vp` is installed by `vite-plus`.
 - Verify with `pnpm install --frozen-lockfile`, `vp check`, `vp run test`, `vp pack`. CI runs the same (`.github/workflows/check.yml`, required check `Check`) and fails if the build leaves uncommitted changes.
 
 ## Dependency updates
 
 - Dependabot opens update PRs (`.github/dependabot.yml`). `.github/workflows/dependabot-triage.yml` enables auto-merge for patch/minor updates on versions >= 1.0; GitHub merges them once `Check` passes. Majors and 0.x minors are left for review.
-- Not managed by Dependabot: the Vite+ toolchain (`vite-plus`, `vite`). `vite-plus` and `vite` (an npm alias for `@voidzero-dev/vite-plus-core`) are pinned in the `catalog` of `pnpm-workspace.yaml`, `vite` is forced via `overrides`, and the `voidzero-dev/setup-vp` `version` input in `check.yml` and `publish.yml` pins the same release. Update all of them together and run `pnpm install` to refresh `pnpm-lock.yaml`.
+- Not managed by Dependabot: the Vite+ toolchain (`vite-plus`, `vite`). `vite-plus` and `vite` (an npm alias for `@voidzero-dev/vite-plus-core`) are pinned in the `catalog` of `pnpm-workspace.yaml`, and `vite` is forced via `overrides`. CI and publish workflows resolve the Vite+ version from the catalog automatically. Update the toolchain entries together and run `pnpm install` to refresh `pnpm-lock.yaml`.
 - Do not update `valibot` (also ignored in `dependabot.yml`): the dev dependency stays at the lowest supported peer version so tests cover it.
 - This is a library published to npm and JSR. `valibot` is a peer dependency: widen or raise `peerDependencies` only deliberately (it also sets the JSR import range), and treat any change to the public API or the peer range as a release-relevant change.
 - Merging to `main` publishes nothing. `.github/workflows/publish.yml` runs only on manual `workflow_dispatch` from `main`; it publishes the `package.json` version to JSR and npm and creates a GitHub release. Do not run it or any publish command.
